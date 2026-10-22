@@ -17,6 +17,24 @@ const volver = (req, res, destino, mensaje) => {
 };
 
 module.exports = {
+  async eventos(req, res) {
+    res.set({
+      "Content-Type": "text/event-stream",
+      "Cache-Control": "no-cache, no-transform",
+      Connection: "keep-alive",
+      "X-Accel-Buffering": "no",
+    });
+    res.flushHeaders();
+    res.write("event: hola\ndata: {}\n\n");
+    const alCambiar = (t) => res.write(`event: cambio\ndata: ${JSON.stringify({ fecha: t.fecha })}\n\n`);
+    turnos.eventos.on("cambio", alCambiar);
+    const latido = setInterval(() => res.write(": latido\n\n"), 25000);
+    req.on("close", () => {
+      clearInterval(latido);
+      turnos.eventos.off("cambio", alCambiar);
+    });
+  },
+
   async agenda(req, res) {
     const hoy = turnos.ahora().fecha;
     const fecha = turnos.fechaValida(req.query.fecha) ? req.query.fecha : hoy;

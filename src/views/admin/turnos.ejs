@@ -5,6 +5,7 @@
   const clasesEstado = { reservado: 'estado--alerta', confirmado: 'estado--curso', completado: 'estado--ok', cancelado: 'estado--cancelado', ausente: 'estado--cancelado' };
   const esHoy = fecha === hoy;
 %>
+<div data-agenda-viva>
 <div class="adm-cab">
   <div>
     <p class="etiqueta-seccion">Agenda</p>
@@ -92,6 +93,7 @@
   </aside>
 </div>
 
+</div>
 <%- include('../partials/admin-fin') %>
 <script src="/js/admin-turnos.js"></script>
 </body>

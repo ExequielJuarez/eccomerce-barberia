@@ -9,13 +9,23 @@
     ausente: ['No asististe', 'estado--alerta'],
   };
   const [textoEstado, claseEstado] = estados[turno.estado];
+  const nombre = turno.cliente.split(' ')[0];
+  const titulos = {
+    reservado: ['Turno reservado', '¡Listo, ' + nombre + '!', 'Guardá el código o este link: lo necesitás para consultar o cancelar tu turno. Te avisamos acá apenas lo confirmemos.'],
+    confirmado: ['Turno confirmado', '¡Confirmado, ' + nombre + '!', 'Te esperamos. Si no podés venir, cancelalo desde acá para liberar el horario.'],
+    completado: ['Turno completado', '¡Gracias, ' + nombre + '!', 'Esperamos que hayas quedado conforme. ¡Hasta la próxima!'],
+    cancelado: ['Turno cancelado', 'Cancelado', 'Este turno ya no está activo.'],
+    ausente: ['Turno sin asistencia', 'No te vimos, ' + nombre, 'Registramos que no asististe. Podés sacar otro turno cuando quieras.'],
+  };
+  const [etiqueta, titular, bajada] = titulos[turno.estado];
 %>
 
-<section class="turnos contenedor turno-detalle">
+<section class="turnos contenedor turno-detalle" data-turno-codigo="<%= turno.codigo %>">
+  <div data-turno-vivo>
   <header class="turnos__cab">
-    <p class="etiqueta-seccion"><%= turno.estado === 'cancelado' ? 'Turno cancelado' : 'Turno reservado' %></p>
-    <h1 class="pagina__titulo titulo"><%= turno.estado === 'cancelado' ? 'Cancelado' : '¡Listo, ' + turno.cliente.split(' ')[0] + '!' %></h1>
-    <p class="pagina__sub"><%= turno.estado === 'cancelado' ? 'Este turno ya no está activo.' : 'Guardá el código o este link: lo necesitás para consultar o cancelar tu turno.' %></p>
+    <p class="etiqueta-seccion"><%= etiqueta %></p>
+    <h1 class="pagina__titulo titulo"><%= titular %></h1>
+    <p class="pagina__sub"><%= bajada %></p>
   </header>
 
   <div class="ticket">
@@ -37,9 +47,10 @@
       <% if (whatsapp) { %><a href="<%= whatsapp %>" target="_blank" rel="noopener" class="btn btn--volt">Avisar por WhatsApp</a><% } %>
       <a href="/turnos" class="btn btn--linea">Sacar otro turno</a>
       <% if (puedeCancelar) { %>
-        <form action="/turnos/<%= turno.codigo %>/cancelar" method="POST" id="formCancelar"><button type="submit" class="btn btn--peligro">Cancelar turno</button></form>
+        <form action="/turnos/<%= turno.codigo %>/cancelar" method="POST" data-confirmar="¿Querés cancelar este turno?"><button type="submit" class="btn btn--peligro">Cancelar turno</button></form>
       <% } %>
     </div>
+  </div>
   </div>
 </section>
 

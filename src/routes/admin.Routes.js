@@ -51,6 +51,7 @@ router.delete("/subcategorias/:id", categorias.borrarSubcategoria);
 router.get("/arrepentimientos", arrepentimientos.ver);
 router.patch("/arrepentimientos/:id", arrepentimientos.cambiarEstado);
 
+router.get("/turnos/eventos", turnosAdmin.eventos);
 router.get("/turnos", turnosAdmin.agenda);
 router.get("/turnos/config", turnosAdmin.config);
 router.patch("/turnos/:id/estado", turnosAdmin.cambiarEstado);

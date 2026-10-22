@@ -41,6 +41,7 @@ async function coloresDe(productos) {
 router.get("/turnos", turnosController.ver);
 router.get("/turnos/disponibilidad", turnosController.disponibilidad);
 router.post("/turnos", turnosController.crear);
+router.get("/turnos/:codigo/eventos", turnosController.eventos);
 router.get("/turnos/:codigo", turnosController.detalle);
 router.post("/turnos/:codigo/cancelar", turnosController.cancelar);
 

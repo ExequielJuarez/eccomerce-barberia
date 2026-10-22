@@ -1,7 +1,11 @@
 const crypto = require("crypto");
+const { EventEmitter } = require("events");
 const { Op } = require("sequelize");
 const db = require("../model/database/models");
 const notificaciones = require("./notificacionService");
+
+const eventos = new EventEmitter();
+eventos.setMaxListeners(200);
 
 const ZONA = "America/Argentina/Buenos_Aires";
 const VENTANA_DIAS = 30;
@@ -271,6 +275,7 @@ async function crear({ servicioId, barberoId = null, fecha, hora, cliente, telef
   if (!turno) return { ok: false, mensaje: "Ese horario se acaba de ocupar. Elegí otro." };
 
   const resumen = planoTurno(turno);
+  eventos.emit("cambio", resumen);
   notificaciones
     .crear({
       tipo: "turno",
@@ -297,7 +302,9 @@ async function cancelarPorCodigo(codigo) {
     return { ok: false, mensaje: "Ese turno ya pasó" };
   }
   await turno.update({ estado: "cancelado" });
-  return { ok: true, turno: planoTurno(turno) };
+  const resumen = planoTurno(turno);
+  eventos.emit("cambio", resumen);
+  return { ok: true, turno: resumen };
 }
 
 async function agenda(fecha) {
@@ -340,7 +347,9 @@ async function cambiarEstado(id, estado) {
   const turno = await db.Turno.findByPk(id);
   if (!turno) return null;
   await turno.update({ estado });
-  return planoTurno(turno);
+  const resumen = planoTurno(turno);
+  eventos.emit("cambio", resumen);
+  return resumen;
 }
 
 async function guardarServicio(id, datos) {
@@ -417,6 +426,7 @@ async function borrarBloqueo(id) {
 }
 
 module.exports = {
+  eventos,
   ESTADOS,
   VENTANA_DIAS,
   DIAS,

@@ -1,5 +1,25 @@
 const turnos = require("../services/turnoService");
 
+function abrirStream(req, res, filtro) {
+  res.set({
+    "Content-Type": "text/event-stream",
+    "Cache-Control": "no-cache, no-transform",
+    Connection: "keep-alive",
+    "X-Accel-Buffering": "no",
+  });
+  res.flushHeaders();
+  res.write("event: hola\ndata: {}\n\n");
+  const alCambiar = (turno) => {
+    if (filtro(turno)) res.write(`event: cambio\ndata: ${JSON.stringify({ estado: turno.estado })}\n\n`);
+  };
+  turnos.eventos.on("cambio", alCambiar);
+  const latido = setInterval(() => res.write(": latido\n\n"), 25000);
+  req.on("close", () => {
+    clearInterval(latido);
+    turnos.eventos.off("cambio", alCambiar);
+  });
+}
+
 const quiereJson = (req) => req.accepts(["html", "json"]) === "json";
 
 module.exports = {
@@ -56,6 +76,11 @@ module.exports = {
       whatsapp: t.whatsapp ? `${t.whatsapp}?text=${encodeURIComponent(texto)}` : "",
       puedeCancelar: ["reservado", "confirmado"].includes(turno.estado),
     });
+  },
+
+  async eventos(req, res) {
+    const codigo = String(req.params.codigo).toUpperCase();
+    abrirStream(req, res, (t) => t.codigo === codigo);
   },
 
   async cancelar(req, res) {

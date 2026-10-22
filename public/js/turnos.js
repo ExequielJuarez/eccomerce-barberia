@@ -1,22 +1,44 @@
 (() => {
   const { $, $$, toast, pedir } = window.BB;
 
-  const copiar = $("#copiarCodigo");
-  if (copiar) {
-    copiar.addEventListener("click", async () => {
-      try {
-        await navigator.clipboard.writeText(copiar.dataset.codigo);
-        toast("Código copiado ✓");
-      } catch {
-        toast("No se pudo copiar", "error");
-      }
-    });
-  }
+  document.addEventListener("click", async (e) => {
+    const copiar = e.target.closest("#copiarCodigo");
+    if (!copiar) return;
+    try {
+      await navigator.clipboard.writeText(copiar.dataset.codigo);
+      toast("Código copiado ✓");
+    } catch {
+      toast("No se pudo copiar", "error");
+    }
+  });
 
-  const cancelar = $("#formCancelar");
-  if (cancelar) {
-    cancelar.addEventListener("submit", (e) => {
-      if (!confirm("¿Querés cancelar este turno?")) e.preventDefault();
+  const seguimiento = $("[data-turno-codigo]");
+  if (seguimiento && "EventSource" in window) {
+    const textos = {
+      reservado: "Tu turno quedó reservado",
+      confirmado: "¡Tu turno fue confirmado!",
+      completado: "Tu turno se completó",
+      cancelado: "Tu turno fue cancelado",
+      ausente: "Marcamos que no asististe",
+    };
+    let pendiente;
+    const refrescar = async (estado) => {
+      try {
+        const html = await fetch(location.href, { headers: { Accept: "text/html" } }).then((r) => r.text());
+        const nuevo = new DOMParser().parseFromString(html, "text/html").querySelector("[data-turno-vivo]");
+        const actual = $("[data-turno-vivo]", seguimiento);
+        if (nuevo && actual) actual.innerHTML = nuevo.innerHTML;
+        if (estado && textos[estado]) toast(textos[estado]);
+      } catch {}
+    };
+    const es = new EventSource(`/turnos/${seguimiento.dataset.turnoCodigo}/eventos`);
+    es.addEventListener("cambio", (e) => {
+      clearTimeout(pendiente);
+      const { estado } = JSON.parse(e.data);
+      pendiente = setTimeout(() => refrescar(estado), 200);
+    });
+    document.addEventListener("visibilitychange", () => {
+      if (!document.hidden) refrescar();
     });
   }
 
