@@ -1,0 +1,28 @@
+<%- include('../partials/head') %>
+<% const precio = (n) => formatoPrecio(n); const p = pedido; %>
+<div class="comp">
+  <header class="comp__cab">
+    <div class="comp__marca"><%- include('../partials/logo') %><p><%= tienda.razonSocial || tienda.nombre %></p>
+      <% if (tienda.cuit) { %><small>CUIT <%= tienda.cuit %></small><% } %><small><%= tienda.direccion %></small><% if (tienda.email) { %><small><%= tienda.email %></small><% } %><% if (tienda.telefono) { %><small><%= tienda.telefono %></small><% } %></div>
+    <div class="comp__num"><span>Comprobante de pedido</span><strong>#<%= p.numero %></strong><small>Fecha: <%= formatoFecha(p.fecha, true) %></small><small>Emitido: <%= formatoFecha(emitido, true) %></small></div>
+  </header>
+  <section class="comp__datos">
+    <div><h2>Cliente</h2><p><strong><%= p.cliente %></strong></p><p><%= p.email %></p><% if (p.telefono) { %><p>Tel. <%= p.telefono %></p><% } %><% if (p.dni) { %><p>DNI <%= p.dni %></p><% } %><% if (p.facturacion === 'facturaA') { %><p>Factura A · CUIT <%= p.cuit %> · <%= p.razonSocial %></p><% } %></div>
+    <div><h2><%= p.entrega === 'retiro' ? 'Retiro' : 'Envío' %></h2><% if (p.entrega === 'retiro') { %><p>Retira en el local</p><% } else { %><p><%= p.calle %> <%= p.altura %><%= p.piso ? ', ' + p.piso : '' %></p><p><%= p.ciudad %>, <%= p.provincia %> (<%= p.codigoPostal %>)</p><% } %></div>
+    <div><h2>Pago</h2><p><%= p.medioPago === 'transferencia' ? 'Transferencia bancaria' : 'Tarjeta (Mercado Pago)' %></p><p><%= p.pagoEstado %></p></div>
+  </section>
+  <table class="comp__tabla">
+    <thead><tr><th>Descripción</th><th>Color</th><th class="der">Cant.</th><th class="der">Precio</th><th class="der">Subtotal</th></tr></thead>
+    <tbody><% p.items.forEach((i) => { %><tr><td><%= i.nombre %></td><td><%= i.color || '—' %></td><td class="der"><%= i.cantidad %></td><td class="der"><%= precio(i.precio) %></td><td class="der"><%= precio(i.precio * i.cantidad) %></td></tr><% }) %></tbody>
+  </table>
+  <dl class="comp__totales">
+    <div><dt>Subtotal</dt><dd><%= precio(p.subtotal) %></dd></div>
+    <% if (p.descuento > 0) { %><div><dt>Descuentos<%= p.cuponCodigo ? ' (' + p.cuponCodigo + ')' : '' %></dt><dd>−<%= precio(p.descuento) %></dd></div><% } %>
+    <div><dt>Envío</dt><dd><%= p.envio > 0 ? precio(p.envio) : 'Gratis' %></dd></div>
+    <div class="comp__total"><dt>Total</dt><dd><%= precio(p.total) %></dd></div>
+  </dl>
+  <p class="comp__pie">Documento no válido como factura. Gracias por tu compra<%= tienda.usuario ? " · " + tienda.usuario : "" %></p>
+  <div class="comp__acciones no-imprimir"><button type="button" class="btn btn--volt" data-imprimir>Imprimir</button><a href="/admin/pedidos" class="btn btn--linea">Volver</a></div>
+</div>
+</body>
+</html>

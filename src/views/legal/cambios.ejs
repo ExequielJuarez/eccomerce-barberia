@@ -1,0 +1,37 @@
+<p>Queremos que estés conforme con tu compra. Acá te explicamos cómo arrepentirte, cómo hacer un cambio de producto y qué pasa si algo llega con un defecto.</p>
+
+<div class="legal__destacado">
+  <strong>¿Te arrepentiste de una compra?</strong> Tenés 10 días corridos para cancelarla sin costo.
+  <p><a href="/arrepentimiento" class="btn btn--volt">Botón de arrepentimiento</a></p>
+</div>
+
+<h2 id="arrepentimiento">1. Arrepentimiento</h2>
+<ul>
+  <li><strong>Plazo:</strong> 10 días corridos desde que recibiste el producto o desde la compra, lo último que ocurra (art. 34 de la Ley 24.240 y art. 1110 y siguientes del Código Civil y Comercial).</li>
+  <li><strong>Cómo:</strong> completá el <a href="/arrepentimiento">Botón de arrepentimiento</a>. No hace falta que expliques el motivo. Te damos un código de seguimiento y te contactamos para coordinar la devolución.</li>
+  <li><strong>Condición:</strong> el producto tiene que estar sin uso, en su caja original y con todos sus accesorios.</li>
+  <li><strong>Reintegro:</strong> te devolvemos el total pagado por el mismo medio de pago. Con tarjeta, el tiempo de acreditación depende de tu banco o de Mercado Pago.</li>
+</ul>
+
+<h2 id="cambios">2. Cambios de producto</h2>
+<ul>
+  <li>Escribinos con tu número de pedido y qué querés cambiar. Plazo para pedir el cambio: <%- d(process.env.TIENDA_PLAZO_CAMBIOS, 'TIENDA_PLAZO_CAMBIOS') %>.</li>
+  <li>El producto tiene que estar sin uso, con su caja y sus accesorios. Los insumos de higiene, una vez abiertos, no tienen cambio.</li>
+  <li>También podés hacer el cambio en el local de <%= tienda.direccion %><%= tienda.horarios ? ' (' + tienda.horarios.toLowerCase() + ')' : '' %>.</li>
+</ul>
+
+<h2 id="garantia">3. Productos con defectos (garantía)</h2>
+<ul>
+  <li>Los productos nuevos tienen <strong>garantía legal de 3 meses</strong> desde la entrega (art. 11 de la Ley 24.240), o el plazo mayor que indique el fabricante o el importador.</li>
+  <li>Si tu producto llega dañado o con un defecto, avisanos con fotos. Te ofrecemos repararlo, cambiarlo por uno igual o devolverte el dinero.</li>
+  <li>La garantía no cubre el desgaste natural, golpes, mal uso ni la falta de lubricación y limpieza de las hojas.</li>
+</ul>
+
+<h2 id="contacto">4. Contacto</h2>
+<ul>
+  <li><strong>Email:</strong> <%- d(tienda.email, 'TIENDA_EMAIL') %></li>
+  <% if (tienda.whatsapp) { %><li><strong>WhatsApp:</strong> <a href="<%= tienda.whatsapp %>" target="_blank" rel="noopener">escribinos</a></li><% } %>
+  <% if (tienda.instagram) { %><li><strong>Instagram:</strong> <a href="<%= tienda.instagram %>" target="_blank" rel="noopener"><%= tienda.usuario || tienda.instagram %></a></li><% } %>
+  <li>Indicá tu número de pedido. Lo encontrás en <a href="/mi-cuenta/pedidos">Mis pedidos</a>.</li>
+</ul>
+<p>Si no quedás conforme con nuestra respuesta, podés reclamar en <a href="https://www.argentina.gob.ar/produccion/defensadelconsumidor/formulario" target="_blank" rel="noopener">Defensa de las y los consumidores</a>.</p>

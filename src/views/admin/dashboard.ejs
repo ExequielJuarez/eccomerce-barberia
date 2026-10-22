@@ -1,0 +1,93 @@
+<%- include('../partials/head') %>
+<%- include('../partials/admin-inicio') %>
+<%
+  const precio = (n) => formatoPrecio(n).replace(',00', '');
+  const serie = m.serie;
+  const maxIng = Math.max(1, ...serie.map(d => d.ingresos));
+  const delta = m.gananciaAnterior ? (m.ganancia - m.gananciaAnterior) / m.gananciaAnterior : null;
+  const unidadesBajo = stock.bajo.length + stock.sinStock.length;
+  const maxTop = Math.max(1, ...m.topProductos.map(p => p.ganancia));
+  const redondo = (n) => { const e = Math.pow(10, Math.floor(Math.log10(Math.max(n, 1)))); return Math.ceil(n / e * 2) / 2 * e; };
+  const tope = redondo(maxIng);
+%>
+<div class="adm-cab">
+  <div><p class="etiqueta-seccion">Resumen</p><h1 class="adm-titulo titulo">Hola, <%= usuario.nombre %></h1></div>
+  <div class="adm-rango" role="group" aria-label="Período">
+    <% [7, 14, 30].forEach(d => { %><a href="/admin?dias=<%= d %>" class="filtro-chip <%= m.dias === d ? 'activo' : '' %>">Últimos <%= d %> días</a><% }) %>
+  </div>
+</div>
+
+<% if (m.pendientes) { %>
+  <a href="/admin/pedidos?estado=pendiente" class="aviso aviso--info adm-alerta"><strong><%= m.pendientes %></strong> <%= m.pendientes === 1 ? 'pedido espera' : 'pedidos esperan' %> tu atención → Ver pedidos</a>
+<% } %>
+
+<section class="kpis">
+  <article class="kpi"><span class="kpi__t">Ingresos</span><strong class="kpi__n"><%= formatoCompacto(m.ingresos) %></strong><small><%= m.pedidos %> pedidos · <%= m.unidades %> unidades</small></article>
+  <article class="kpi kpi--volt"><span class="kpi__t">Ganancia</span><strong class="kpi__n"><%= formatoCompacto(m.ganancia) %></strong>
+    <small><%= formatoPorcentaje(m.margen) %> de margen<% if (delta !== null) { %> · <span class="<%= delta >= 0 ? 'sube' : 'baja' %>"><%= delta >= 0 ? '▲' : '▼' %> <%= formatoPorcentaje(Math.abs(delta)) %></span> vs. período anterior<% } %></small></article>
+  <article class="kpi"><span class="kpi__t">Ticket promedio</span><strong class="kpi__n"><%= formatoCompacto(m.ticketPromedio) %></strong><small>por pedido</small></article>
+  <article class="kpi"><span class="kpi__t">Stock en tienda</span><strong class="kpi__n"><%= stock.unidades %></strong><small>valor a precio de venta <%= formatoCompacto(stock.valorVenta) %></small></article>
+</section>
+
+<section class="adm-grilla-2">
+  <article class="panel">
+    <header class="panel__cab"><h2>Ingresos por día</h2><span class="apagado"><span class="leyenda leyenda--ing"></span>Ingresos <span class="leyenda leyenda--gan"></span>Ganancia</span></header>
+    <div class="grafico" role="img" aria-label="Gráfico de barras de ingresos y ganancia por día">
+      <div class="grafico__ejes">
+        <% [1, 0.75, 0.5, 0.25, 0].forEach(f => { %><span data-b="<%= f * 100 %>"><%= f ? formatoCompacto(tope * f) : '0' %></span><% }) %>
+      </div>
+      <div class="grafico__barras" data-n="<%= serie.length %>">
+        <% serie.forEach((d, i) => { const f = new Date(d.fecha); %>
+          <div class="barra" tabindex="0">
+            <div class="barra__pila"><span class="barra__ing" data-h="<%= (d.ingresos / tope) * 100 %>"></span><span class="barra__gan" data-h="<%= (d.ganancia / tope) * 100 %>"></span></div>
+            <small><%= serie.length > 14 ? (i % 2 ? '' : f.getDate()) : formatoFecha(d.fecha) %></small>
+            <span class="barra__tip"><strong><%= formatoFecha(d.fecha) %></strong><%= precio(d.ingresos) %> · <%= d.pedidos %> ped.<br>Ganancia <%= precio(d.ganancia) %></span>
+          </div>
+        <% }) %>
+      </div>
+    </div>
+  </article>
+
+  <article class="panel">
+    <header class="panel__cab"><h2>Lo que más deja</h2><span class="apagado">por ganancia</span></header>
+    <% if (!m.topProductos.length) { %><p class="apagado">Todavía no hay ventas en este período.</p><% } %>
+    <ol class="top">
+      <% m.topProductos.forEach((p, i) => { %>
+        <li>
+          <span class="top__pos"><%= i + 1 %></span>
+          <div class="top__datos"><a href="/admin/productos/<%= p.id %>"><%= p.nombre %></a><small><%= p.unidades %> u. · <%= precio(p.ingresos) %></small><span class="top__barra"><i data-w="<%= (p.ganancia / maxTop) * 100 %>"></i></span></div>
+          <strong><%= formatoCompacto(p.ganancia) %></strong>
+        </li>
+      <% }) %>
+    </ol>
+  </article>
+</section>
+
+<section class="adm-grilla-2 adm-grilla-2--inv">
+  <article class="panel">
+    <header class="panel__cab"><h2>Últimos pedidos</h2><a href="/admin/pedidos" class="enlace">Ver todos</a></header>
+    <div class="tabla-wrap"><table class="tabla">
+      <thead><tr><th>N°</th><th>Cliente</th><th>Estado</th><th class="num">Total</th></tr></thead>
+      <tbody>
+        <% ultimos.forEach(p => { const s = situacionPedido(p); %>
+          <tr><td><a class="enlace" href="/admin/pedidos?q=<%= p.numero %>">#<%= p.numero %></a></td><td><%= p.cliente %><br><small class="apagado"><%= formatoFecha(p.fecha, true) %></small></td><td><span class="estado estado--<%= s.clave %>"><%= s.texto %></span></td><td class="num"><%= precio(p.total) %></td></tr>
+        <% }) %>
+      </tbody>
+    </table></div>
+  </article>
+
+  <article class="panel">
+    <header class="panel__cab"><h2>Stock para reponer</h2><span class="apagado"><%= unidadesBajo %> <%= unidadesBajo === 1 ? 'producto' : 'productos' %></span></header>
+    <% if (!unidadesBajo) { %><p class="apagado">Todo el stock está al día. 👌</p><% } %>
+    <ul class="alertas-stock">
+      <% stock.sinStock.concat(stock.bajo).forEach(p => { %>
+        <li><span class="alertas-stock__foto"><% if (p.imagen) { %><img src="<%= p.imagen %>" alt=""><% } %></span>
+          <a href="/admin/productos/<%= p.id %>"><%= p.nombre %></a>
+          <span class="estado <%= p.stock === 0 ? 'estado--cancelado' : 'estado--alerta' %>"><%= p.stock === 0 ? 'Sin stock' : p.stock + ' u.' %></span></li>
+      <% }) %>
+    </ul>
+  </article>
+</section>
+<%- include('../partials/admin-fin') %>
+</body>
+</html>

@@ -1,0 +1,15 @@
+.lista-pedidos { display: grid; gap: 14px; }
+.pedido-card { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 22px; align-items: center; padding: 18px; border: 1px solid var(--linea); transition: border-color 0.15s, transform 0.2s var(--ease), box-shadow 0.2s var(--ease); }
+.pedido-card__fotos { display: flex; }
+.pedido-card__fotos span { width: 64px; aspect-ratio: 4 / 5; background: var(--tinta-3); border: 1px solid var(--tinta); margin-left: -14px; overflow: hidden; }
+.pedido-card__fotos span:first-child { margin-left: 0; }
+.pedido-card__fotos img { width: 100%; height: 100%; object-fit: cover; }
+.pedido-card__datos { display: grid; gap: 6px; justify-items: start; }
+.pedido-card__num { font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; }
+.pedido-card__num small { color: var(--apagado); font-weight: 600; margin-left: 8px; }
+.pedido-card__total { display: grid; gap: 8px; justify-items: end; }
+@media (hover: hover) and (pointer: fine) {
+  .pedido-card:hover { border-color: var(--papel); transform: translate(-3px, -3px); }
+}
+
+@media (max-width: 640px) { .pedido-card { grid-template-columns: 1fr; } .pedido-card__total { justify-items: start; grid-auto-flow: column; justify-content: space-between; align-items: center; } }

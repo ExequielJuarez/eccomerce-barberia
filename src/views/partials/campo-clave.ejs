@@ -1,0 +1,8 @@
+<% const _errC = (locals.errores || {})[nombre]; %>
+<div class="campo campo-clave <%= _errC ? 'campo--error' : '' %> <%= locals.clase || '' %>">
+  <label for="c-<%= nombre %>"><%= etiqueta %></label>
+  <input id="c-<%= nombre %>" type="password" name="<%= nombre %>" <%- locals.atributos || 'autocomplete="current-password"' %> <%= _errC ? 'aria-invalid="true"' : '' %>>
+  <button type="button" data-ver-clave aria-label="Mostrar contraseña">Ver</button>
+  <% if (locals.ayuda && !_errC) { %><span class="campo__ayuda"><%= ayuda %></span><% } %>
+  <% if (_errC) { %><span class="campo__error"><%= _errC.msg %></span><% } %>
+</div>

@@ -1,0 +1,7 @@
+<% const _err = (locals.errores || {})[nombre]; const _tipo = locals.tipo || 'text'; %>
+<div class="campo <%= _err ? 'campo--error' : '' %> <%= locals.clase || '' %>">
+  <label for="c-<%= nombre %>"><%= etiqueta %></label>
+  <input id="c-<%= nombre %>" type="<%= _tipo %>" name="<%= nombre %>" value="<%= locals.valor ?? '' %>" <%- locals.atributos || '' %> <%= _err ? 'aria-invalid="true"' : '' %> aria-describedby="e-<%= nombre %>">
+  <% if (locals.ayuda && !_err) { %><span class="campo__ayuda"><%= ayuda %></span><% } %>
+  <% if (_err) { %><span class="campo__error" id="e-<%= nombre %>"><%= _err.msg %></span><% } %>
+</div>

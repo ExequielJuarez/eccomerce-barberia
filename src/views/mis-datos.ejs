@@ -1,0 +1,55 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+<% const e = errores; const v = (k) => datos[k] ?? ''; %>
+<section class="contenedor pagina">
+  <h1 class="pagina__titulo titulo">Mi cuenta</h1>
+  <%- include('partials/cuenta-nav', { cuentaActiva: 'datos' }) %>
+
+  <div class="datos-grilla">
+    <form action="/mi-cuenta/datos" method="POST" class="checkout__form" novalidate>
+      <fieldset class="bloque-form">
+        <legend><span>1</span> Tus datos</legend>
+        <div class="grilla-form">
+          <%- include('partials/campo', { nombre: 'nombre', etiqueta: 'Nombre', valor: v('nombre'), errores: e }) %>
+          <%- include('partials/campo', { nombre: 'apellido', etiqueta: 'Apellido', valor: v('apellido'), errores: e }) %>
+          <%- include('partials/campo', { nombre: 'email', etiqueta: 'Email', tipo: 'email', valor: v('email'), errores: e }) %>
+          <%- include('partials/campo', { nombre: 'telefono', etiqueta: 'Teléfono', tipo: 'tel', valor: v('telefono'), errores: e }) %>
+          <%- include('partials/campo', { nombre: 'dni', etiqueta: 'DNI', valor: v('dni'), errores: e, atributos: 'inputmode="numeric" maxlength="8"' }) %>
+        </div>
+      </fieldset>
+      <fieldset class="bloque-form">
+        <legend><span>2</span> Dirección de entrega</legend>
+        <div class="grilla-form">
+          <%- include('partials/campo', { nombre: 'calle', etiqueta: 'Calle', valor: v('calle'), errores: e }) %>
+          <%- include('partials/campo', { nombre: 'numero', etiqueta: 'Altura', valor: v('numero'), errores: e }) %>
+          <%- include('partials/campo', { nombre: 'piso', etiqueta: 'Piso / depto', valor: v('piso'), errores: e }) %>
+          <%- include('partials/campo', { nombre: 'codigoPostal', etiqueta: 'Código postal', valor: v('codigoPostal'), errores: e, atributos: 'inputmode="numeric" maxlength="4"' }) %>
+          <%- include('partials/campo', { nombre: 'ciudad', etiqueta: 'Ciudad / localidad', valor: v('ciudad'), errores: e }) %>
+          <div class="campo <%= e.provincia ? 'campo--error' : '' %>">
+            <label for="c-provincia">Provincia</label>
+            <select id="c-provincia" name="provincia">
+              <option value="">Elegí una provincia</option>
+              <% provincias.forEach((pv) => { %><option value="<%= pv %>" <%= v('provincia') === pv ? 'selected' : '' %>><%= pv %></option><% }) %>
+            </select>
+            <% if (e.provincia) { %><span class="campo__error"><%= e.provincia.msg %></span><% } %>
+          </div>
+        </div>
+      </fieldset>
+      <div><button type="submit" class="btn btn--volt">Guardar cambios</button></div>
+    </form>
+
+    <details class="clave-caja" <%= abrir === 'clave' ? 'open' : '' %>>
+      <summary><%= perfil.tieneClave === false ? 'Crear una contraseña' : 'Cambiar contraseña' %></summary>
+      <form action="/mi-cuenta/clave" method="POST" class="acceso__campos" novalidate>
+        <% if (recuperando) { %><p class="aviso aviso--info">Entraste con un código: podés elegir una contraseña nueva sin escribir la anterior.</p>
+        <% } else { %><%- include('partials/campo-clave', { nombre: 'actual', etiqueta: 'Contraseña actual', errores: erroresClave, atributos: 'autocomplete="current-password"' }) %><% } %>
+        <%- include('partials/campo-clave', { nombre: 'nueva', etiqueta: 'Contraseña nueva', errores: erroresClave, atributos: 'autocomplete="new-password"', ayuda: 'Mínimo 8 caracteres, con letras y números.' }) %>
+        <%- include('partials/campo-clave', { nombre: 'confirmar', etiqueta: 'Repetí la contraseña nueva', errores: erroresClave, atributos: 'autocomplete="new-password"' }) %>
+        <button type="submit" class="btn btn--linea">Actualizar contraseña</button>
+      </form>
+    </details>
+  </div>
+</section>
+<%- include('partials/footer') %>
+</body>
+</html>

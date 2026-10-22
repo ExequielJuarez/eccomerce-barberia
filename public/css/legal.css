@@ -1,0 +1,24 @@
+.legal { display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: clamp(28px, 5vw, 72px); padding-block: 40px 40px; align-items: start; }
+.legal__lateral { position: sticky; top: calc(var(--alto-header) + 24px); display: grid; gap: 14px; }
+.legal__lateral ul { display: grid; border-left: 1px solid var(--linea); }
+.legal__lateral a { display: block; padding: 9px 16px; margin-left: -2px; border-left: 1px solid transparent; font-size: 14px; font-weight: 600; color: var(--apagado); transition: all 0.15s; }
+.legal__lateral a.activo { color: var(--papel); border-color: var(--oro); }
+.legal__arrepentimiento { color: var(--oro) !important; }
+.legal__texto { max-width: 760px; display: grid; gap: 14px; }
+.legal__texto h2 { font-family: var(--ff-titulo); text-transform: uppercase; font-size: 19px; margin-top: 30px; scroll-margin-top: calc(var(--alto-header) + 20px); }
+.legal__texto p, .legal__texto li { color: var(--papel-2); }
+.legal__texto ul { display: grid; gap: 8px; padding-left: 20px; list-style: square; }
+.legal__texto li::marker { color: var(--oro); }
+.legal__texto strong { color: var(--papel); }
+.legal__texto a:not(.btn) { color: var(--oro); text-decoration: underline; text-underline-offset: 3px; }
+.legal__texto code { padding: 1px 6px; background: var(--tinta-3); }
+.legal__falta { padding: 1px 6px; background: rgba(255, 194, 71, 0.15); color: var(--ambar); border: 1px dashed var(--ambar); }
+.legal__destacado { padding: 20px; border: 1px solid var(--oro); background: var(--tinta-2); display: grid; gap: 12px; }
+.legal__indice { padding: 18px; border: 1px solid var(--linea); }
+.legal__indice p { font-size: 11px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: var(--apagado); margin-bottom: 8px; }
+.legal__indice ul { gap: 4px; list-style: none; padding: 0; }
+@media (hover: hover) and (pointer: fine) {
+  .legal__lateral a:hover { color: var(--papel); }
+}
+
+@media (max-width: 860px) { .legal { grid-template-columns: 1fr; } .legal__lateral { position: static; } .legal__lateral ul { grid-auto-flow: column; overflow-x: auto; border-left: 0; border-bottom: 1px solid var(--linea); } .legal__lateral a { white-space: nowrap; border-left: 0; border-bottom: 1px solid transparent; margin: 0 0 -2px; } .legal__lateral a.activo { border-bottom-color: var(--oro); } }

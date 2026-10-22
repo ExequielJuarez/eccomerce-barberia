@@ -1,0 +1,14 @@
+.cuenta-nav { display: flex; gap: 6px; flex-wrap: wrap; margin-block: 22px 30px; border-bottom: 1px solid var(--linea); }
+.cuenta-nav a { padding: 12px 18px; font-size: 12px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: var(--apagado); border-bottom: 1px solid transparent; margin-bottom: -1px; transition: color 0.15s, border-color 0.15s; }
+.cuenta-nav a.activo { color: var(--papel); border-color: var(--oro); }
+.cuenta-nav__admin { margin-left: auto; color: var(--oro) !important; }
+.filtros-pedidos { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 26px; }
+.filtro-chip { padding: 9px 16px; border: 1px solid var(--linea-fuerte); font-size: 12px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; transition: all 0.15s; }
+.filtro-chip.activo { background: var(--oro); border-color: var(--oro); color: var(--tinta); }
+.carrito-vacio { display: grid; justify-items: start; gap: 14px; margin-block: 30px 60px; }
+.vacio__titulo { font-size: clamp(29px, 9vw, 72px); }
+
+@media (hover: hover) and (pointer: fine) {
+  .cuenta-nav a:hover { color: var(--papel); }
+  .filtro-chip:hover { border-color: var(--papel); }
+}

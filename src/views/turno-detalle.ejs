@@ -1,0 +1,49 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+<%
+  const estados = {
+    reservado: ['Reservado', 'estado--curso'],
+    confirmado: ['Confirmado', 'estado--ok'],
+    completado: ['Completado', 'estado--ok'],
+    cancelado: ['Cancelado', 'estado--cancelado'],
+    ausente: ['No asististe', 'estado--alerta'],
+  };
+  const [textoEstado, claseEstado] = estados[turno.estado];
+%>
+
+<section class="turnos contenedor turno-detalle">
+  <header class="turnos__cab">
+    <p class="etiqueta-seccion"><%= turno.estado === 'cancelado' ? 'Turno cancelado' : 'Turno reservado' %></p>
+    <h1 class="pagina__titulo titulo"><%= turno.estado === 'cancelado' ? 'Cancelado' : '¡Listo, ' + turno.cliente.split(' ')[0] + '!' %></h1>
+    <p class="pagina__sub"><%= turno.estado === 'cancelado' ? 'Este turno ya no está activo.' : 'Guardá el código o este link: lo necesitás para consultar o cancelar tu turno.' %></p>
+  </header>
+
+  <div class="ticket">
+    <div class="ticket__cab">
+      <span class="estado <%= claseEstado %>"><%= textoEstado %></span>
+      <button type="button" class="ticket__codigo" id="copiarCodigo" data-codigo="<%= turno.codigo %>" aria-label="Copiar código <%= turno.codigo %>">
+        <small>Código</small><strong><%= turno.codigo %></strong>
+      </button>
+    </div>
+    <dl class="ticket__datos">
+      <div><dt>Día</dt><dd><%= turno.fechaTexto %></dd></div>
+      <div><dt>Hora</dt><dd><%= turno.inicio %> hs</dd></div>
+      <div><dt>Servicio</dt><dd><%= turno.servicio %></dd></div>
+      <div><dt>Profesional</dt><dd><%= turno.barbero %></dd></div>
+      <div><dt>A nombre de</dt><dd><%= turno.cliente %></dd></div>
+      <div><dt>Dónde</dt><dd><%= tienda.direccion %></dd></div>
+    </dl>
+    <div class="ticket__acciones">
+      <% if (whatsapp) { %><a href="<%= whatsapp %>" target="_blank" rel="noopener" class="btn btn--volt">Avisar por WhatsApp</a><% } %>
+      <a href="/turnos" class="btn btn--linea">Sacar otro turno</a>
+      <% if (puedeCancelar) { %>
+        <form action="/turnos/<%= turno.codigo %>/cancelar" method="POST" id="formCancelar"><button type="submit" class="btn btn--peligro">Cancelar turno</button></form>
+      <% } %>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>
+<script src="/js/turnos.js"></script>
+</body>
+</html>

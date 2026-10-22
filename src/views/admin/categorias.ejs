@@ -1,0 +1,45 @@
+<%- include('../partials/head') %>
+<%- include('../partials/admin-inicio') %>
+<div class="adm-cab"><div><p class="etiqueta-seccion">Catálogo</p><h1 class="adm-titulo titulo">Categorías</h1></div></div>
+<p class="apagado texto-ancho">Las categorías son las pestañas del menú de la tienda. Las subcategorías son los filtros de cada sección (por ejemplo Clippers → Wahl, Kemei).</p>
+
+<form action="/admin/categorias" method="POST" class="panel cat-alta">
+  <label class="campo"><span class="campo__label">Nueva categoría</span><span class="cat-alta__fila"><input type="text" name="nombre" maxlength="60" placeholder="Ej: Trimmers" required><button class="btn btn--volt">Agregar</button></span></label>
+</form>
+
+<ul class="cats">
+  <% lista.forEach((c, n) => { %>
+    <li class="panel cat" id="categoria-<%= c.id %>">
+      <header class="cat__cab">
+        <div class="cat__orden">
+          <form action="/admin/categorias/<%= c.id %>/mover?_method=PATCH" method="POST"><input type="hidden" name="direccion" value="-1"><button class="icono-btn" <%= n === 0 ? 'disabled' : '' %> aria-label="Subir <%= c.nombre %>">▲</button></form>
+          <form action="/admin/categorias/<%= c.id %>/mover?_method=PATCH" method="POST"><input type="hidden" name="direccion" value="1"><button class="icono-btn" <%= n === lista.length - 1 ? 'disabled' : '' %> aria-label="Bajar <%= c.nombre %>">▼</button></form>
+        </div>
+        <div class="cat__titulo"><h2 class="titulo"><%= c.nombre %></h2><small class="apagado"><%= c.productos %> <%= c.productos === 1 ? 'producto' : 'productos' %> · <a href="/categoria/<%= c.slug %>" target="_blank" rel="noopener" class="enlace-suave">/categoria/<%= c.slug %> ↗</a></small></div>
+        <div class="cat__acciones">
+          <details class="menu-flotante"><summary class="btn btn--linea btn--chico">Renombrar</summary>
+            <form action="/admin/categorias/<%= c.id %>?_method=PATCH" method="POST" class="menu-flotante__form"><input type="text" name="nombre" value="<%= c.nombre %>" maxlength="60" required aria-label="Nuevo nombre"><button class="btn btn--volt btn--chico">Guardar</button></form></details>
+          <% if (c.productos) { %><button class="btn btn--peligro btn--chico" disabled title="Pasá sus productos a otra categoría antes de borrarla">Eliminar</button>
+          <% } else { %><form action="/admin/categorias/<%= c.id %>?_method=DELETE" method="POST" data-confirmar="¿Eliminar la categoría “<%= c.nombre %>” y sus subcategorías? Deja de aparecer en el menú."><button class="btn btn--peligro btn--chico">Eliminar</button></form><% } %>
+        </div>
+      </header>
+      <div class="cat__subs">
+        <% if (!c.subcategorias.length) { %><p class="apagado">Sin subcategorías.</p><% } %>
+        <ul class="subs">
+          <% c.subcategorias.forEach((s) => { %>
+            <li>
+              <span class="sub__nombre"><%= s.nombre %></span><span class="sub__n" title="Productos"><%= s.productos %></span>
+              <details class="menu-flotante"><summary class="icono-btn" aria-label="Renombrar <%= s.nombre %>">✎</summary>
+                <form action="/admin/subcategorias/<%= s.id %>?_method=PATCH" method="POST" class="menu-flotante__form"><input type="text" name="nombre" value="<%= s.nombre %>" maxlength="40" required aria-label="Nuevo nombre"><button class="btn btn--volt btn--chico">Guardar</button></form></details>
+              <form action="/admin/subcategorias/<%= s.id %>?_method=DELETE" method="POST" data-confirmar="¿Eliminar “<%= s.nombre %>”?<%= s.productos ? ' ' + s.productos + ' producto(s) quedan sin subcategoría.' : '' %>"><button class="icono-btn sub__borrar" aria-label="Eliminar <%= s.nombre %>">✕</button></form>
+            </li>
+          <% }) %>
+        </ul>
+        <form action="/admin/categorias/<%= c.id %>/subcategorias" method="POST" class="cat-alta__fila"><input type="text" name="nombre" maxlength="40" placeholder="Nueva subcategoría de <%= c.nombre %>" required aria-label="Nueva subcategoría de <%= c.nombre %>"><button class="btn btn--linea btn--chico">Agregar</button></form>
+      </div>
+    </li>
+  <% }) %>
+</ul>
+<%- include('../partials/admin-fin') %>
+</body>
+</html>

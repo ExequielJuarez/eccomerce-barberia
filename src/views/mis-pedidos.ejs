@@ -1,0 +1,38 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+<% const precio = (n) => formatoPrecio(n).replace(',00', ''); const filtros = [['todos', 'Todos'], ['curso', 'En curso'], ['entregados', 'Entregados'], ['cancelados', 'Cancelados']];
+   const visibles = pedidos.filter((p) => filtro === 'todos' || (filtro === 'curso' && !['entregado', 'cancelado'].includes(p.estado)) || (filtro === 'entregados' && p.estado === 'entregado') || (filtro === 'cancelados' && p.estado === 'cancelado')); %>
+<section class="contenedor pagina">
+  <h1 class="pagina__titulo titulo">Mi cuenta</h1>
+  <%- include('partials/cuenta-nav', { cuentaActiva: 'pedidos' }) %>
+
+  <div class="filtros-pedidos" role="group" aria-label="Filtrar pedidos">
+    <% filtros.forEach(([k, n]) => { %><a class="filtro-chip <%= filtro === k ? 'activo' : '' %>" href="/mi-cuenta/pedidos?ver=<%= k %>"><%= n %></a><% }) %>
+  </div>
+
+  <% if (!visibles.length) { %>
+    <div class="carrito-vacio">
+      <p class="vacio__titulo vacio__titulo--grande titulo"><%= pedidos.length ? 'Sin resultados' : 'Aún no compraste' %></p>
+      <a href="<%= urlProductos %>" class="btn btn--volt">Ir a la tienda</a>
+    </div>
+  <% } else { %>
+    <ul class="lista-pedidos">
+      <% visibles.forEach((p) => { const s = situacionPedido(p); %>
+        <li class="pedido-card">
+          <div class="pedido-card__fotos">
+            <% p.items.slice(0, 3).forEach((i) => { %><span><% if (i.imagen) { %><img src="<%= i.imagen %>" alt=""><% } %></span><% }) %>
+          </div>
+          <div class="pedido-card__datos">
+            <p class="pedido-card__num">Pedido #<%= p.numero %> <small><%= formatoFecha(p.fecha) %></small></p>
+            <p class="apagado"><%= p.items.reduce((a, i) => a + i.cantidad, 0) %> <%= p.items.reduce((a, i) => a + i.cantidad, 0) === 1 ? 'producto' : 'productos' %> · <%= p.entrega === 'retiro' ? 'Retiro en el local' : 'Envío a domicilio' %></p>
+            <span class="estado estado--<%= s.clave %>"><%= s.texto %></span>
+          </div>
+          <div class="pedido-card__total"><strong class="precio"><%= precio(p.total) %></strong><a href="/pedido/<%= p.numero %>" class="btn btn--linea btn--chico">Ver detalle</a></div>
+        </li>
+      <% }) %>
+    </ul>
+  <% } %>
+</section>
+<%- include('partials/footer') %>
+</body>
+</html>

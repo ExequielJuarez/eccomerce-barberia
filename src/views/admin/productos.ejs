@@ -1,0 +1,61 @@
+<%- include('../partials/head') %>
+<%- include('../partials/admin-inicio') %>
+<% const precio = (n) => formatoPrecio(n).replace(',00', ''); const f = filtros; %>
+<div class="adm-cab">
+  <div><p class="etiqueta-seccion">Catálogo</p><h1 class="adm-titulo titulo">Productos <sup class="sup-n" id="totalLista"><%= lista.length %></sup></h1></div>
+  <a href="/admin/productos/nuevo" class="btn btn--volt">+ Nuevo producto</a>
+</div>
+
+<section class="kpis kpis--3">
+  <article class="kpi"><span class="kpi__t">Unidades en stock</span><strong class="kpi__n" data-resumen="unidades"><%= stockResumen.unidades %></strong><small>a precio de venta <span data-resumen="valorVenta"><%= formatoCompacto(stockResumen.valorVenta) %></span></small></article>
+  <a class="kpi kpi--link" href="/admin/productos?stock=bajo"><span class="kpi__t">Stock bajo (≤ <%= STOCK_BAJO %>)</span><strong class="kpi__n" data-resumen="bajo"><%= stockResumen.bajo.length %></strong><small>productos por reponer</small></a>
+  <a class="kpi kpi--link" href="/admin/productos?stock=sin"><span class="kpi__t">Sin stock</span><strong class="kpi__n" data-resumen="sin"><%= stockResumen.sinStock.length %></strong><small>agotados</small></a>
+</section>
+
+<form method="GET" class="adm-filtros" id="filtrosProductos">
+  <label class="adm-buscar"><span class="sr-only">Buscar</span><input type="search" name="q" value="<%= f.q %>" placeholder="Buscar por nombre, categoría o código…"></label>
+  <select name="categoria" class="adm-select" aria-label="Categoría" data-auto-enviar>
+    <option value="">Todas las categorías</option>
+    <% categorias.forEach(c => { %><option <%= f.categoria === c ? 'selected' : '' %>><%= c %></option><% }) %>
+  </select>
+  <select name="stock" class="adm-select" aria-label="Stock" data-auto-enviar>
+    <option value="">Todo el stock</option>
+    <option value="bajo" <%= f.stock === 'bajo' ? 'selected' : '' %>>Stock bajo</option>
+    <option value="sin" <%= f.stock === 'sin' ? 'selected' : '' %>>Sin stock</option>
+  </select>
+  <select name="orden" class="adm-select" aria-label="Orden" data-auto-enviar>
+    <% [['nombre', 'Nombre A–Z'], ['precio-desc', 'Precio: mayor a menor'], ['stock-asc', 'Menos stock primero'], ['margen-desc', 'Mayor margen']].forEach(([v, t]) => { %><option value="<%= v %>" <%= f.orden === v ? 'selected' : '' %>><%= t %></option><% }) %>
+  </select>
+</form>
+
+<div class="tabla-wrap">
+  <table class="tabla" id="tablaProductos">
+    <thead><tr><th></th><th>Producto</th><th>Categoría</th><th class="num">Precio</th><th class="num">Margen</th><th>Stock</th><th></th></tr></thead>
+    <tbody>
+      <% lista.forEach(p => { const margen = p.precio ? (p.precio - p.costo) / p.precio : 0; %>
+        <tr data-id="<%= p.id %>">
+          <td><% if (p.imagen) { %><img class="mini-foto" src="<%= p.imagen %>" alt=""><% } %></td>
+          <td><a class="enlace-fuerte" href="/admin/productos/<%= p.id %>"><%= p.nombre %></a><br><small class="apagado">#<%= p.id %><% if (p.etiqueta) { %> · <%= p.etiqueta %><% } %></small></td>
+          <td><%= p.categoria %><br><small class="apagado"><%= p.subcategoria || '—' %></small></td>
+          <td class="num"><%= precio(p.precio) %></td>
+          <td class="num"><%= formatoPorcentaje(margen) %></td>
+          <td>
+            <div class="stock-ctl" data-stock-ctl>
+              <button type="button" data-cambio="-1" aria-label="Restar uno">−</button>
+              <input type="number" min="0" value="<%= p.stock %>" aria-label="Stock de <%= p.nombre %>" data-stock-input>
+              <button type="button" data-cambio="1" aria-label="Sumar uno">+</button>
+            </div>
+            <span class="estado <%= p.stock === 0 ? 'estado--cancelado' : (p.stock <= STOCK_BAJO ? 'estado--alerta' : 'estado--ok') %> stock-estado" data-stock-estado><%= p.stock === 0 ? 'Sin stock' : (p.stock <= STOCK_BAJO ? 'Bajo' : 'OK') %></span>
+          </td>
+          <td class="num"><a class="btn btn--linea btn--chico" href="/admin/productos/<%= p.id %>/editar">Editar</a></td>
+        </tr>
+      <% }) %>
+      <% if (!lista.length) { %><tr><td colspan="8" class="apagado vacio-panel vacio-panel--alto">No hay productos con esos filtros.</td></tr><% } %>
+    </tbody>
+  </table>
+</div>
+<script>window.STOCK_BAJO = <%= STOCK_BAJO %>;</script>
+<%- include('../partials/admin-fin') %>
+<script src="/js/admin-productos.js"></script>
+</body>
+</html>

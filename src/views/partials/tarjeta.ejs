@@ -1,0 +1,25 @@
+<% const esFav = (locals.favoritosIds || []).includes(p.id); const agotado = p.stock <= 0; %>
+<article class="tarjeta rev" data-d="<%= ((locals.indice || 0) % 4) * 0.07 %>" data-id="<%= p.id %>" data-precio="<%= p.precio %>" data-grupo="<%= (locals.grupoCampo === 'categoria') ? p.categoria : p.subcategoriaSlug %>" data-colores="<%= p.colores.map(c => c.valor).join(',') %>" data-stock="<%= p.stock > 0 ? 1 : 0 %>">
+  <div class="tarjeta__foto">
+    <% if (p.etiqueta && !agotado) { %><span class="tarjeta__etiqueta chip"><%= p.etiqueta %></span><% } %>
+    <button type="button" class="tarjeta__fav" data-fav="<%= p.id %>" aria-pressed="<%= esFav %>" aria-label="Guardar en favoritos">
+      <svg viewBox="0 0 24 24" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-10a4 4 0 017-2.6A4 4 0 0119 10c0 5.6-7 10-7 10z"/></svg>
+    </button>
+    <a href="/producto/<%= p.id %>" tabindex="-1" aria-hidden="true" class="tarjeta__enlace">
+      <% if (p.imagenes[0]) { %><img src="<%= p.imagenes[0].ruta %>" alt="" loading="lazy"><% } %>
+      <% if (p.imagenes[1]) { %><img src="<%= p.imagenes[1].ruta %>" alt="" loading="lazy"><% } %>
+    </a>
+    <% if (agotado) { %><span class="tarjeta__agotado">Agotado</span><% } %>
+  </div>
+  <div class="tarjeta__datos">
+    <span class="tarjeta__cat"><%= p.categoria %><%= p.subcategoria ? ' · ' + p.subcategoria : '' %></span>
+    <h3 class="tarjeta__nombre"><a href="/producto/<%= p.id %>"><%= p.nombre %></a></h3>
+    <div class="tarjeta__precio"><span class="precio"><%= formatoPrecio(p.precio).replace(',00', '') %></span></div>
+    <span class="tarjeta__cuotas">o 6 cuotas de <%= formatoPrecio(p.precio / 6).replace(',00', '') %></span>
+    <% if (p.colores.length > 1) { %>
+      <div class="puntos-color" aria-label="Colores: <%= p.colores.map(c => c.nombre).join(', ') %>">
+        <% p.colores.forEach(c => { %><span class="punto-color" data-bg="<%= c.hex %>" title="<%= c.nombre %>"></span><% }) %>
+      </div>
+    <% } %>
+  </div>
+</article>

@@ -1,0 +1,106 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+<%
+  const enBusqueda = modo === 'busqueda';
+  const nombreSeccion = enBusqueda ? `“${busqueda}”` : categoria.nombre;
+  const precios = productos.map(p => p.precio);
+  const minPrecio = precios.length ? Math.floor(Math.min(...precios) / 1000) * 1000 : 0;
+  const maxPrecio = precios.length ? Math.ceil(Math.max(...precios) / 1000) * 1000 : 0;
+%>
+
+<section class="cabecera-seccion">
+  <div class="contenedor">
+    <nav class="migas" aria-label="Migas de pan">
+      <a href="/">Inicio</a><span>/</span>
+      <% if (enBusqueda) { %><span aria-current="page">Búsqueda</span><% } else { %><span aria-current="page"><%= categoria.nombre %></span><% } %>
+    </nav>
+    <h1 class="cabecera-seccion__titulo titulo"><%= nombreSeccion %><sup id="catCantidad"><%= productos.length %></sup></h1>
+    <% if (!enBusqueda && subElegida) { %><p class="pagina__sub">Mostrando <strong><%= subElegida.nombre %></strong>.</p><% } %>
+  </div>
+</section>
+
+<section class="contenedor catalogo" data-catalogo data-grupo-campo="<%= grupo.campo %>">
+  <div class="barra-filtros">
+    <div class="barra-filtros__chips" role="group" aria-label="<%= grupo.titulo %>">
+      <% if (grupo.opciones.length) { %>
+        <button type="button" class="filtro-chip <%= grupo.opciones.some(o => o.marcado) ? '' : 'activo' %>" data-grupo="">Todo <small><%= productos.length %></small></button>
+        <% grupo.opciones.forEach(o => { %>
+          <button type="button" class="filtro-chip <%= o.marcado ? 'activo' : '' %>" data-grupo="<%= o.valor %>"><%= o.nombre %> <small><%= o.cantidad %></small></button>
+        <% }) %>
+      <% } %>
+    </div>
+    <div class="barra-filtros__acciones">
+      <button type="button" class="btn btn--linea btn--chico" id="abrirFiltros" aria-controls="panelFiltros" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg>
+        Filtros <span class="contador contador--inline" id="filtrosActivos" hidden>0</span>
+      </button>
+      <label class="orden">
+        <span class="sr-only">Ordenar</span>
+        <select id="orden" aria-label="Ordenar productos">
+          <option value="novedad">Novedades</option>
+          <option value="precio-asc">Precio: menor a mayor</option>
+          <option value="precio-desc">Precio: mayor a menor</option>
+          <option value="nombre">Nombre A–Z</option>
+        </select>
+      </label>
+    </div>
+  </div>
+
+  <% if (productos.length) { %>
+    <div class="grilla-productos" id="grilla">
+      <% productos.forEach((p, i) => { %><%- include('partials/tarjeta', { p, indice: i, grupoCampo: grupo.campo }) %><% }) %>
+    </div>
+    <div class="vacio" id="vacio" hidden>
+      <p class="vacio__titulo titulo">Nada con esos filtros</p>
+      <p class="apagado">Probá sacando alguno para ver más productos.</p>
+      <button type="button" class="btn btn--volt" id="limpiarFiltros">Limpiar filtros</button>
+    </div>
+  <% } else { %>
+    <div class="vacio">
+      <p class="vacio__titulo titulo"><%= enBusqueda ? 'No encontramos nada' : 'Muy pronto' %></p>
+      <p class="apagado"><%= enBusqueda ? 'Probá con otra palabra o mirá las categorías.' : 'Estamos cargando productos en esta sección.' %></p>
+      <a href="/" class="btn btn--volt">Volver al inicio</a>
+    </div>
+  <% } %>
+</section>
+
+<div class="panel-fondo" id="panelFondo" hidden></div>
+<aside class="panel-filtros" id="panelFiltros" aria-label="Filtros" aria-hidden="true">
+  <header class="panel-filtros__cab">
+    <h2 class="titulo">Filtros</h2>
+    <button type="button" class="icono-btn" id="cerrarFiltros" aria-label="Cerrar filtros"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 5l14 14M19 5L5 19"/></svg></button>
+  </header>
+  <div class="panel-filtros__cuerpo">
+    <% if (colores.length) { %>
+    <fieldset class="filtro-bloque">
+      <legend>Color</legend>
+      <div class="colores-filtro">
+        <% colores.forEach(c => { %>
+          <label class="color-op" title="<%= c.nombre %>">
+            <input type="checkbox" name="color" value="<%= c.valor %>">
+            <span class="color-op__punto" data-bg="<%= c.hex %>"></span>
+            <span class="color-op__nombre"><%= c.nombre %> <small><%= c.cantidad %></small></span>
+          </label>
+        <% }) %>
+      </div>
+    </fieldset>
+    <% } %>
+    <fieldset class="filtro-bloque">
+      <legend>Precio</legend>
+      <div class="precio-filtro">
+        <label class="campo"><span class="campo__label">Desde</span><input type="number" id="precioMin" min="0" step="1000" placeholder="<%= minPrecio %>" inputmode="numeric"></label>
+        <label class="campo"><span class="campo__label">Hasta</span><input type="number" id="precioMax" min="0" step="1000" placeholder="<%= maxPrecio %>" inputmode="numeric"></label>
+      </div>
+    </fieldset>
+    <label class="tilde"><input type="checkbox" id="soloStock"> <span>Solo con stock</span></label>
+  </div>
+  <footer class="panel-filtros__pie">
+    <button type="button" class="btn btn--linea" id="limpiarPanel">Limpiar</button>
+    <button type="button" class="btn btn--volt" id="aplicarFiltros">Ver <span id="resultadosPanel"><%= productos.length %></span> productos</button>
+  </footer>
+</aside>
+
+<%- include('partials/footer') %>
+<script src="/js/catalogo.js"></script>
+</body>
+</html>

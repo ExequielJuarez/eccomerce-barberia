@@ -1,0 +1,75 @@
+<%
+  const nombre = ruta[0] + ruta.slice(1).map((p) => `[${p}]`).join('');
+  const clave = ruta.join('.');
+  const id = 'ce-' + ruta.join('-');
+  const error = errores[clave];
+  const ancho = def.ancho === 'medio' ? 'ce--medio' : '';
+%>
+<% if (def.tipo === 'lista') { const items = valor || []; %>
+  <fieldset class="ce-lista">
+    <legend><%= def.etiqueta %></legend>
+    <% if (def.ayuda) { %><p class="campo__ayuda"><%= def.ayuda %></p><% } %>
+    <% if (error) { %><p class="campo__error"><%= error %></p><% } %>
+    <div class="ce-lista__items">
+      <% items.forEach((item, i) => { %>
+        <div class="ce-item">
+          <p class="ce-item__titulo"><%= def.item %> <%= i + 1 %></p>
+          <div class="ce-grilla">
+            <% Object.entries(def.campos).forEach(([k, sub]) => { %>
+              <%- include('campo-inicio', { def: sub, ruta: [...ruta, i, k], valor: item[k], original: original && original[i] ? original[i][k] : undefined, errores }) %>
+            <% }) %>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+  </fieldset>
+
+<% } else if (def.tipo === 'imagen') { %>
+  <div class="ce ce--imagen <%= ancho %>" data-foto>
+    <span class="campo__label"><%= def.etiqueta %></span>
+    <div class="ce-foto"><img src="<%= valor %>" alt="" data-foto-img><span class="chip ce-foto__nueva" data-foto-nueva hidden>Nueva</span></div>
+    <div class="ce-foto__acciones">
+      <label class="btn btn--chico btn--linea ce-foto__cambiar">Cambiar foto<input type="file" name="archivo:<%= clave %>" accept="image/jpeg,image/png,image/webp" data-foto-archivo></label>
+      <button type="button" class="enlace" data-foto-deshacer hidden>Deshacer</button>
+      <% if (original && original !== valor) { %><button type="button" class="enlace" data-foto-original>Usar la original</button><% } %>
+    </div>
+    <input type="hidden" name="<%= nombre %>" value="<%= valor %>" data-foto-ruta data-original="<%= original || '' %>">
+    <% if (def.ayuda) { %><p class="campo__ayuda"><%= def.ayuda %></p><% } %>
+  </div>
+
+<% } else if (def.tipo === 'opciones') { %>
+  <div class="ce <%= ancho %>">
+    <span class="campo__label"><%= def.etiqueta %></span>
+    <div class="ce-opciones" role="radiogroup" aria-label="<%= def.etiqueta %>">
+      <% Object.entries(def.opciones).forEach(([v, texto]) => { %>
+        <label class="ce-opcion"><input type="radio" name="<%= nombre %>" value="<%= v %>" <%= v === valor ? 'checked' : '' %>><span><%= texto %></span></label>
+      <% }) %>
+    </div>
+  </div>
+
+<% } else { %>
+  <%
+    const largo = def.tipo === 'lineas' || def.tipo === 'parrafo';
+    const filas = def.tipo === 'lineas' ? Math.max(2, Math.min(def.maxLineas || 4, String(valor).split('\n').length + 1)) : 3;
+    const tieneOriginal = original !== undefined && original !== null;
+  %>
+  <div class="ce <%= ancho %> <%= error ? 'campo--error' : '' %> campo" data-texto>
+    <div class="ce__cabeza">
+      <label for="<%= id %>"><%= def.etiqueta %></label>
+      <% if (def.max && def.tipo !== 'numero' && def.tipo !== 'link') { %><span class="ce__cuenta" data-cuenta><%= String(valor).length %>/<%= def.max %></span><% } %>
+    </div>
+    <% if (largo) { %>
+      <textarea id="<%= id %>" name="<%= nombre %>" rows="<%= filas %>" maxlength="<%= def.max %>" <% if (tieneOriginal) { %>data-original="<%= original %>"<% } %>><%= valor %></textarea>
+    <% } else { %>
+      <input id="<%= id %>" name="<%= nombre %>" value="<%= valor %>" type="<%= def.tipo === 'numero' ? 'number' : 'text' %>"
+             <%- def.tipo === 'numero' ? `min="0" max="${def.max}" step="1"` : `maxlength="${def.max}"` %>
+             <%- def.tipo === 'link' ? 'inputmode="url" spellcheck="false" autocapitalize="off" placeholder="/categoria/clippers o https://…"' : '' %>
+             <% if (tieneOriginal) { %>data-original="<%= original %>"<% } %>>
+    <% } %>
+    <div class="ce__pie">
+      <% if (def.ayuda) { %><span class="campo__ayuda"><%= def.ayuda %></span><% } %>
+      <% if (tieneOriginal) { %><button type="button" class="enlace" data-restaurar <%= String(original) === String(valor) ? 'hidden' : '' %>>Restaurar original</button><% } %>
+    </div>
+    <% if (error) { %><span class="campo__error"><%= error %></span><% } %>
+  </div>
+<% } %>

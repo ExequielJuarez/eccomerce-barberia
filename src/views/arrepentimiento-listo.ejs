@@ -1,0 +1,15 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+<section class="contenedor pagina arrep">
+  <p class="etiqueta-seccion">Solicitud recibida</p>
+  <h1 class="pagina__titulo titulo">Listo, <em>recibimos</em> tu solicitud</h1>
+  <p class="pagina__sub">Guardá este código de seguimiento. Te escribimos al email que indicaste para coordinar la devolución.</p>
+  <p class="arrep__codigo titulo"><%= solicitud.codigo %></p>
+  <div class="arrep__botones">
+    <a href="/" class="btn btn--volt">Volver al inicio</a>
+    <a href="/cambios-y-devoluciones" class="btn btn--linea">Cambios y devoluciones</a>
+  </div>
+</section>
+<%- include('partials/footer') %>
+</body>
+</html>

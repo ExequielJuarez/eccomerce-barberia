@@ -1,0 +1,108 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+<%
+  const precio = (n) => formatoPrecio(n).replace(',00', '');
+  const hayEquipo = barberos.length > 1;
+%>
+
+<section class="turnos contenedor">
+  <header class="turnos__cab">
+    <p class="etiqueta-seccion">Reservá online</p>
+    <h1 class="pagina__titulo titulo">Sacá tu <em>turno</em></h1>
+    <p class="pagina__sub">Elegí el servicio, el día y el horario. Es rápido y no necesitás crear una cuenta.</p>
+  </header>
+
+  <% if (!servicios.length) { %>
+    <div class="vacio">
+      <p class="vacio__titulo titulo">Muy pronto</p>
+      <p class="apagado">Todavía no hay servicios disponibles para reservar.</p>
+      <a href="/" class="btn btn--volt">Volver al inicio</a>
+    </div>
+  <% } else { %>
+  <div class="turnos__grilla">
+    <form class="turnos__form" id="formTurno" action="/turnos" method="POST" novalidate>
+      <fieldset class="paso" data-paso="1">
+        <legend><span class="paso__n">1</span> Elegí el servicio</legend>
+        <div class="servicios">
+          <% servicios.forEach((s) => { %>
+            <label class="servicio">
+              <input type="radio" name="servicio" value="<%= s.id %>" data-nombre="<%= s.nombre %>" data-duracion="<%= s.duracion %>" data-precio="<%= s.precio === null ? '' : precio(s.precio) %>">
+              <span class="servicio__cuerpo">
+                <strong><%= s.nombre %></strong>
+                <% if (s.detalle) { %><small><%= s.detalle %></small><% } %>
+                <span class="servicio__meta"><%= s.duracion %> min<%= s.precio !== null ? ' · ' + precio(s.precio) : '' %></span>
+              </span>
+            </label>
+          <% }) %>
+        </div>
+      </fieldset>
+
+      <% if (hayEquipo) { %>
+      <fieldset class="paso paso--bloqueado" data-paso="2" data-opcional>
+        <legend><span class="paso__n">2</span> ¿Con quién?</legend>
+        <div class="equipo">
+          <label class="chip-opcion"><input type="radio" name="barbero" value="" checked data-nombre="Sin preferencia"><span>Sin preferencia</span></label>
+          <% barberos.forEach((b) => { %>
+            <label class="chip-opcion"><input type="radio" name="barbero" value="<%= b.id %>" data-nombre="<%= b.nombre %>"><span><%= b.nombre %></span></label>
+          <% }) %>
+        </div>
+      </fieldset>
+      <% } %>
+
+      <fieldset class="paso paso--bloqueado" data-paso="<%= hayEquipo ? 3 : 2 %>" data-clave="fecha">
+        <legend><span class="paso__n"><%= hayEquipo ? 3 : 2 %></span> Elegí el día</legend>
+        <div class="dias" role="radiogroup" aria-label="Días disponibles">
+          <% dias.forEach((d) => { %>
+            <label class="dia <%= d.abierto ? '' : 'dia--cerrado' %>" <%- d.motivo ? `title="${d.motivo}"` : '' %>>
+              <input type="radio" name="fecha" value="<%= d.fecha %>" data-texto="<%= d.semana %> <%= d.dia %> de <%= d.mes %>" <%= d.abierto ? '' : 'disabled' %>>
+              <span class="dia__cuerpo">
+                <small><%= d.hoy ? 'Hoy' : d.semana %></small>
+                <strong><%= d.dia %></strong>
+                <small><%= d.mes %></small>
+              </span>
+            </label>
+          <% }) %>
+        </div>
+      </fieldset>
+
+      <fieldset class="paso paso--bloqueado" data-paso="<%= hayEquipo ? 4 : 3 %>" data-clave="hora">
+        <legend><span class="paso__n"><%= hayEquipo ? 4 : 3 %></span> Elegí el horario</legend>
+        <p class="apagado paso__ayuda" id="horasAyuda">Primero elegí el servicio y el día.</p>
+        <div class="horas" id="horas" role="radiogroup" aria-label="Horarios disponibles" aria-live="polite"></div>
+      </fieldset>
+
+      <fieldset class="paso paso--bloqueado" data-paso="<%= hayEquipo ? 5 : 4 %>" data-clave="datos">
+        <legend><span class="paso__n"><%= hayEquipo ? 5 : 4 %></span> Tus datos</legend>
+        <div class="grilla-form">
+          <div class="campo"><label for="t-cliente">Nombre y apellido</label><input id="t-cliente" name="cliente" autocomplete="name" maxlength="90" required></div>
+          <div class="campo"><label for="t-telefono">Teléfono / WhatsApp</label><input id="t-telefono" name="telefono" type="tel" inputmode="tel" autocomplete="tel" maxlength="25" placeholder="385 555 1234" required></div>
+          <div class="campo completo"><label for="t-notas">Aclaraciones (opcional)</label><input id="t-notas" name="notas" maxlength="200" placeholder="Ej: quiero fade bajo"></div>
+        </div>
+        <button type="submit" class="btn btn--volt btn--bloque turnos__enviar" id="btnReservar"><span>Reservar turno</span></button>
+        <p class="apagado paso__ayuda">Te mostramos el código de tu turno al terminar. Podés cancelarlo desde ese mismo link.</p>
+      </fieldset>
+    </form>
+
+    <aside class="turnos__resumen" aria-label="Resumen de tu turno">
+      <h2 class="titulo">Tu turno</h2>
+      <dl class="resumen-turno" id="resumenTurno">
+        <div><dt>Servicio</dt><dd data-r="servicio">—</dd></div>
+        <% if (hayEquipo) { %><div><dt>Profesional</dt><dd data-r="barbero">Sin preferencia</dd></div><% } %>
+        <div><dt>Día</dt><dd data-r="fecha">—</dd></div>
+        <div><dt>Hora</dt><dd data-r="hora">—</dd></div>
+        <div><dt>Duración</dt><dd data-r="duracion">—</dd></div>
+      </dl>
+      <div class="turnos__local">
+        <span class="etiqueta-seccion">Dónde</span>
+        <p><%= tienda.direccion %></p>
+        <% if (tienda.mapa) { %><a href="<%= tienda.mapa %>" target="_blank" rel="noopener" class="enlace">Cómo llegar</a><% } %>
+      </div>
+    </aside>
+  </div>
+  <% } %>
+</section>
+
+<%- include('partials/footer') %>
+<script src="/js/turnos.js"></script>
+</body>
+</html>

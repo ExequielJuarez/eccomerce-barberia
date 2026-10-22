@@ -1,0 +1,66 @@
+.pagina__titulo sup { font-family: var(--ff-texto); font-size: clamp(14px, 1.6vw, 22px); font-weight: 800; vertical-align: top; position: relative; top: 0.6em; margin-left: 0.4em; padding: 4px 10px; background: var(--oro); color: var(--tinta); }
+.carrito { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(320px, 0.9fr); gap: clamp(24px, 4vw, 56px); align-items: start; margin-top: 34px; }
+.carrito-vacio { display: grid; justify-items: start; gap: 14px; margin-block: 30px 60px; }
+.vacio__titulo { font-size: clamp(29px, 9vw, 72px); }
+
+.envio-barra { padding: 16px 18px; border: 1px solid var(--linea); margin-bottom: 8px; display: grid; gap: 10px; font-size: 14px; }
+.envio-barra__riel { height: 8px; background: var(--tinta-4); overflow: hidden; }
+.envio-barra__riel span { display: block; height: 100%; background: var(--oro); transition: width 0.5s var(--ease); }
+
+.item { display: grid; grid-template-columns: 112px minmax(0, 1fr) auto; gap: 18px; padding: 20px 0; border-bottom: 1px solid var(--linea); align-items: start; }
+.item__foto { display: block; aspect-ratio: 4 / 5; background: var(--tinta-3); overflow: hidden; border: 1px solid var(--linea); }
+.item__foto img { width: 100%; height: 100%; object-fit: cover; }
+.item__datos { display: grid; gap: 4px; align-content: start; }
+.item__nombre { font-weight: 800; text-transform: uppercase; letter-spacing: 0.03em; line-height: 1.25; }
+.item__variante { color: var(--apagado); font-size: 13px; }
+.item__variante strong { color: var(--papel); }
+.item__unitario { font-size: 13px; color: var(--apagado); }
+.item__acciones { display: flex; align-items: center; gap: 18px; margin-top: 10px; }
+.item__quitar { font-size: 12px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--apagado); text-decoration: underline; text-underline-offset: 3px; transition: color 0.15s; }
+#vaciarCarrito { margin-top: 18px; }
+.item__subtotal { font-size: 26px; }
+.cantidad--chica { grid-template-columns: 36px 44px 36px; }
+.cantidad { display: grid; grid-template-columns: 44px 54px 44px; border: 1px solid var(--linea-fuerte); }
+.cantidad button { font-size: 18px; font-weight: 700; }
+.cantidad input { width: 100%; height: 38px; text-align: center; background: transparent; border: 0; border-inline: 1px solid var(--linea-fuerte); font-weight: 800; -moz-appearance: textfield; outline: 0; }
+.cantidad input::-webkit-outer-spin-button, .cantidad input::-webkit-inner-spin-button { appearance: none; margin: 0; }
+
+.resumen { position: sticky; top: calc(var(--alto-header) + 18px); padding: 24px; background: var(--tinta-2); border: 1px solid var(--papel); display: grid; gap: 22px; }
+.resumen__titulo { font-size: 24px; }
+.resumen__bloque { border: 0; margin: 0; padding: 0; display: grid; gap: 10px; }
+.resumen__bloque legend { padding: 0; margin-bottom: 10px; float: left; width: 100%; font-size: 11px; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase; color: var(--apagado); }
+.resumen__bloque > .opcion, .resumen__bloque > form { clear: both; }
+.resumen .opcion { padding: 12px 14px; align-items: center; }
+.cp { display: grid; }
+.cp__fila { display: grid; grid-template-columns: 1fr auto; gap: 8px; }
+.cp input { min-height: 42px; }
+.cupon { display: grid; grid-template-columns: 1fr auto; gap: 8px; }
+.cupon input { min-height: 42px; padding: 0 14px; background: var(--tinta); border: 1px solid var(--linea); text-transform: uppercase; outline: 0; }
+.cupon input:focus { border-color: var(--oro); }
+.cupon-activo { display: flex; justify-content: space-between; gap: 10px; align-items: center; padding: 12px 14px; border: 2px dashed var(--oro); }
+.cupon-activo small { display: block; color: var(--apagado); }
+.totales { margin: 0; display: grid; gap: 10px; }
+.totales > div { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.totales dt { color: var(--papel-2); }
+.totales dd { margin: 0; font-weight: 700; }
+.totales__total { padding-top: 14px; border-top: 1px solid var(--papel); }
+.totales__total dt { font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; font-size: 13px; }
+.resumen__cuotas { font-size: 13px; color: var(--apagado); margin-top: -10px; }
+.resumen__seguir { text-align: center; font-size: 13px; font-weight: 700; color: var(--apagado); }
+.recomendados { margin-top: 90px; }
+
+@media (hover: hover) and (pointer: fine) {
+  .item__nombre:hover { color: var(--oro); }
+  .item__quitar:hover { color: var(--rojo); }
+  .cantidad button:hover { background: var(--tinta-4); }
+  .resumen__seguir:hover { color: var(--oro); }
+}
+
+@media (max-width: 900px) {
+  .carrito { grid-template-columns: 1fr; }
+  .resumen { position: static; }
+}
+@media (max-width: 560px) {
+  .item { grid-template-columns: 84px minmax(0, 1fr); }
+  .item__subtotal { grid-column: 2; font-size: 22px; }
+}

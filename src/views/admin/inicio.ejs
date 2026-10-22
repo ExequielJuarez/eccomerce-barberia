@@ -1,0 +1,42 @@
+<%- include('../partials/head') %>
+<%- include('../partials/admin-inicio') %>
+<% const hayErrores = Object.keys(errores).length > 0; const ids = Object.keys(secciones); %>
+<div class="adm-cab">
+  <div><p class="etiqueta-seccion">Solo superadmin</p><h1 class="adm-titulo titulo">Página de inicio</h1>
+    <% if (ultimaEdicion) { %><small class="apagado">Última edición: <%= formatoFecha(ultimaEdicion.fecha, true) %><%= ultimaEdicion.editor ? ' · ' + ultimaEdicion.editor : '' %></small><% } %></div>
+  <div class="adm-acciones">
+    <button type="button" class="btn btn--linea" id="btnVistaPrevia">Vista previa</button>
+    <button type="submit" form="formInicio" class="btn btn--volt">Guardar cambios</button>
+  </div>
+</div>
+<% if (hayErrores) { %><div class="aviso aviso--error" role="alert"><strong>No se guardó nada.</strong> <%= errores.fotos || errores.fotosDescartadas || 'Revisá los campos marcados.' %></div><% } %>
+
+<div class="ci">
+  <nav class="ci__nav" aria-label="Secciones"><% ids.forEach((id) => { %><a href="#sec-<%= id %>"><%= secciones[id].titulo %></a><% }) %></nav>
+  <form action="/admin/inicio?_method=PUT" method="POST" enctype="multipart/form-data" id="formInicio" class="ci__form" novalidate data-previa="/admin/inicio/vista-previa">
+    <% ids.forEach((id) => { const sec = secciones[id]; const c = contenido[id]; %>
+      <section class="panel ci-sec" id="sec-<%= id %>">
+        <header class="ci-sec__cab">
+          <div><h2><%= sec.titulo %></h2><p class="apagado"><%= sec.descripcion %></p></div>
+          <% if (!sec.siempreVisible) { %>
+            <label class="interruptor"><input type="hidden" name="<%= id %>[visible]" value="0"><input type="checkbox" name="<%= id %>[visible]" value="1" <%= c.visible ? 'checked' : '' %>><span>Mostrar</span></label>
+          <% } %>
+        </header>
+        <div class="ce-grilla">
+          <% Object.entries(sec.campos).forEach(([k, def]) => { %>
+            <%- include('../partials/campo-inicio', { def, ruta: [id, k], valor: c[k], original: original[id][k], errores }) %>
+          <% }) %>
+        </div>
+      </section>
+    <% }) %>
+    <div class="ci__pie">
+      <button type="submit" class="btn btn--volt">Guardar cambios</button>
+      <button type="submit" class="btn btn--peligro" form="formRestablecer" data-confirmar="Se pierden todos los cambios y el inicio vuelve a su contenido original. ¿Seguir?">Restablecer todo</button>
+    </div>
+  </form>
+  <form action="/admin/inicio?_method=DELETE" method="POST" id="formRestablecer" hidden></form>
+</div>
+<%- include('../partials/admin-fin') %>
+<script src="/js/admin-inicio.js"></script>
+</body>
+</html>

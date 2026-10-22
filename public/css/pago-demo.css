@@ -1,0 +1,2 @@
+.demo-pago { display: grid; gap: 22px; justify-items: start; max-width: 720px; }
+.demo-pago__botones { display: flex; flex-wrap: wrap; gap: 12px; }

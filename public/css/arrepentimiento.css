@@ -1,0 +1,6 @@
+.arrep { display: grid; gap: 20px; justify-items: start; max-width: 860px; }
+.arrep__form { width: 100%; }
+.arrep__codigo { font-size: clamp(32px, 10vw, 78px); color: var(--oro); letter-spacing: 0.02em; }
+.arrep__botones { display: flex; gap: 12px; flex-wrap: wrap; }
+.bloque-form { border: 0; margin: 0; padding: 0; display: grid; gap: 18px; }
+.checkout__form { display: grid; gap: 22px; }

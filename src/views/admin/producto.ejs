@@ -1,0 +1,47 @@
+<%- include('../partials/head') %>
+<%- include('../partials/admin-inicio') %>
+<% const precio = (n) => formatoPrecio(n).replace(',00', ''); const p = producto; const margen = p.precio ? (p.precio - p.costo) / p.precio : 0; %>
+<nav class="migas migas--plana"><a href="/admin/productos">Productos</a><span>/</span><span aria-current="page">#<%= p.id %></span></nav>
+<div class="adm-cab">
+  <div><p class="etiqueta-seccion"><%= p.categoria %><%= p.subcategoria ? ' · ' + p.subcategoria : '' %></p><h1 class="adm-titulo titulo"><%= p.nombre %></h1></div>
+  <div class="adm-acciones">
+    <a class="btn btn--linea" href="/producto/<%= p.id %>" target="_blank" rel="noopener">Ver en la tienda ↗</a>
+    <a class="btn btn--volt" href="/admin/productos/<%= p.id %>/editar">Editar</a>
+  </div>
+</div>
+
+<section class="kpis">
+  <article class="kpi"><span class="kpi__t">Precio</span><strong class="kpi__n"><%= precio(p.precio) %></strong><small>costo <%= precio(p.costo) %></small></article>
+  <article class="kpi kpi--volt"><span class="kpi__t">Margen</span><strong class="kpi__n"><%= formatoPorcentaje(margen) %></strong><small><%= precio(p.precio - p.costo) %> por unidad</small></article>
+  <article class="kpi"><span class="kpi__t">Stock</span><strong class="kpi__n"><%= p.stock %></strong><small><%= p.stock === 0 ? 'Sin stock' : (p.stock <= STOCK_BAJO ? 'Stock bajo: conviene reponer' : 'Stock sano') %></small></article>
+  <article class="kpi"><span class="kpi__t">Vendidas</span><strong class="kpi__n"><%= ventas.unidades %></strong><small><%= precio(ventas.ingresos) %> · ganancia <%= precio(ventas.ganancia) %></small></article>
+</section>
+
+<section class="adm-grilla-2">
+  <article class="panel">
+    <header class="panel__cab"><h2>Fotos</h2><span class="apagado"><%= p.imagenes.length %></span></header>
+    <div class="fotos-ficha"><% p.imagenes.forEach((i, n) => { %><figure class="<%= n === 0 ? 'principal' : '' %>"><img src="<%= i.ruta %>" alt=""><% if (n === 0) { %><figcaption class="chip">Principal</figcaption><% } %></figure><% }) %><% if (!p.imagenes.length) { %><p class="apagado">Sin fotos todavía.</p><% } %></div>
+  </article>
+  <article class="panel">
+    <header class="panel__cab"><h2>Ficha</h2></header>
+    <dl class="ficha-lista">
+      <div><dt>Colores</dt><dd class="colores-lista"><% p.colores.forEach(c => { %><span><i data-bg="<%= c.hex %>"></i><%= c.nombre %></span><% }) %></dd></div>
+      <div><dt>Etiqueta</dt><dd><%= p.etiqueta || '—' %></dd></div>
+      <div><dt>Resumen</dt><dd><%= p.resumen %></dd></div>
+      <% p.especificaciones.forEach(([k, v]) => { %><div><dt><%= k %></dt><dd><%= v %></dd></div><% }) %>
+    </dl>
+    <form action="/admin/productos/<%= p.id %>?_method=DELETE" method="POST" data-confirmar="¿Eliminar este producto? Esta acción no se puede deshacer."><button class="btn btn--peligro btn--chico">Eliminar producto</button></form>
+  </article>
+</section>
+
+<article class="panel">
+  <header class="panel__cab"><h2>Últimas ventas</h2></header>
+  <% if (!ventas.ultimas.length) { %><p class="apagado">Todavía no se vendió.</p><% } else { %>
+  <div class="tabla-wrap"><table class="tabla">
+    <thead><tr><th>Pedido</th><th>Fecha</th><th>Variante</th><th class="num">Cant.</th><th class="num">Precio</th></tr></thead>
+    <tbody><% ventas.ultimas.forEach(v => { %><tr><td><a class="enlace" href="/admin/pedidos?q=<%= v.numero %>">#<%= v.numero %></a></td><td><%= formatoFecha(v.fecha, true) %></td><td><%= [v.color || ''].filter(Boolean).join(' · ') || '—' %></td><td class="num"><%= v.cantidad %></td><td class="num"><%= precio(v.precio) %></td></tr><% }) %></tbody>
+  </table></div><% } %>
+</article>
+<%- include('../partials/admin-fin') %>
+</body>
+</html>

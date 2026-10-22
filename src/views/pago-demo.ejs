@@ -1,0 +1,17 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+<section class="contenedor pagina demo-pago">
+  <p class="etiqueta-seccion">Modo demo</p>
+  <h1 class="pagina__titulo titulo">Pagar pedido #<%= pedido.numero %></h1>
+  <p class="pagina__sub">Esta pantalla simula Mercado Pago: no se cobra nada. Elegí qué resultado querés probar.</p>
+  <p class="precio precio--grande"><%= formatoPrecio(pedido.total).replace(',00', '') %></p>
+  <form action="/pagos/demo/<%= pedido.numero %>" method="POST" class="demo-pago__botones">
+    <button type="submit" name="resultado" value="aprobado" class="btn btn--volt">Simular pago aprobado</button>
+    <button type="submit" name="resultado" value="rechazado" class="btn btn--linea">Simular pago rechazado</button>
+    <button type="submit" name="resultado" value="pendiente" class="btn btn--linea">Simular pago en proceso</button>
+  </form>
+  <a href="/pedido/<%= pedido.numero %>" class="enlace enlace--inicio">← Volver al pedido</a>
+</section>
+<%- include('partials/footer') %>
+</body>
+</html>

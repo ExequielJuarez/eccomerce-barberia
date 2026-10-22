@@ -1,0 +1,24 @@
+<% const precio = (n) => formatoPrecio(n).replace(',00', ''); const r = resumen; %>
+<aside class="resumen-lateral" aria-label="Tu pedido">
+  <h2 class="resumen__titulo titulo">Tu pedido</h2>
+  <ul class="mini-items">
+    <% r.items.forEach((i) => { %>
+      <li>
+        <span class="mini-items__foto"><% if (i.producto.imagen) { %><img src="<%= i.producto.imagen %>" alt=""><% } %><b><%= i.cantidad %></b></span>
+        <span class="mini-items__datos">
+          <strong><%= i.producto.nombre %></strong>
+          <small><%= [i.color || ''].filter(Boolean).join(' · ') %></small>
+        </span>
+        <span class="mini-items__precio"><%= precio(i.subtotal) %></span>
+      </li>
+    <% }) %>
+  </ul>
+  <dl class="totales">
+    <div><dt>Subtotal</dt><dd><%= precio(r.subtotal) %></dd></div>
+    <% if (r.descuentoCupon) { %><div><dt>Cupón <%= r.cupon.codigo %></dt><dd class="resaltado">−<%= precio(r.descuentoCupon) %></dd></div><% } %>
+    <% if (r.descuentoPago) { %><div><dt>Transferencia (10%)</dt><dd class="resaltado">−<%= precio(r.descuentoPago) %></dd></div><% } %>
+    <div><dt>Envío</dt><dd><%= r.envio === null ? 'A calcular' : (r.envio === 0 ? 'Gratis' : precio(r.envio)) %></dd></div>
+    <div class="totales__total"><dt>Total</dt><dd class="precio precio--grande"><%= precio(r.total) %></dd></div>
+  </dl>
+  <a href="/carrito" class="resumen__seguir">← Volver al carrito</a>
+</aside>

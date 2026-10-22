@@ -1,0 +1,28 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+<%
+  const d = (valor, variable) => valor ? valor : `<span class="legal__falta" title="Completar ${variable} en el .env">[completar ${variable}]</span>`;
+%>
+<section class="contenedor legal">
+  <aside class="legal__lateral" aria-label="Información legal">
+    <p class="etiqueta-seccion">Legales</p>
+    <ul>
+      <% paginas.forEach(pg => { %>
+        <li><a href="<%= pg.url %>" class="<%= pg.url === pagina.url ? 'activo' : '' %>" <%- pg.url === pagina.url ? 'aria-current="page"' : '' %>><%= pg.titulo %></a></li>
+      <% }) %>
+      <li><a href="/arrepentimiento" class="legal__arrepentimiento">Botón de arrepentimiento</a></li>
+    </ul>
+  </aside>
+
+  <article class="legal__texto" id="textoLegal">
+    <p class="etiqueta-seccion">Información legal</p>
+    <h1 class="pagina__titulo titulo"><%= pagina.titulo %></h1>
+    <p class="apagado">Última actualización: <%= actualizado %></p>
+    <nav class="legal__indice" id="indiceLegal" aria-label="En esta página" hidden><p>En esta página</p><ul></ul></nav>
+    <%- include('legal/' + pagina.archivo, { d }) %>
+  </article>
+</section>
+<%- include('partials/footer') %>
+<script src="/js/legal.js"></script>
+</body>
+</html>

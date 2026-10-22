@@ -1,0 +1,7 @@
+<ol class="pasos" aria-label="Pasos de la compra">
+  <% [['Carrito', '/carrito'], ['Tus datos', '/checkout/datos'], ['Pago', '/checkout/pago']].forEach(([nombre, url], i) => { %>
+    <li class="<%= i + 1 < paso ? 'hecho' : (i + 1 === paso ? 'actual' : '') %>" <%- i + 1 === paso ? 'aria-current="step"' : '' %>>
+      <% if (i + 1 < paso) { %><a href="<%= url %>"><span><%= i + 1 %></span> <%= nombre %></a><% } else { %><span class="pasos__num"><%= i + 1 %></span> <%= nombre %><% } %>
+    </li>
+  <% }) %>
+</ol>

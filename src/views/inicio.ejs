@@ -1,0 +1,156 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+<%
+  const c = contenido;
+  const lineas = (t) => String(t || '').split('\n').filter(Boolean);
+  const precio = (n) => formatoPrecio(n).replace(',00', '');
+%>
+
+<section class="hero" id="portada">
+    <div class="contenedor hero__grilla">
+    <div class="hero__texto">
+      <p class="etiqueta-seccion hero__etiqueta"><%= c.portada.etiqueta %></p>
+      <h1 class="hero__titulo titulo">
+        <% lineas(c.portada.titulo).forEach((l, i) => { %>
+          <span class="hero__linea"><span data-i="<%= i %>"><%- textoRico(l) %></span></span>
+        <% }) %>
+      </h1>
+      <p class="hero__bajada"><%= c.portada.bajada %></p>
+      <div class="hero__botones">
+        <a href="<%= c.portada.botonLink %>" class="btn btn--volt"><%= c.portada.botonTexto %> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        <a href="<%= c.portada.secundarioLink %>" class="btn btn--linea"><%= c.portada.secundarioTexto %></a>
+      </div>
+    </div>
+
+    <div class="hero__collage" data-parallax>
+      <figure class="hero__foto hero__foto--principal" data-capa="1">
+        <img src="<%= c.portada.imagen %>" alt="Wahl Magic Clip" fetchpriority="high">
+        <span class="chip hero__sticker">Profesional</span>
+      </figure>
+      <figure class="hero__foto hero__foto--a" data-capa="2"><img src="<%= c.portada.imagen2 %>" alt="" loading="lazy"></figure>
+      <figure class="hero__foto hero__foto--b" data-capa="3"><img src="<%= c.portada.imagen3 %>" alt="" loading="lazy"></figure>
+      <div class="hero__sello" aria-hidden="true">
+        <svg viewBox="0 0 200 200" class="hero__sello-texto">
+          <defs><path id="circulo" d="M100,100 m-78,0 a78,78 0 1,1 156,0 a78,78 0 1,1 -156,0"/></defs>
+          <text><textPath href="#circulo" startOffset="0">BARBA BLACK ✦ INSUMOS DE BARBERÍA ✦ LA PLATA 212 ✦</textPath></text>
+        </svg>
+        <span class="hero__sello-logo"><%- include('partials/logo') %></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<% if (c.cinta.visible) { %>
+<div class="cinta" aria-hidden="true">
+  <div class="cinta__pista">
+    <% for (let r = 0; r < 4; r++) { lineas(c.cinta.palabras).forEach((w) => { %>
+      <span><%- textoRico(w) %></span><i>✦</i>
+    <% }) } %>
+  </div>
+</div>
+<% } %>
+
+<% if (c.categorias.visible) { %>
+<section class="bloque" id="categorias">
+  <div class="contenedor">
+    <header class="bloque__cab rev">
+      <p class="etiqueta-seccion"><%= c.categorias.etiqueta %></p>
+      <h2 class="bloque__titulo titulo"><%- textoRico(c.categorias.titulo) %></h2>
+    </header>
+    <div class="categorias">
+      <% c.categorias.items.forEach((cat, i) => { if (!cat.nombre) return; %>
+        <a href="<%= cat.link %>" class="cat rev" data-d="<%= i * 0.08 %>">
+          <span class="cat__num"><%= String(i + 1).padStart(2, '0') %></span>
+          <% if (cat.imagen) { %><img src="<%= cat.imagen %>" alt="" loading="lazy"><% } %>
+          <span class="cat__pie">
+            <strong class="cat__nombre titulo"><%= cat.nombre %></strong>
+            <span class="cat__frase"><%= cat.frase %></span>
+            <span class="cat__flecha"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+          </span>
+        </a>
+      <% }) %>
+    </div>
+  </div>
+</section>
+<% } %>
+
+<% if (c.nuevos.visible && nuevos.length) { %>
+<section class="bloque" id="nuevos">
+  <div class="contenedor">
+    <header class="bloque__cab bloque__cab--fila rev">
+      <div>
+        <p class="etiqueta-seccion"><%= c.nuevos.etiqueta %></p>
+        <h2 class="bloque__titulo titulo"><%- textoRico(c.nuevos.titulo) %></h2>
+      </div>
+      <a href="<%= c.nuevos.linkUrl %>" class="enlace"><%= c.nuevos.linkTexto %> →</a>
+    </header>
+    <div class="grilla-productos">
+      <% nuevos.forEach((p, i) => { %><%- include('partials/tarjeta', { p, indice: i }) %><% }) %>
+    </div>
+  </div>
+</section>
+<% } %>
+
+<% if (c.turnos.visible) { %>
+<section class="bloque" id="turnos">
+  <div class="contenedor turnos-banner rev">
+    <div class="turnos-banner__texto">
+      <p class="etiqueta-seccion"><%= c.turnos.etiqueta %></p>
+      <h2 class="bloque__titulo titulo"><%- textoRico(c.turnos.titulo) %></h2>
+      <p class="turnos-banner__bajada"><%= c.turnos.bajada %></p>
+      <a href="<%= c.turnos.botonLink %>" class="btn btn--volt"><%= c.turnos.botonTexto %> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3.5" y="5" width="17" height="15" rx="1"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg></a>
+    </div>
+    <div class="turnos-banner__logo" aria-hidden="true"><%- include('partials/logo') %></div>
+  </div>
+</section>
+<% } %>
+
+<% if (c.beneficios.visible) { %>
+<section class="beneficios">
+  <div class="contenedor beneficios__grilla">
+    <% c.beneficios.items.forEach((b) => { if (!b.titulo) return; %>
+      <div class="beneficio rev"><h3><%= b.titulo %></h3><p><%= b.texto %></p></div>
+    <% }) %>
+  </div>
+</section>
+<% } %>
+
+<% if (c.local.visible) { %>
+<section class="bloque" id="local">
+  <div class="contenedor local">
+    <div class="local__foto rev">
+      <img src="<%= c.local.imagen %>" alt="Insumos de Barba Black" loading="lazy">
+    </div>
+    <div class="local__info rev">
+      <p class="etiqueta-seccion"><%= c.local.etiqueta %></p>
+      <h2 class="bloque__titulo titulo"><%- textoRico(c.local.titulo) %></h2>
+      <p class="local__bajada"><%= c.local.bajada %></p>
+      <dl class="local__datos">
+        <div><dt>Dirección</dt><dd><%= c.local.direccion %></dd></div>
+        <% if (c.local.horarios) { %><div><dt>Horarios</dt><dd><%= c.local.horarios %></dd></div><% } %>
+        <% if (tienda.whatsapp) { %><div><dt>WhatsApp</dt><dd><a href="<%= tienda.whatsapp %>" target="_blank" rel="noopener" class="enlace">Escribinos</a></dd></div><% } %>
+      </dl>
+      <a href="<%= c.local.botonLink %>" target="_blank" rel="noopener" class="btn btn--volt"><%= c.local.botonTexto %> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 21s-7-6.2-7-11a7 7 0 0114 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></a>
+    </div>
+  </div>
+</section>
+<% } %>
+
+<% if (c.cierre.visible) { %>
+<section class="cierre">
+  <div class="contenedor cierre__interior rev">
+    <p class="etiqueta-seccion"><%= c.cierre.etiqueta %></p>
+    <h2 class="cierre__titulo titulo">
+      <% lineas(c.cierre.titulo).forEach((l) => { %><span><%- textoRico(l) %></span><% }) %>
+    </h2>
+    <div class="hero__botones">
+      <a href="<%= c.cierre.botonLink %>" target="_blank" rel="noopener" class="btn btn--volt"><%= c.cierre.botonTexto %></a>
+      <a href="<%= c.cierre.secundarioLink %>" class="btn btn--linea"><%= c.cierre.secundarioTexto %></a>
+    </div>
+  </div>
+</section>
+<% } %>
+
+<%- include('partials/footer') %>
+</body>
+</html>

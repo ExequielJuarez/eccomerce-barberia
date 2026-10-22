@@ -1,0 +1,27 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+<% const recuperar = motivo === 'recuperar'; %>
+<section class="acceso">
+  <%- include('partials/acceso-marca', { frase: recuperar ? 'Todo tiene *solución*.' : 'Sin claves, *sin vueltas*.' }) %>
+  <div class="acceso__panel">
+    <div class="acceso__form">
+      <p class="etiqueta-seccion"><%= recuperar ? 'Recuperar cuenta' : 'Acceso rápido' %></p>
+      <h1 class="acceso__titulo titulo"><%= recuperar ? 'Recuperá tu cuenta' : 'Entrá con un código' %></h1>
+      <p class="apagado"><%= recuperar ? 'Te mandamos un código por email. Después podés elegir una contraseña nueva.' : 'Te mandamos un código de 6 números a tu email. Sin contraseña.' %></p>
+
+      <% if (!disponible) { %><div class="aviso aviso--error">Por ahora no podemos mandar códigos por email. <a class="enlace" href="/login">Entrá con tu contraseña</a>.</div><% } %>
+      <% if (errorGeneral) { %><div class="aviso aviso--error" role="alert"><%= errorGeneral %></div><% } %>
+
+      <form action="/login/codigo" method="POST" novalidate class="acceso__campos">
+        <input type="hidden" name="volver" value="<%= volver %>">
+        <input type="hidden" name="motivo" value="<%= motivo %>">
+        <%- include('partials/campo', { nombre: 'email', etiqueta: 'Email', tipo: 'email', valor: datos.email || '', errores, atributos: 'autocomplete="email" required autofocus' }) %>
+        <button type="submit" class="btn btn--volt btn--bloque" <%= disponible ? '' : 'disabled' %>>Enviarme el código</button>
+      </form>
+      <p class="acceso__pie"><a class="enlace" href="/login?volver=<%= encodeURIComponent(volver) %>">← Volver a iniciar sesión</a></p>
+    </div>
+  </div>
+</section>
+<%- include('partials/footer') %>
+</body>
+</html>

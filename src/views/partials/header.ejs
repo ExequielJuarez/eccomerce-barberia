@@ -1,0 +1,115 @@
+<% const cats = locals.categoriasMenu || []; const cantFav = (locals.favoritosIds || []).length; %>
+
+<div class="anuncios" aria-label="Promociones">
+  <div class="anuncios__pista">
+    <% for (let i = 0; i < 4; i++) { %>
+      <span>Sacá tu turno online</span>
+      <span>✦</span>
+      <span>Envío gratis desde <%= formatoPrecio(150000).replace(',00', '') %></span>
+      <span>✦</span>
+      <span>10% off por transferencia</span>
+      <span>✦</span>
+      <span>Retirá en <%= tienda.direccion %></span>
+      <span>✦</span>
+    <% } %>
+  </div>
+</div>
+
+<header class="header" id="header">
+  <div class="header__barra contenedor">
+    <button class="icono-btn header__menu-btn" id="btnMenu" aria-label="Abrir menú" aria-expanded="false" aria-controls="drawer">
+      <span class="hamburguesa"></span>
+    </button>
+
+    <a href="/" class="marca-link" aria-label="Barba Black — Inicio">
+      <%- include('logo') %>
+      <span class="marca-link__texto">Barba <em>Black</em></span>
+    </a>
+
+    <nav class="nav" aria-label="Principal">
+      <ul class="nav__lista">
+        <% cats.forEach(cat => { %>
+          <li class="<%= locals.navActivo === cat.slug ? 'nav__item--activo' : '' %>"><a href="<%= cat.url %>"><%= cat.nombre %></a></li>
+        <% }) %>
+        <li class="<%= locals.navActivo === 'local' ? 'nav__item--activo' : '' %>"><a href="/#local">El local</a></li>
+      </ul>
+    </nav>
+
+    <div class="header__acciones">
+      <a href="/turnos" class="btn btn--linea btn--chico header__turno">Sacar turno</a>
+      <button class="icono-btn" id="btnBuscar" aria-label="Buscar" aria-expanded="false" aria-controls="busqueda">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4" stroke-linecap="round"/></svg>
+      </button>
+
+      <% if (locals.usuarioLocal) { %>
+        <div class="cuenta" id="cuenta">
+          <button class="icono-btn" id="cuentaBtn" aria-label="Mi cuenta" aria-expanded="false" aria-controls="cuentaMenu">
+            <span class="cuenta__inicial"><%= usuarioLocal.nombre.charAt(0) %></span>
+          </button>
+          <div class="cuenta__menu" id="cuentaMenu" hidden>
+            <p class="cuenta__hola">Hola, <strong><%= usuarioLocal.nombre %></strong></p>
+            <p class="cuenta__email"><%= usuarioLocal.email %></p>
+            <% if (esAdmin(usuarioLocal)) { %>
+              <a href="/admin" class="cuenta__link cuenta__link--admin">Panel de administración →</a>
+            <% } %>
+            <a href="/mi-cuenta/pedidos" class="cuenta__link">Mis pedidos</a>
+            <a href="/mi-cuenta/datos" class="cuenta__link">Mis datos</a>
+            <a href="/favoritos" class="cuenta__link">Favoritos</a>
+            <form action="/logout" method="POST">
+              <button type="submit" class="cuenta__salir">Cerrar sesión</button>
+            </form>
+          </div>
+        </div>
+      <% } else { %>
+        <% const volverA = ['/login', '/'].includes(locals.currentPath) ? '' : '?volver=' + encodeURIComponent(currentPath); %>
+        <a href="/login<%= volverA %>" class="icono-btn" aria-label="Iniciar sesión">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>
+        </a>
+      <% } %>
+
+      <a href="/favoritos" class="icono-btn" aria-label="Favoritos">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-10a4 4 0 017-2.6A4 4 0 0119 10c0 5.6-7 10-7 10z"/></svg>
+        <span class="contador" id="contadorFavoritos" <%= cantFav ? '' : 'hidden' %>><%= cantFav %></span>
+      </a>
+      <a href="/carrito" class="icono-btn" aria-label="Carrito">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M5 8h14l-1.2 12H6.2L5 8z"/><path d="M9 8V6a3 3 0 016 0v2"/></svg>
+        <span class="contador" id="contadorCarrito" <%= (locals.cantidadCarrito || 0) ? '' : 'hidden' %>><%= locals.cantidadCarrito || 0 %></span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<aside class="drawer" id="drawer" aria-label="Menú">
+  <nav class="drawer__lista">
+    <% cats.forEach(cat => { %>
+      <a href="<%= cat.url %>"><%= cat.nombre %> <small>→</small></a>
+    <% }) %>
+    <a href="/#local">El local <small>→</small></a>
+    <a href="/turnos" class="drawer__turno">Sacar turno <small>→</small></a>
+    <a href="/favoritos">Favoritos <small><%= cantFav ? '(' + cantFav + ')' : '→' %></small></a>
+  </nav>
+  <div class="drawer__pie">
+    <span><%= tienda.direccion %></span>
+    <% if (tienda.horarios) { %><span><%= tienda.horarios %></span><% } %>
+    <% if (tienda.instagram) { %><a href="<%= tienda.instagram %>" target="_blank" rel="noopener"><%= tienda.usuario || 'Instagram' %></a><% } %>
+  </div>
+</aside>
+
+<div class="busqueda" id="busqueda" role="dialog" aria-modal="true" aria-label="Buscar productos" aria-hidden="true">
+  <button class="icono-btn busqueda__cerrar" id="btnCerrarBusqueda" aria-label="Cerrar buscador">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 5l14 14M19 5L5 19"/></svg>
+  </button>
+  <form class="busqueda__form" action="/buscar" method="GET" role="search">
+    <input type="search" name="q" id="busquedaInput" value="<%= locals.busqueda || '' %>" placeholder="Buscar…" aria-label="Buscar productos" autocomplete="off" maxlength="60">
+    <button type="submit" aria-label="Buscar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4" stroke-linecap="round"/></svg>
+    </button>
+  </form>
+  <p class="busqueda__ayuda">Probá con “clipper”, “tijera” o “shaver”.</p>
+  <div class="sugerencias" id="sugerencias" aria-live="polite"></div>
+  <div class="sugerencias__atajos" id="busquedaAtajos">
+    <% cats.forEach(cat => { %><a class="atajo" href="<%= cat.url %>"><%= cat.nombre %></a><% }) %>
+  </div>
+</div>
+
+<main id="contenido">

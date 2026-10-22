@@ -1,0 +1,91 @@
+<%- include('../partials/head') %>
+<%- include('../partials/admin-inicio') %>
+<%
+  const editando = !!producto;
+  const e = errores;
+  const v = (k, def = '') => (datos[k] ?? def);
+  const coloresSel = [].concat(datos.colores || []);
+  const existentes = (producto && producto.imagenes) || [];
+  const quitar = [].concat(datos.quitarImagenes || []).map(String);
+%>
+<nav class="migas migas--plana"><a href="/admin/productos">Productos</a><span>/</span><span aria-current="page"><%= editando ? 'Editar' : 'Nuevo' %></span></nav>
+<div class="adm-cab"><div><p class="etiqueta-seccion"><%= editando ? '#' + producto.id : 'Alta' %></p><h1 class="adm-titulo titulo"><%= editando ? producto.nombre : 'Nuevo producto' %></h1></div></div>
+
+<% if (Object.keys(e).length) { %><div class="aviso aviso--error" role="alert">Revisá los campos marcados para poder guardar.</div><% } %>
+
+<form action="<%= editando ? '/admin/productos/' + producto.id + '?_method=PUT' : '/admin/productos' %>" method="POST" enctype="multipart/form-data" class="pf" id="formProducto" novalidate
+      data-max-imagenes="<%= MAX_IMAGENES %>">
+  <div class="pf__col">
+    <section class="panel">
+      <header class="panel__cab"><h2>Datos</h2></header>
+      <div class="grilla-form">
+        <div class="campo completo <%= e.nombre ? 'campo--error' : '' %>"><label for="f-nombre">Nombre</label><input id="f-nombre" name="nombre" value="<%= v('nombre') %>" maxlength="90" required><% if (e.nombre) { %><span class="campo__error"><%= e.nombre.msg %></span><% } %></div>
+        <div class="campo <%= e.categoria ? 'campo--error' : '' %>"><label for="f-categoria">Categoría</label>
+          <select id="f-categoria" name="categoria" required><option value="">Elegí una</option><% categorias.forEach(c => { %><option <%= v('categoria') === c ? 'selected' : '' %>><%= c %></option><% }) %></select>
+          <% if (e.categoria) { %><span class="campo__error"><%= e.categoria.msg %></span><% } %></div>
+        <div class="campo <%= e.subcategoria ? 'campo--error' : '' %>"><label for="f-sub">Subcategoría (opcional)</label>
+          <select id="f-sub" name="subcategoria" data-actual="<%= v('subcategoria') %>"><option value="">Ninguna</option></select>
+          <% if (e.subcategoria) { %><span class="campo__error"><%= e.subcategoria.msg %></span><% } %></div>
+        <div class="campo"><label for="f-etiqueta">Etiqueta (opcional)</label><input id="f-etiqueta" name="etiqueta" value="<%= v('etiqueta') %>" maxlength="24" placeholder="Nuevo, Más vendido…"><% if (e.etiqueta) { %><span class="campo__error"><%= e.etiqueta.msg %></span><% } %></div>
+        <div class="campo <%= e.stock ? 'campo--error' : '' %>"><label for="f-stock">Stock</label><input id="f-stock" name="stock" type="number" min="0" value="<%= v('stock', 0) %>"><% if (e.stock) { %><span class="campo__error"><%= e.stock.msg %></span><% } %></div>
+        <div class="campo <%= e.precio ? 'campo--error' : '' %>"><label for="f-precio">Precio de venta ($)</label><input id="f-precio" name="precio" type="number" min="1" step="any" value="<%= v('precio') %>" required><% if (e.precio) { %><span class="campo__error"><%= e.precio.msg %></span><% } %></div>
+        <div class="campo <%= e.costo ? 'campo--error' : '' %>"><label for="f-costo">Costo ($)</label><input id="f-costo" name="costo" type="number" min="0" step="any" value="<%= v('costo') %>" required><% if (e.costo) { %><span class="campo__error"><%= e.costo.msg %></span><% } else { %><span class="campo__ayuda" id="margenTxt">Lo que te cuesta cada unidad. Sirve para calcular la ganancia.</span><% } %></div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <header class="panel__cab"><h2>Colores</h2><span class="apagado">El primero marcado es el principal</span></header>
+      <div class="pf__colores" id="listaColores">
+        <% colores.forEach(c => { %>
+          <label class="color-op" title="<%= c.nombre %>"><input type="checkbox" name="colores" value="<%= c.valor %>" <%= coloresSel.includes(c.valor) ? 'checked' : '' %>><span class="color-op__punto" data-bg="<%= c.hex %>"></span><span class="color-op__nombre"><%= c.nombre %></span></label>
+        <% }) %>
+      </div>
+      <% if (e.colores) { %><span class="campo__error"><%= e.colores.msg %></span><% } %>
+      <div class="pf__nuevo-color">
+        <input type="text" id="nuevoColorNombre" placeholder="Nuevo color (ej: Verde militar)" maxlength="40" aria-label="Nombre del color nuevo">
+        <input type="color" id="nuevoColorHex" value="#888888" aria-label="Tono del color">
+        <button type="button" class="btn btn--linea btn--chico" id="agregarColor">Agregar color</button>
+      </div>
+    </section>
+
+    <section class="panel">
+      <header class="panel__cab"><h2>Descripción</h2></header>
+      <div class="grilla-form">
+        <div class="campo completo"><label for="f-resumen">Resumen (una línea)</label><input id="f-resumen" name="resumen" value="<%= v('resumen') %>" maxlength="255"></div>
+        <div class="campo completo"><label for="f-desc">Descripción</label><textarea id="f-desc" name="descripcion" rows="6" maxlength="4000" placeholder="Separá los párrafos con una línea en blanco."><%= v('descripcion') %></textarea></div>
+        <div class="campo completo"><label for="f-dest">Puntos destacados (uno por línea)</label><textarea id="f-dest" name="destacados" rows="4" maxlength="1000" placeholder="Algodón pesado&#10;Calce oversize"><%= v('destacados') %></textarea></div>
+      </div>
+    </section>
+  </div>
+
+  <aside class="pf__col pf__lateral">
+    <section class="panel">
+      <header class="panel__cab"><h2>Fotos</h2><span class="apagado"><span id="cuentaFotos">0</span>/<%= MAX_IMAGENES %></span></header>
+      <p class="apagado texto-chico">JPG, PNG o WEBP de hasta 2 MB. Elegí cuál es la principal (sale en las tarjetas).</p>
+      <% if (e.imagenes) { %><span class="campo__error"><%= e.imagenes.msg %></span><% } %>
+      <ul class="fotos-editor" id="fotosEditor">
+        <% existentes.forEach((img) => { %>
+          <li class="foto-item <%= quitar.includes(String(img.id)) ? 'quitada' : '' %>" data-existente="<%= img.id %>">
+            <img src="<%= img.ruta %>" alt="">
+            <label class="foto-item__principal"><input type="radio" name="principal" value="e-<%= img.id %>" <%= v('principal', existentes[0] && 'e-' + existentes[0].id) === 'e-' + img.id ? 'checked' : '' %>><span>Principal</span></label>
+            <label class="foto-item__quitar"><input type="checkbox" name="quitarImagenes" value="<%= img.id %>" <%= quitar.includes(String(img.id)) ? 'checked' : '' %>><span>Quitar</span></label>
+          </li>
+        <% }) %>
+      </ul>
+      <label class="subir" id="zonaSubir">
+        <input type="file" id="archivosFotos" name="imagenes" accept="image/jpeg,image/png,image/webp" multiple>
+        <strong>+ Agregar fotos</strong><small>o arrastralas acá</small>
+      </label>
+    </section>
+    <div class="pf__acciones">
+      <button type="submit" class="btn btn--volt btn--bloque"><%= editando ? 'Guardar cambios' : 'Crear producto' %></button>
+      <a href="<%= editando ? '/admin/productos/' + producto.id : '/admin/productos' %>" class="btn btn--linea btn--bloque">Cancelar</a>
+    </div>
+  </aside>
+</form>
+
+<script>window.PF_CATEGORIAS = <%- JSON.stringify(categoriasCompletas.map(c => ({ nombre: c.nombre, subs: c.subcategorias.map(s => ({ id: s.id, nombre: s.nombre })) }))).replace(/</g, '\\u003c') %>;</script>
+<%- include('../partials/admin-fin') %>
+<script src="/js/admin-producto-form.js"></script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+.sup-n { font-family: var(--ff-texto); font-size: 16px; font-weight: 800; vertical-align: top; position: relative; top: 0.5em; padding: 3px 9px; background: var(--oro); color: var(--tinta); }
+.kpis--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+a.kpi--link { transition: border-color 0.15s, transform 0.2s var(--ease), box-shadow 0.2s var(--ease); }
+.enlace-fuerte { font-weight: 800; text-transform: uppercase; letter-spacing: 0.02em; }
+.stock-ctl { display: inline-grid; grid-template-columns: 30px 56px 30px; border: 1px solid var(--linea-fuerte); }
+.stock-ctl button { font-weight: 800; height: 32px; }
+.stock-ctl input { width: 100%; height: 32px; text-align: center; background: transparent; border: 0; border-inline: 1px solid var(--linea-fuerte); font-weight: 800; -moz-appearance: textfield; outline: 0; }
+.stock-ctl input::-webkit-outer-spin-button, .stock-ctl input::-webkit-inner-spin-button { appearance: none; margin: 0; }
+.stock-estado { margin-left: 8px; }
+@media (hover: hover) and (pointer: fine) {
+  a.kpi--link:hover { border-color: var(--oro); transform: translate(-3px, -3px); }
+  .enlace-fuerte:hover { color: var(--oro); }
+   .stock-ctl button:hover { background: var(--tinta-4); }
+}
+
+@media (max-width: 700px) { .kpis--3 { grid-template-columns: 1fr; } }

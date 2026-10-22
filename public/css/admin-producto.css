@@ -1,0 +1,12 @@
+.fotos-ficha { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 10px; }
+.fotos-ficha figure { position: relative; margin: 0; aspect-ratio: 4 / 5; background: var(--tinta-3); border: 1px solid var(--linea); }
+.fotos-ficha img { width: 100%; height: 100%; object-fit: cover; }
+.fotos-ficha .principal { grid-column: span 2; grid-row: span 2; border-color: var(--oro); }
+.fotos-ficha figcaption { position: absolute; left: 6px; top: 6px; }
+.ficha-lista { margin: 0; display: grid; }
+.ficha-lista > div { display: grid; grid-template-columns: 110px 1fr; gap: 14px; padding: 11px 0; border-top: 1px solid var(--linea); font-size: 14px; }
+.ficha-lista dt { color: var(--apagado); }
+.ficha-lista dd { margin: 0; }
+.colores-lista { display: flex; gap: 12px; flex-wrap: wrap; }
+.colores-lista span { display: inline-flex; align-items: center; gap: 7px; }
+.colores-lista i { width: 16px; height: 16px; border-radius: 50%; border: 1px solid var(--linea-fuerte); }

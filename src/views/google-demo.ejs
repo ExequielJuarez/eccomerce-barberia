@@ -1,0 +1,22 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+<section class="acceso">
+  <%- include('partials/acceso-marca', { frase: 'Un toque y *listo*.' }) %>
+  <div class="acceso__panel">
+    <div class="acceso__form">
+      <p class="etiqueta-seccion">Modo demo</p>
+      <h1 class="acceso__titulo titulo">Continuar con Google</h1>
+      <p class="aviso aviso--info">Esto simula el inicio de sesión con Google. Cuando configures las credenciales en el <code>.env</code> se usa el real.</p>
+      <form action="/auth/google/demo" method="POST" novalidate class="acceso__campos">
+        <input type="hidden" name="volver" value="<%= volver %>">
+        <%- include('partials/campo', { nombre: 'nombre', etiqueta: 'Nombre y apellido', valor: datos.nombre || '', errores, atributos: 'required autofocus' }) %>
+        <%- include('partials/campo', { nombre: 'email', etiqueta: 'Email de Google', tipo: 'email', valor: datos.email || '', errores, atributos: 'required' }) %>
+        <button type="submit" class="btn btn--volt btn--bloque">Continuar</button>
+      </form>
+      <p class="acceso__pie"><a class="enlace" href="/login">← Volver</a></p>
+    </div>
+  </div>
+</section>
+<%- include('partials/footer') %>
+</body>
+</html>

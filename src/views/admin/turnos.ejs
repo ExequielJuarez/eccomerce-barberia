@@ -1,0 +1,98 @@
+<%- include('../partials/head') %>
+<%- include('../partials/admin-inicio') %>
+<%
+  const nombresEstado = { reservado: 'Reservado', confirmado: 'Confirmado', completado: 'Completado', cancelado: 'Cancelado', ausente: 'No vino' };
+  const clasesEstado = { reservado: 'estado--alerta', confirmado: 'estado--curso', completado: 'estado--ok', cancelado: 'estado--cancelado', ausente: 'estado--cancelado' };
+  const esHoy = fecha === hoy;
+%>
+<div class="adm-cab">
+  <div>
+    <p class="etiqueta-seccion">Agenda</p>
+    <h1 class="adm-titulo titulo">Turnos</h1>
+  </div>
+  <div class="agenda-acciones">
+    <a href="/admin/turnos/config" class="btn btn--linea btn--chico">Servicios y horarios</a>
+    <a href="/turnos" target="_blank" rel="noopener" class="btn btn--volt btn--chico">Ver página pública ↗</a>
+  </div>
+</div>
+
+<nav class="agenda-nav" aria-label="Día de la agenda">
+  <a href="/admin/turnos?fecha=<%= anterior %>" class="icono-btn" aria-label="Día anterior">◀</a>
+  <div class="agenda-nav__dia">
+    <strong class="titulo"><%= esHoy ? 'Hoy' : fechaTexto %></strong>
+    <% if (esHoy) { %><small class="apagado"><%= fechaTexto %></small><% } %>
+  </div>
+  <a href="/admin/turnos?fecha=<%= siguiente %>" class="icono-btn" aria-label="Día siguiente">▶</a>
+  <form action="/admin/turnos" method="GET" class="agenda-nav__fecha">
+    <input type="date" name="fecha" value="<%= fecha %>" aria-label="Ir a una fecha" data-auto-enviar>
+  </form>
+  <% if (!esHoy) { %><a href="/admin/turnos" class="btn btn--linea btn--chico">Ir a hoy</a><% } %>
+</nav>
+
+<section class="kpis">
+  <article class="kpi"><span class="kpi__t">Turnos del día</span><strong class="kpi__n"><%= resumen.total %></strong><small>sin contar cancelados</small></article>
+  <article class="kpi kpi--volt"><span class="kpi__t">Por confirmar</span><strong class="kpi__n"><%= resumen.reservados %></strong><small>reservados por clientes</small></article>
+  <article class="kpi"><span class="kpi__t">Confirmados</span><strong class="kpi__n"><%= resumen.confirmados %></strong><small>listos para atender</small></article>
+  <article class="kpi"><span class="kpi__t">Completados</span><strong class="kpi__n"><%= resumen.completados %></strong><small><%= resumen.cancelados %> cancelados</small></article>
+</section>
+
+<div class="agenda-grilla">
+  <section class="panel">
+    <header class="panel__cab"><h2>Agenda del día</h2></header>
+    <% if (!lista.length) { %>
+      <p class="apagado agenda-vacia">No hay turnos para este día.</p>
+    <% } %>
+    <ul class="agenda-lista">
+      <% lista.forEach((t) => { %>
+        <li class="turno-fila turno-fila--<%= t.estado %>">
+          <div class="turno-fila__hora"><strong><%= t.inicio %></strong><small><%= t.fin %></small></div>
+          <div class="turno-fila__datos">
+            <strong><%= t.cliente %></strong>
+            <span><%= t.servicio %> · <%= t.barbero %></span>
+            <% if (t.notas) { %><small class="apagado">“<%= t.notas %>”</small><% } %>
+            <a class="enlace-suave" href="<%= whatsapp(t.telefono, 'Hola ' + t.cliente.split(' ')[0] + '! Te escribimos de Barba Black por tu turno del ' + t.fechaTexto + ' a las ' + t.inicio + ' hs.') %>" target="_blank" rel="noopener"><%= t.telefono %> ↗</a>
+          </div>
+          <div class="turno-fila__estado">
+            <span class="estado <%= clasesEstado[t.estado] %>"><%= nombresEstado[t.estado] %></span>
+            <small class="apagado"><%= t.codigo %></small>
+          </div>
+          <div class="turno-fila__acciones">
+            <% const acciones = {
+              reservado: [['confirmado', 'Confirmar', 'btn--volt'], ['cancelado', 'Cancelar', 'btn--peligro']],
+              confirmado: [['completado', 'Completado', 'btn--volt'], ['ausente', 'No vino', 'btn--linea'], ['cancelado', 'Cancelar', 'btn--peligro']],
+              completado: [['confirmado', 'Reabrir', 'btn--linea']],
+              ausente: [['confirmado', 'Reabrir', 'btn--linea']],
+              cancelado: [['reservado', 'Reactivar', 'btn--linea']],
+            }[t.estado]; %>
+            <% acciones.forEach(([estado, texto, clase]) => { %>
+              <form action="/admin/turnos/<%= t.id %>/estado?_method=PATCH" method="POST"<%- estado === 'cancelado' ? ` data-confirmar="¿Cancelar el turno de ${t.cliente}?"` : '' %>>
+                <input type="hidden" name="estado" value="<%= estado %>">
+                <button class="btn btn--chico <%= clase %>"><%= texto %></button>
+              </form>
+            <% }) %>
+          </div>
+        </li>
+      <% }) %>
+    </ul>
+  </section>
+
+  <aside class="panel">
+    <header class="panel__cab"><h2>Próximos turnos</h2></header>
+    <% if (!proximos.length) { %><p class="apagado">No hay turnos próximos.</p><% } %>
+    <ul class="proximos">
+      <% proximos.forEach((t) => { %>
+        <li>
+          <a href="/admin/turnos?fecha=<%= t.fecha %>">
+            <strong><%= t.inicio %></strong>
+            <span><%= t.cliente %><small class="apagado"><%= t.fechaTexto %> · <%= t.servicio %></small></span>
+          </a>
+        </li>
+      <% }) %>
+    </ul>
+  </aside>
+</div>
+
+<%- include('../partials/admin-fin') %>
+<script src="/js/admin-turnos.js"></script>
+</body>
+</html>

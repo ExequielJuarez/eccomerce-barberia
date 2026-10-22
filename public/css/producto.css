@@ -1,0 +1,86 @@
+.ficha { display: grid; grid-template-columns: minmax(0, 1.12fr) minmax(0, 0.88fr); gap: clamp(28px, 5vw, 80px); align-items: start; padding-block: 14px 40px; }
+
+.galeria { display: grid; grid-template-columns: 84px minmax(0, 1fr); gap: 14px; position: sticky; top: calc(var(--alto-header) + 18px); }
+.galeria:not(:has(.galeria__mini)) { grid-template-columns: 1fr; }
+.galeria__mini { display: grid; gap: 10px; align-content: start; }
+.galeria__mini button { display: block; width: 100%; aspect-ratio: 4 / 5; border: 1px solid var(--linea); opacity: 0.6; transition: all 0.15s; overflow: hidden; }
+.galeria__mini img { width: 100%; height: 100%; object-fit: cover; }
+.galeria__principal { position: relative; aspect-ratio: 4 / 5; overflow: hidden; background: var(--tinta-3); border: 1px solid var(--linea); cursor: zoom-in; }
+.galeria__principal img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.15s ease-out; transform-origin: var(--zx, 50%) var(--zy, 50%); }
+.galeria__principal.zoom img { transform: scale(1.9); }
+.galeria__chip { position: absolute; top: 14px; left: 14px; z-index: 2; }
+
+.ficha__info { display: grid; gap: 22px; }
+.ficha__nombre { font-size: clamp(26px, 6vw, 52px); line-height: 1.08; }
+.ficha__resumen { color: var(--papel-2); max-width: 52ch; font-size: 16px; }
+.ficha__precio { display: flex; align-items: flex-end; flex-wrap: wrap; gap: 8px 22px; padding-block: 18px; border-block: 1px solid var(--linea); }
+.ficha__precio-extra { display: grid; gap: 2px; font-size: 14px; padding-bottom: 6px; }
+.ficha__precio-extra small { color: var(--apagado); }
+.ficha__form { display: grid; gap: 22px; }
+.selector { border: 0; margin: 0; padding: 0; }
+.selector legend { padding: 0; margin-bottom: 12px; font-size: 11px; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase; color: var(--apagado); }
+.selector legend strong { color: var(--papel); }
+.color-swatch input { position: absolute; opacity: 0; pointer-events: none; }
+.color-swatch span:nth-of-type(1) { display: block; width: 42px; height: 42px; border-radius: 50%; border: 1px solid var(--linea-fuerte); cursor: pointer; transition: box-shadow 0.15s, transform 0.15s; }
+.color-swatch input:checked + span { box-shadow: 0 0 0 3px var(--tinta), 0 0 0 5px var(--oro); }
+.color-swatch input:focus-visible + span { outline: 2px solid var(--oro); outline-offset: 5px; }
+@keyframes sacudir { 20%, 60% { transform: translateX(-6px); } 40%, 80% { transform: translateX(6px); } }
+.ficha__compra { display: grid; grid-template-columns: auto 1fr auto; gap: 10px; align-items: stretch; }
+.cantidad { display: grid; grid-template-columns: 44px 54px 44px; border: 1px solid var(--linea-fuerte); }
+.cantidad button { font-size: 20px; font-weight: 700; transition: background 0.15s; }
+.cantidad input { width: 100%; text-align: center; background: transparent; border: 0; border-inline: 1px solid var(--linea-fuerte); font-weight: 800; font-size: 16px; -moz-appearance: textfield; outline: 0; }
+.cantidad input::-webkit-outer-spin-button, .cantidad input::-webkit-inner-spin-button { appearance: none; margin: 0; }
+.ficha__agregar { min-height: 56px; font-size: 14px; }
+.ficha__fav { width: 56px; height: 56px; border: 1px solid var(--linea-fuerte); }
+.ficha__fav svg { fill: none; stroke: currentColor; stroke-width: 2; }
+.ficha__fav[aria-pressed="true"] { color: var(--oro); border-color: var(--oro); }
+.ficha__fav[aria-pressed="true"] svg { fill: var(--oro); }
+.ficha__stock { font-size: 13px; color: var(--ambar); }
+.ficha__garantias { display: grid; gap: 10px; padding: 18px; border: 1px solid var(--linea); background: var(--tinta-2); font-size: 13.5px; }
+.ficha__garantias li { display: flex; align-items: center; gap: 12px; }
+.ficha__garantias svg { width: 22px; height: 22px; color: var(--oro); flex: none; }
+
+.acordeon { border-top: 1px solid var(--linea); }
+.acordeon details { border-bottom: 1px solid var(--linea); }
+.acordeon summary { display: flex; justify-content: space-between; align-items: center; padding: 18px 0; cursor: pointer; list-style: none; font-weight: 800; font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase; }
+.acordeon summary::-webkit-details-marker { display: none; }
+.acordeon summary::after { content: "+"; font-size: 22px; font-weight: 400; color: var(--oro); transition: transform 0.25s var(--ease); }
+.acordeon details[open] summary::after { transform: rotate(45deg); }
+.acordeon__cuerpo { padding-bottom: 20px; display: grid; gap: 12px; color: var(--papel-2); }
+.destacados { display: grid; gap: 6px; }
+.destacados li { display: flex; gap: 10px; }
+.destacados li::before { content: ""; flex: none; width: 8px; height: 8px; margin-top: 7px; background: var(--oro); }
+.specs { margin: 8px 0 0; display: grid; }
+.specs > div { display: grid; grid-template-columns: 110px 1fr; gap: 14px; padding: 9px 0; border-top: 1px solid var(--linea); font-size: 14px; }
+.specs dt { color: var(--apagado); }
+.specs dd { margin: 0; color: var(--papel); }
+
+.relacionados { padding-top: 40px; }
+
+.barra-compra { display: none; }
+@media (hover: hover) and (pointer: fine) {
+  .galeria__mini button.activa, .galeria__mini button:hover { opacity: 1; border-color: var(--oro); }
+  .color-swatch:hover span:nth-of-type(1) { transform: scale(1.08); }
+  .cantidad button:hover { background: var(--tinta-4); }
+}
+
+@media (max-width: 900px) {
+  .ficha { grid-template-columns: minmax(0, 1fr); }
+  .galeria { position: static; grid-template-columns: minmax(0, 1fr); }
+  .ficha__info { min-width: 0; }
+  .galeria__mini { grid-auto-flow: column; grid-auto-columns: 72px; order: 2; overflow-x: auto; }
+  .galeria__principal { cursor: default; }
+  .barra-compra { position: fixed; z-index: 45; left: 0; right: 0; bottom: 0; display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 10px var(--gutter); background: var(--tinta-2); border-top: 1px solid var(--papel); transform: translateY(110%); transition: transform 0.3s var(--ease); }
+  .barra-compra.visible { transform: none; }
+  .barra-compra div { display: grid; min-width: 0; }
+  .barra-compra small { color: var(--apagado); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .whatsapp { bottom: 84px; }
+}
+
+@media (max-width: 560px) {
+  .ficha__info, .ficha__form, .ficha__compra { min-width: 0; }
+  .ficha__compra { grid-template-columns: auto minmax(0, 1fr) auto; gap: 8px; }
+  .ficha__agregar { padding: 0 12px; font-size: 12px; white-space: normal; line-height: 1.2; }
+  .cantidad { grid-template-columns: 36px 40px 36px; }
+  .ficha__fav { width: 50px; }
+}

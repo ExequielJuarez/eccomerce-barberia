@@ -1,0 +1,14 @@
+.pedidos-lista { display: grid; gap: 12px; }
+.pedido { padding: 0; gap: 0; }
+.pedido__cab { display: grid; grid-template-columns: 130px minmax(0, 1fr) auto auto auto; gap: 18px; align-items: center; padding: 16px 20px; }
+.pedido__id { display: grid; } .pedido__id strong { font-size: 18px; line-height: 1; } .pedido__id small, .pedido__cliente small { color: var(--apagado); font-size: 12px; }
+.pedido__cliente { display: grid; min-width: 0; } .pedido__cliente small { overflow: hidden; text-overflow: ellipsis; }
+.pedido__cuerpo { padding: 0 20px 20px; display: grid; gap: 18px; border-top: 1px solid var(--linea); padding-top: 18px; }
+.pedido__items { display: grid; gap: 8px; }
+.pedido__items li { display: grid; grid-template-columns: auto 1fr auto auto; gap: 8px; align-items: baseline; font-size: 14px; }
+.pedido__items small { color: var(--apagado); } .pedido__items .num { margin-left: 16px; font-weight: 800; }
+.pedido__info { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; font-size: 14px; }
+.pedido__info p { margin-top: 4px; }
+.pedido__pie { display: flex; justify-content: space-between; align-items: flex-end; gap: 14px; flex-wrap: wrap; }
+.pedido__estado { display: grid; gap: 6px; }
+@media (max-width: 900px) { .pedido__cab { grid-template-columns: 1fr auto; } .pedido__info { grid-template-columns: 1fr; } }

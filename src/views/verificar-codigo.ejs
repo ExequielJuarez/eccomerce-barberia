@@ -1,0 +1,35 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+<%
+  const titulos = { login: 'Revisá tu email', registro: 'Confirmá tu email', recuperar: 'Revisá tu email' };
+%>
+<section class="acceso">
+  <%- include('partials/acceso-marca', { frase: 'Ya *casi estás*.' }) %>
+  <div class="acceso__panel">
+    <div class="acceso__form">
+      <p class="etiqueta-seccion">Verificación</p>
+      <h1 class="acceso__titulo titulo"><%= titulos[motivo] || 'Ingresá el código' %></h1>
+      <p class="apagado">Mandamos un código de 6 números a <strong class="texto-papel"><%= emailOculto %></strong>. Vence en <%= venceMin %> minutos.</p>
+
+      <% if (codigoDemo) { %><div class="aviso aviso--info">Modo demo: tu código es <strong class="resaltado codigo-demo"><%= codigoDemo %></strong></div><% } %>
+      <% if (errorGeneral) { %><div class="aviso aviso--error" role="alert"><%= errorGeneral %></div><% } %>
+
+      <form action="/verificar" method="POST" class="acceso__campos" id="formCodigo">
+        <div class="campo">
+          <label for="codigo">Código</label>
+          <input class="codigo__input" type="text" id="codigo" name="codigo" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="one-time-code" placeholder="000000" required autofocus>
+        </div>
+        <button type="submit" class="btn btn--volt btn--bloque">Confirmar</button>
+      </form>
+
+      <form action="/verificar/reenviar" method="POST" class="codigo__reenviar">
+        <button type="submit" class="enlace" id="btnReenviar" data-espera="<%= esperaReenvio %>">Mandar otro código</button>
+      </form>
+      <p class="acceso__pie"><a class="enlace" href="<%= motivo === 'registro' ? '/registro' : '/login' %>">← Usar otro email</a></p>
+    </div>
+  </div>
+</section>
+<%- include('partials/footer') %>
+<script src="/js/verificar-codigo.js"></script>
+</body>
+</html>

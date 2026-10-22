@@ -1,0 +1,57 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+<% const precio = (n) => formatoPrecio(n).replace(',00', ''); const r = resumen; const tarjetaOk = modoPago !== 'desactivado'; %>
+
+<section class="contenedor pagina checkout">
+  <%- include('partials/pasos', { paso: 3 }) %>
+  <h1 class="pagina__titulo titulo">Pago</h1>
+
+  <div class="checkout__grilla">
+    <form action="/checkout/confirmar" method="POST" class="checkout__form" id="formPago">
+      <fieldset class="bloque-form">
+        <legend><span>1</span> Cómo pagás</legend>
+        <div class="opciones-entrega">
+          <% if (tarjetaOk) { %>
+          <label class="opcion">
+            <input type="radio" name="medio" value="tarjeta" <%= r.medioPago === 'tarjeta' ? 'checked' : '' %>>
+            <span><strong>Tarjeta de crédito o débito</strong><small>Hasta <%= r.cuotas %> cuotas · Pagás de forma segura en Mercado Pago<%= modoPago === 'demo' ? ' (modo demo: no se cobra)' : '' %></small></span>
+          </label>
+          <% } %>
+          <label class="opcion">
+            <input type="radio" name="medio" value="transferencia" <%= r.medioPago === 'transferencia' || !tarjetaOk ? 'checked' : '' %>>
+            <span><strong>Transferencia bancaria</strong><small>10% de descuento · Te pasamos los datos al confirmar</small></span>
+            <span class="opcion__extra">−10%</span>
+          </label>
+        </div>
+        <% if (!tarjetaOk) { %><p class="aviso">Por ahora aceptamos solo transferencia. Pronto sumamos tarjetas.</p><% } %>
+        <p class="apagado texto-chico">Reservamos tu pedido por <%= venceHoras %> hs mientras se acredita el pago.</p>
+      </fieldset>
+
+      <fieldset class="bloque-form">
+        <legend><span>2</span> Datos de tu compra</legend>
+        <div class="revision">
+          <div><span>Contacto</span><strong><%= datos.nombre %> <%= datos.apellido %></strong><small><%= datos.email %> · <%= datos.telefono %></small></div>
+          <div>
+            <span><%= datos.entrega === 'retiro' ? 'Retiro' : 'Envío a' %></span>
+            <% if (datos.entrega === 'retiro') { %><strong>Local de <%= tienda.direccion %></strong><% if (tienda.horarios) { %><small><%= tienda.horarios %></small><% } %>
+            <% } else { %><strong><%= datos.calle %> <%= datos.numero %><%= datos.piso ? ', ' + datos.piso : '' %></strong><small><%= datos.ciudad %>, <%= datos.provincia %> (<%= datos.codigoPostal %>)</small><% } %>
+          </div>
+          <a href="/checkout/datos" class="enlace">Editar</a>
+        </div>
+      </fieldset>
+
+      <div class="checkout__acciones">
+        <a href="/checkout/datos" class="btn btn--linea">Volver</a>
+        <button type="submit" class="btn btn--volt" id="btnConfirmar">Confirmar y pagar <%= precio(r.total) %></button>
+      </div>
+      <p class="checkout__legal">Al confirmar aceptás los <a href="/terminos" target="_blank" class="enlace">términos y condiciones</a> y la <a href="/privacidad" target="_blank" class="enlace">política de privacidad</a>.</p>
+    </form>
+
+    <%- include('partials/resumen-pedido', { resumen }) %>
+  </div>
+</section>
+
+<%- include('partials/footer') %>
+<script src="/js/checkout-pago.js"></script>
+</body>
+</html>

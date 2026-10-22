@@ -1,0 +1,5 @@
+.pagina__titulo sup { font-family: var(--ff-texto); font-size: clamp(14px, 1.6vw, 22px); font-weight: 800; vertical-align: top; position: relative; top: 0.6em; margin-left: 0.4em; padding: 4px 10px; background: var(--oro); color: var(--tinta); }
+.fav-grilla { margin-top: 40px; }
+.tarjeta.sale { opacity: 0; transform: scale(0.94); transition: opacity 0.3s, transform 0.3s; }
+.carrito-vacio { display: grid; justify-items: start; gap: 14px; margin-block: 40px 60px; }
+.vacio__titulo { font-size: clamp(29px, 9vw, 72px); }

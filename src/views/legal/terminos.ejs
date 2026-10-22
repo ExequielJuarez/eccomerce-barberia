@@ -1,0 +1,56 @@
+<p>Estos términos regulan el uso de <strong><%= tienda.web || 'este sitio' %></strong> y las compras que hacés en él. Al navegar, crear una cuenta o comprar, aceptás estas condiciones.</p>
+
+<h2 id="quienes-somos">1. Quiénes somos</h2>
+<ul>
+  <li><strong>Nombre comercial:</strong> <%= tienda.nombre %><%= tienda.usuario ? ' (' + tienda.usuario + ' en Instagram)' : '' %></li>
+  <li><strong>Titular / Razón social:</strong> <%- d(tienda.razonSocial, 'TIENDA_RAZON_SOCIAL') %></li>
+  <li><strong>CUIT:</strong> <%- d(tienda.cuit, 'TIENDA_CUIT') %></li>
+  <li><strong>Local y domicilio:</strong> <%= tienda.direccion %></li>
+  <% if (tienda.horarios) { %><li><strong>Horarios:</strong> <%= tienda.horarios %></li><% } %>
+  <li><strong>Email:</strong> <%- d(tienda.email, 'TIENDA_EMAIL') %></li>
+</ul>
+
+<h2 id="cuenta">2. Cuenta de usuario</h2>
+<ul>
+  <li>Podés comprar como invitado o con una cuenta. Con la cuenta seguís tus pedidos y comprás más rápido.</li>
+  <li>Tenés que ser mayor de 18 años o contar con autorización de tus padres o tutores.</li>
+  <li>Los datos que cargues tienen que ser verdaderos. Sos responsable de cuidar tu contraseña.</li>
+  <li>Podemos suspender cuentas usadas de forma fraudulenta o que incumplan estos términos.</li>
+</ul>
+
+<h2 id="productos">3. Productos y turnos</h2>
+<ul>
+  <li>Las fotos son ilustrativas. El color puede verse distinto según la pantalla y los accesorios incluidos pueden variar según el modelo y el lote del fabricante.</li>
+  <li>Cada ficha detalla las características del producto. Si tenés dudas sobre compatibilidad o uso, escribinos antes de comprar.</li>
+  <li><strong>Turnos:</strong> los turnos se reservan online, sin necesidad de cuenta. Podés cancelarlos desde el link que te damos al reservar. Si no podés asistir, avisá con anticipación para liberar el horario.</li>
+  <li>Las ofertas están sujetas al stock disponible. Si luego de tu compra un producto no estuviera disponible, te avisamos y te devolvemos el dinero completo o te ofrecemos un cambio, a tu elección.</li>
+</ul>
+
+<h2 id="precios">4. Precios</h2>
+<ul>
+  <li>Los precios están en pesos argentinos e incluyen impuestos. Se confirman al finalizar la compra.</li>
+  <li>Los descuentos y cupones no son acumulables salvo que se indique lo contrario. El 10% por transferencia se aplica sobre el total de los productos, luego de cualquier cupón.</li>
+</ul>
+
+<h2 id="pagos">5. Medios de pago</h2>
+<ul>
+  <li><strong>Tarjeta de crédito o débito:</strong> el pago se procesa en Mercado Pago. No almacenamos los datos de tu tarjeta.</li>
+  <li><strong>Transferencia bancaria:</strong> reservamos tu pedido por un plazo limitado. Si no se acredita el pago en ese plazo, el pedido se cancela y el stock vuelve a la tienda.</li>
+  <li>Las cuotas y las promociones dependen de tu banco y de Mercado Pago.</li>
+</ul>
+
+<h2 id="envios">6. Envíos y retiro</h2>
+<ul>
+  <li><strong>Envío a domicilio:</strong> hacemos envíos a todo el país. El costo se calcula en el carrito según tu código postal y es <strong>gratis desde <%= formatoPrecio(150000).replace(',00', '') %></strong> de compra.</li>
+  <li><strong>Retiro en el local:</strong> sin costo, en <%= tienda.direccion %><%= tienda.horarios ? ', en el horario ' + tienda.horarios.toLowerCase() : '' %>. Te avisamos cuando tu pedido esté listo.</li>
+  <li>Los plazos de entrega dependen del correo y de tu zona. Son estimados y no están garantizados.</li>
+</ul>
+
+<h2 id="cambios">7. Cambios, devoluciones y arrepentimiento</h2>
+<p>Tenés derecho a arrepentirte de tu compra dentro de los 10 días corridos. Los detalles están en <a href="/cambios-y-devoluciones">Cambios y devoluciones</a>, y podés usar el <a href="/arrepentimiento">Botón de arrepentimiento</a>.</p>
+
+<h2 id="propiedad">8. Propiedad intelectual</h2>
+<p>El nombre, el logo y el contenido del sitio pertenecen a <%= tienda.nombre %>. No se pueden usar sin autorización.</p>
+
+<h2 id="ley">9. Ley aplicable</h2>
+<p>Rige la ley argentina, en especial la Ley de Defensa del Consumidor (24.240) y el Código Civil y Comercial. Para cualquier conflicto, el consumidor puede elegir la justicia de su domicilio. También podés reclamar en <a href="https://www.argentina.gob.ar/produccion/defensadelconsumidor/formulario" target="_blank" rel="noopener">Defensa de las y los consumidores</a>.</p>

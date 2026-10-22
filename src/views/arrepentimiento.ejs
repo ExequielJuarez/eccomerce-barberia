@@ -1,0 +1,30 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+<% const e = errores; const v = (k) => datos[k] ?? ''; %>
+<section class="contenedor pagina arrep">
+  <p class="etiqueta-seccion">Res. 424/2020</p>
+  <h1 class="pagina__titulo titulo">Botón de arrepentimiento</h1>
+  <p class="pagina__sub">Si te arrepentiste de tu compra podés cancelarla dentro de los 10 días corridos, sin dar explicaciones. Completá el formulario y te damos un código de seguimiento al instante.</p>
+
+  <form action="/arrepentimiento" method="POST" class="checkout__form arrep__form" novalidate>
+    <% if (e.general) { %><div class="aviso aviso--error" role="alert"><%= e.general.msg %></div><% } %>
+    <div class="grilla-form">
+      <%- include('partials/campo', { nombre: 'nombre', etiqueta: 'Nombre y apellido', valor: v('nombre'), errores: e, atributos: 'required' }) %>
+      <%- include('partials/campo', { nombre: 'email', etiqueta: 'Email de la compra', tipo: 'email', valor: v('email'), errores: e, atributos: 'required' }) %>
+      <%- include('partials/campo', { nombre: 'telefono', etiqueta: 'Teléfono (opcional)', tipo: 'tel', valor: v('telefono'), errores: e }) %>
+      <%- include('partials/campo', { nombre: 'numeroPedido', etiqueta: 'Número de pedido', valor: v('numeroPedido'), errores: e, atributos: 'inputmode="numeric" placeholder="Ej: 1024" required' }) %>
+      <div class="campo completo <%= e.motivo ? 'campo--error' : '' %>">
+        <label for="c-motivo">Motivo (opcional)</label>
+        <textarea id="c-motivo" name="motivo" maxlength="500" rows="4"><%= v('motivo') %></textarea>
+        <% if (e.motivo) { %><span class="campo__error"><%= e.motivo.msg %></span><% } %>
+      </div>
+    </div>
+    <label class="tilde <%= e.confirmo ? 'tilde--error' : '' %>"><input type="checkbox" name="confirmo" value="1" <%= datos.confirmo ? 'checked' : '' %>> <span>Confirmo que quiero cancelar esta compra.</span></label>
+    <% if (e.confirmo) { %><span class="campo__error"><%= e.confirmo.msg %></span><% } %>
+    <div><button type="submit" class="btn btn--volt">Enviar solicitud</button></div>
+  </form>
+  <p class="apagado">Más info en <a class="enlace" href="/cambios-y-devoluciones">Cambios y devoluciones</a>.</p>
+</section>
+<%- include('partials/footer') %>
+</body>
+</html>

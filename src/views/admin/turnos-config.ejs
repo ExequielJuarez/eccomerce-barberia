@@ -1,0 +1,113 @@
+<%- include('../partials/head') %>
+<%- include('../partials/admin-inicio') %>
+<%
+  const precio = (n) => formatoPrecio(n).replace(',00', '');
+  const porDia = (d) => horarios.find((h) => h.diaSemana === d);
+  const orden = [1, 2, 3, 4, 5, 6, 0];
+%>
+<nav class="migas"><a href="/admin/turnos">Turnos</a><span>/</span><span aria-current="page">Servicios y horarios</span></nav>
+<div class="adm-cab">
+  <div>
+    <p class="etiqueta-seccion">Configuración</p>
+    <h1 class="adm-titulo titulo">Servicios y horarios</h1>
+  </div>
+</div>
+
+<section class="panel enlace-publico">
+  <header class="panel__cab"><h2>Link para tus clientes</h2></header>
+  <p class="apagado">Compartí este link por WhatsApp, Instagram o donde quieras: lleva directo a la página para sacar turno.</p>
+  <div class="enlace-publico__fila">
+    <input type="text" readonly value="<%= enlace %>" id="enlaceTurnos" aria-label="Link de turnos">
+    <button type="button" class="btn btn--volt" id="copiarEnlace" data-copiar="#enlaceTurnos">Copiar link</button>
+    <a href="/turnos" target="_blank" rel="noopener" class="btn btn--linea">Abrir ↗</a>
+  </div>
+</section>
+
+<section class="panel" id="servicios">
+  <header class="panel__cab"><h2>Servicios</h2><span class="apagado">Lo que el cliente puede reservar</span></header>
+  <ul class="config-lista">
+    <% servicios.forEach((s) => { %>
+      <li class="config-item <%= s.activo ? '' : 'config-item--apagado' %>">
+        <form action="/admin/turnos/servicios/<%= s.id %>?_method=PUT" method="POST" class="config-form">
+          <div class="campo"><label for="s-n-<%= s.id %>">Nombre</label><input id="s-n-<%= s.id %>" name="nombre" value="<%= s.nombre %>" maxlength="80" required></div>
+          <div class="campo"><label for="s-d-<%= s.id %>">Detalle</label><input id="s-d-<%= s.id %>" name="detalle" value="<%= s.detalle || '' %>" maxlength="160"></div>
+          <div class="campo campo--chico"><label for="s-m-<%= s.id %>">Minutos</label><input id="s-m-<%= s.id %>" name="duracion" type="number" min="5" max="480" step="5" value="<%= s.duracion %>" required></div>
+          <div class="campo campo--chico"><label for="s-p-<%= s.id %>">Precio ($)</label><input id="s-p-<%= s.id %>" name="precio" type="number" min="0" step="any" value="<%= s.precio === null ? '' : s.precio %>" placeholder="Opcional"></div>
+          <label class="tilde config-form__activo"><input type="checkbox" name="activo" value="1" <%= s.activo ? 'checked' : '' %>><span>Visible</span></label>
+          <button class="btn btn--volt btn--chico">Guardar</button>
+        </form>
+        <form action="/admin/turnos/servicios/<%= s.id %>?_method=DELETE" method="POST" data-confirmar="¿Eliminar el servicio “<%= s.nombre %>”? Los turnos ya reservados se conservan.">
+          <button class="btn btn--peligro btn--chico">Eliminar</button>
+        </form>
+      </li>
+    <% }) %>
+  </ul>
+  <form action="/admin/turnos/servicios" method="POST" class="config-form config-form--nuevo">
+    <div class="campo"><label for="s-n-nuevo">Nuevo servicio</label><input id="s-n-nuevo" name="nombre" maxlength="80" placeholder="Ej: Color y decoloración" required></div>
+    <div class="campo"><label for="s-d-nuevo">Detalle</label><input id="s-d-nuevo" name="detalle" maxlength="160" placeholder="Opcional"></div>
+    <div class="campo campo--chico"><label for="s-m-nuevo">Minutos</label><input id="s-m-nuevo" name="duracion" type="number" min="5" max="480" step="5" value="30" required></div>
+    <div class="campo campo--chico"><label for="s-p-nuevo">Precio ($)</label><input id="s-p-nuevo" name="precio" type="number" min="0" step="any" placeholder="Opcional"></div>
+    <button class="btn btn--linea btn--chico">Agregar servicio</button>
+  </form>
+</section>
+
+<section class="panel" id="horarios">
+  <header class="panel__cab"><h2>Horarios de atención</h2><span class="apagado">Los turnos se ofrecen solo dentro de estos horarios</span></header>
+  <form action="/admin/turnos/horarios?_method=PUT" method="POST" class="horarios-form">
+    <% orden.forEach((d) => { const h = porDia(d); %>
+      <div class="horario-dia">
+        <label class="tilde"><input type="checkbox" name="abierto_<%= d %>" value="1" <%= h ? 'checked' : '' %>><span><%= dias[d] %></span></label>
+        <input type="time" name="desde_<%= d %>" value="<%= h ? h.desde : '10:00' %>" aria-label="<%= dias[d] %>: abre">
+        <span class="apagado">a</span>
+        <input type="time" name="hasta_<%= d %>" value="<%= h ? h.hasta : '20:00' %>" aria-label="<%= dias[d] %>: cierra">
+      </div>
+    <% }) %>
+    <button class="btn btn--volt">Guardar horarios</button>
+  </form>
+</section>
+
+<section class="panel" id="equipo">
+  <header class="panel__cab"><h2>Equipo</h2><span class="apagado">Cada profesional tiene su propia agenda. Si hay más de uno, el cliente puede elegir.</span></header>
+  <ul class="config-lista">
+    <% barberos.forEach((b) => { %>
+      <li class="config-item <%= b.activo ? '' : 'config-item--apagado' %>">
+        <form action="/admin/turnos/equipo/<%= b.id %>?_method=PUT" method="POST" class="config-form">
+          <div class="campo"><label for="b-<%= b.id %>">Nombre</label><input id="b-<%= b.id %>" name="nombre" value="<%= b.nombre %>" maxlength="60" required></div>
+          <label class="tilde config-form__activo"><input type="checkbox" name="activo" value="1" <%= b.activo ? 'checked' : '' %>><span>Atiende</span></label>
+          <button class="btn btn--volt btn--chico">Guardar</button>
+        </form>
+        <form action="/admin/turnos/equipo/<%= b.id %>?_method=DELETE" method="POST" data-confirmar="¿Eliminar a <%= b.nombre %> del equipo?">
+          <button class="btn btn--peligro btn--chico">Eliminar</button>
+        </form>
+      </li>
+    <% }) %>
+  </ul>
+  <form action="/admin/turnos/equipo" method="POST" class="config-form config-form--nuevo">
+    <div class="campo"><label for="b-nuevo">Nuevo profesional</label><input id="b-nuevo" name="nombre" maxlength="60" placeholder="Nombre" required></div>
+    <button class="btn btn--linea btn--chico">Agregar</button>
+  </form>
+</section>
+
+<section class="panel" id="cierres">
+  <header class="panel__cab"><h2>Días cerrados</h2><span class="apagado">Feriados, vacaciones o cualquier día sin atención</span></header>
+  <% if (bloqueos.length) { %>
+    <ul class="config-lista">
+      <% bloqueos.forEach((b) => { %>
+        <li class="config-item">
+          <p><strong><%= b.fecha.split('-').reverse().join('/') %></strong> <span class="apagado"><%= b.motivo || '' %></span></p>
+          <form action="/admin/turnos/cierres/<%= b.id %>?_method=DELETE" method="POST"><button class="btn btn--linea btn--chico">Reabrir</button></form>
+        </li>
+      <% }) %>
+    </ul>
+  <% } %>
+  <form action="/admin/turnos/cierres" method="POST" class="config-form config-form--nuevo">
+    <div class="campo campo--chico"><label for="c-fecha">Fecha</label><input id="c-fecha" type="date" name="fecha" min="<%= hoy %>" required></div>
+    <div class="campo"><label for="c-motivo">Motivo</label><input id="c-motivo" name="motivo" maxlength="80" placeholder="Opcional"></div>
+    <button class="btn btn--linea btn--chico">Cerrar ese día</button>
+  </form>
+</section>
+
+<%- include('../partials/admin-fin') %>
+<script src="/js/admin-turnos.js"></script>
+</body>
+</html>
