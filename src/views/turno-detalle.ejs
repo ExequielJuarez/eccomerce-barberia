@@ -40,8 +40,9 @@
       <div><dt>Hora</dt><dd><%= turno.inicio %> hs</dd></div>
       <div><dt>Servicio</dt><dd><%= turno.servicio %></dd></div>
       <div><dt>Profesional</dt><dd><%= turno.barbero %></dd></div>
+      <% if (turno.sucursal) { %><div><dt>Sucursal</dt><dd><%= turno.sucursal %></dd></div><% } %>
       <div><dt>A nombre de</dt><dd><%= turno.cliente %></dd></div>
-      <div><dt>Dónde</dt><dd><%= tienda.direccion %></dd></div>
+      <div><dt>Dónde</dt><dd><%= direccion %></dd></div>
     </dl>
     <div class="ticket__acciones">
       <% if (whatsapp) { %><a href="<%= whatsapp %>" target="_blank" rel="noopener" class="btn btn--volt">Avisar por WhatsApp</a><% } %>

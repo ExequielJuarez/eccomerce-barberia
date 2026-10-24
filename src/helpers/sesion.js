@@ -21,7 +21,8 @@ function iniciarSesion(req, res, usuario, { recordar = false, volver = "/", mens
     }
     if (recordar) req.session.cookie.maxAge = RECORDAR_MS;
     req.session.flash = mensaje || `¡Hola, ${usuario.nombre}! Iniciaste sesión.`;
-    req.session.save(() => res.redirect(destinoSeguro(volver)));
+    const destino = destinoSeguro(volver);
+    req.session.save(() => res.redirect(usuario.rol === "barbero" && destino === "/" ? "/barbero" : destino));
   });
 }
 

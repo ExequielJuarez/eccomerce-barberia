@@ -24,13 +24,20 @@ const quiereJson = (req) => req.accepts(["html", "json"]) === "json";
 
 module.exports = {
   async ver(req, res) {
-    const [servicios, barberos, dias] = await Promise.all([turnos.servicios(), turnos.barberos(), turnos.diasDisponibles()]);
+    const [servicios, sucursales, barberos, dias] = await Promise.all([
+      turnos.servicios(),
+      turnos.sucursales(),
+      turnos.barberos(),
+      turnos.diasDisponibles(),
+    ]);
     res.render("turnos", {
       titulo: "Sacá tu turno",
-      estilo: "turnos",
+      estilo: ["turnos", "turnos-hero"],
       navActivo: "turnos",
-      descripcion: "Reservá tu turno online en Barba Black: elegí el servicio, el día y el horario.",
+      descripcion: "Reservá tu turno online en La Vecindad Barber Shop: elegí sucursal, peluquero, día y horario.",
+      hero: true,
       servicios,
+      sucursales,
       barberos,
       dias,
     });
@@ -41,6 +48,7 @@ module.exports = {
       servicioId: req.query.servicio,
       fecha: String(req.query.fecha || ""),
       barberoId: req.query.barbero || null,
+      sucursalId: req.query.sucursal || null,
     });
     res.status(r.ok ? 200 : 400).json(r);
   },
@@ -49,6 +57,7 @@ module.exports = {
     const r = await turnos.crear({
       servicioId: req.body.servicio,
       barberoId: req.body.barbero || null,
+      sucursalId: req.body.sucursal || null,
       fecha: String(req.body.fecha || ""),
       hora: String(req.body.hora || ""),
       cliente: req.body.cliente,
@@ -67,12 +76,14 @@ module.exports = {
     const turno = await turnos.porCodigo(req.params.codigo);
     if (!turno) return next();
     const t = req.app.locals.tienda;
-    const texto = `Hola Barba Black! Reservé un turno (${turno.codigo}): ${turno.servicio}, ${turno.fechaTexto} a las ${turno.inicio} hs. A nombre de ${turno.cliente}.`;
+    const sucursal = turno.sucursalId ? (await turnos.sucursales({ soloActivas: false })).find((s) => s.id === turno.sucursalId) : null;
+    const texto = `Hola La Vecindad! Reservé un turno (${turno.codigo}): ${turno.servicio}, ${turno.fechaTexto} a las ${turno.inicio} hs. A nombre de ${turno.cliente}.`;
     res.render("turno-detalle", {
       titulo: `Turno ${turno.codigo}`,
       estilo: "turnos",
       navActivo: "turnos",
       turno,
+      direccion: sucursal?.direccion || t.direccion,
       whatsapp: t.whatsapp ? `${t.whatsapp}?text=${encodeURIComponent(texto)}` : "",
       puedeCancelar: ["reservado", "confirmado"].includes(turno.estado),
     });

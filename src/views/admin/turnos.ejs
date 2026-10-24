@@ -5,29 +5,31 @@
   const clasesEstado = { reservado: 'estado--alerta', confirmado: 'estado--curso', completado: 'estado--ok', cancelado: 'estado--cancelado', ausente: 'estado--cancelado' };
   const esHoy = fecha === hoy;
 %>
-<div data-agenda-viva>
+<% const r = panel.esBarbero; %>
+<div data-agenda-viva data-agenda-url="<%= panel.agenda %>" data-eventos-url="<%= panel.eventos %>">
 <div class="adm-cab">
   <div>
-    <p class="etiqueta-seccion">Agenda</p>
-    <h1 class="adm-titulo titulo">Turnos</h1>
+    <p class="etiqueta-seccion"><%= r ? 'Hola, ' + usuario.nombre + (perfil && perfil.sucursal ? ' · ' + perfil.sucursal : '') : 'Agenda' %></p>
+    <h1 class="adm-titulo titulo"><%= r ? 'Mis turnos' : 'Turnos' %></h1>
   </div>
   <div class="agenda-acciones">
-    <a href="/admin/turnos/config" class="btn btn--linea btn--chico">Servicios y horarios</a>
+    <% if (!r) { %><a href="/admin/equipo" class="btn btn--linea btn--chico">Equipo</a>
+    <a href="/admin/turnos/config" class="btn btn--linea btn--chico">Servicios y horarios</a><% } %>
     <a href="/turnos" target="_blank" rel="noopener" class="btn btn--volt btn--chico">Ver página pública ↗</a>
   </div>
 </div>
 
 <nav class="agenda-nav" aria-label="Día de la agenda">
-  <a href="/admin/turnos?fecha=<%= anterior %>" class="icono-btn" aria-label="Día anterior">◀</a>
+  <a href="<%= panel.agenda %>?fecha=<%= anterior %>" class="icono-btn" aria-label="Día anterior">◀</a>
   <div class="agenda-nav__dia">
     <strong class="titulo"><%= esHoy ? 'Hoy' : fechaTexto %></strong>
     <% if (esHoy) { %><small class="apagado"><%= fechaTexto %></small><% } %>
   </div>
-  <a href="/admin/turnos?fecha=<%= siguiente %>" class="icono-btn" aria-label="Día siguiente">▶</a>
-  <form action="/admin/turnos" method="GET" class="agenda-nav__fecha">
+  <a href="<%= panel.agenda %>?fecha=<%= siguiente %>" class="icono-btn" aria-label="Día siguiente">▶</a>
+  <form action="<%= panel.agenda %>" method="GET" class="agenda-nav__fecha">
     <input type="date" name="fecha" value="<%= fecha %>" aria-label="Ir a una fecha" data-fecha-agenda>
   </form>
-  <% if (!esHoy) { %><a href="/admin/turnos" class="btn btn--linea btn--chico">Ir a hoy</a><% } %>
+  <% if (!esHoy) { %><a href="<%= panel.agenda %>" class="btn btn--linea btn--chico">Ir a hoy</a><% } %>
 </nav>
 
 <section class="kpis">
@@ -49,9 +51,9 @@
           <div class="turno-fila__hora"><strong><%= t.inicio %></strong><small><%= t.fin %></small></div>
           <div class="turno-fila__datos">
             <strong><%= t.cliente %></strong>
-            <span><%= t.servicio %> · <%= t.barbero %></span>
+            <span><%= t.servicio %><%= r ? '' : ' · ' + t.barbero %><%= t.sucursal ? ' · ' + t.sucursal : '' %></span>
             <% if (t.notas) { %><small class="apagado">“<%= t.notas %>”</small><% } %>
-            <a class="enlace-suave" href="<%= whatsapp(t.telefono, 'Hola ' + t.cliente.split(' ')[0] + '! Te escribimos de Barba Black por tu turno del ' + t.fechaTexto + ' a las ' + t.inicio + ' hs.') %>" target="_blank" rel="noopener"><%= t.telefono %> ↗</a>
+            <a class="enlace-suave" href="<%= whatsapp(t.telefono, 'Hola ' + t.cliente.split(' ')[0] + '! Te escribimos de La Vecindad por tu turno del ' + t.fechaTexto + ' a las ' + t.inicio + ' hs.') %>" target="_blank" rel="noopener"><%= t.telefono %> ↗</a>
           </div>
           <div class="turno-fila__estado">
             <span class="estado <%= clasesEstado[t.estado] %>"><%= nombresEstado[t.estado] %></span>
@@ -66,7 +68,7 @@
               cancelado: [['reservado', 'Reactivar', 'btn--linea']],
             }[t.estado]; %>
             <% acciones.forEach(([estado, texto, clase]) => { %>
-              <form action="/admin/turnos/<%= t.id %>/estado?_method=PATCH" method="POST"<%- estado === 'cancelado' ? ` data-confirmar="¿Cancelar el turno de ${t.cliente}?"` : '' %>>
+              <form action="<%= panel.estado(t.id) %>?_method=PATCH" method="POST"<%- estado === 'cancelado' ? ` data-confirmar="¿Cancelar el turno de ${t.cliente}?"` : '' %>>
                 <input type="hidden" name="estado" value="<%= estado %>">
                 <button class="btn btn--chico <%= clase %>"><%= texto %></button>
               </form>
@@ -83,7 +85,7 @@
     <ul class="proximos">
       <% proximos.forEach((t) => { %>
         <li>
-          <a href="/admin/turnos?fecha=<%= t.fecha %>">
+          <a href="<%= panel.agenda %>?fecha=<%= t.fecha %>">
             <strong><%= t.inicio %></strong>
             <span><%= t.cliente %><small class="apagado"><%= t.fechaTexto %> · <%= t.servicio %></small></span>
           </a>

@@ -77,7 +77,10 @@ function planoTurno(t) {
     id: x.id,
     codigo: x.codigo,
     servicio: x.servicio,
+    barberoId: x.barberoId,
     barbero: x.barbero,
+    sucursalId: x.sucursalId,
+    sucursal: x.sucursal,
     cliente: x.cliente,
     telefono: x.telefono,
     notas: x.notas,
@@ -99,8 +102,15 @@ async function servicios({ soloActivos = true } = {}) {
   return filas.map((s) => ({ ...s, precio: s.precio === null ? null : Number(s.precio) }));
 }
 
-async function barberos({ soloActivos = true } = {}) {
-  return db.Barbero.findAll({ where: soloActivos ? { activo: true } : {}, order: [["orden", "ASC"], ["id", "ASC"]], raw: true });
+async function sucursales({ soloActivas = true } = {}) {
+  return db.Sucursal.findAll({ where: soloActivas ? { activo: true } : {}, order: [["orden", "ASC"], ["id", "ASC"]], raw: true });
+}
+
+async function barberos({ soloActivos = true, sucursalId = null } = {}) {
+  const where = {};
+  if (soloActivos) where.activo = true;
+  if (sucursalId) where.sucursalId = Number(sucursalId);
+  return db.Barbero.findAll({ where, order: [["orden", "ASC"], ["id", "ASC"]], raw: true });
 }
 
 async function horarios() {
@@ -181,13 +191,13 @@ function calcularSlots({ rangos, hoy, fecha, duracion, barberosIds, ocupados }) 
   return slots;
 }
 
-async function disponibilidad({ servicioId, fecha, barberoId = null }) {
+async function disponibilidad({ servicioId, fecha, barberoId = null, sucursalId = null }) {
   const servicio = await db.ServicioTurno.findOne({ where: { id: Number(servicioId) || 0, activo: true }, raw: true });
   if (!servicio) return { ok: false, mensaje: "Elegí un servicio válido" };
   const reglas = await reglasDelDia(fecha);
   if (reglas.error) return { ok: true, slots: [], aviso: reglas.error };
 
-  let lista = await barberos();
+  let lista = await barberos({ sucursalId });
   if (barberoId) lista = lista.filter((b) => b.id === Number(barberoId));
   if (!lista.length) return { ok: false, mensaje: "No hay profesionales disponibles" };
 
@@ -208,7 +218,7 @@ function nuevoCodigo() {
   return [...bytes].map((b) => ALFABETO[b % ALFABETO.length]).join("");
 }
 
-async function crear({ servicioId, barberoId = null, fecha, hora, cliente, telefono, notas = "" }) {
+async function crear({ servicioId, sucursalId = null, barberoId = null, fecha, hora, cliente, telefono, notas = "" }) {
   const tel = limpiarTelefono(telefono);
   if (!tel) return { ok: false, mensaje: "Ingresá un teléfono válido, con característica" };
   const nombre = String(cliente || "").trim().replace(/\s+/g, " ");
@@ -227,7 +237,10 @@ async function crear({ servicioId, barberoId = null, fecha, hora, cliente, telef
     return { ok: false, mensaje: "Ya tenés turnos reservados. Cancelá uno para sacar otro." };
   }
 
-  let lista = await barberos();
+  const sucursal = sucursalId ? await db.Sucursal.findOne({ where: { id: Number(sucursalId) || 0, activo: true }, raw: true }) : null;
+  if (sucursalId && !sucursal) return { ok: false, mensaje: "Elegí una sucursal válida" };
+
+  let lista = await barberos({ sucursalId: sucursal?.id });
   if (barberoId) lista = lista.filter((b) => b.id === Number(barberoId));
   if (!lista.length) return { ok: false, mensaje: "No hay profesionales disponibles" };
 
@@ -254,6 +267,8 @@ async function crear({ servicioId, barberoId = null, fecha, hora, cliente, telef
             servicioId: servicio.id,
             barberoId: elegido.id,
             servicio: servicio.nombre,
+            sucursalId: sucursal?.id || elegido.sucursalId || null,
+            sucursal: sucursal?.nombre || null,
             barbero: elegido.nombre,
             cliente: nombre.slice(0, 90),
             telefono: tel,
@@ -276,14 +291,16 @@ async function crear({ servicioId, barberoId = null, fecha, hora, cliente, telef
 
   const resumen = planoTurno(turno);
   eventos.emit("cambio", resumen);
-  notificaciones
-    .crear({
-      tipo: "turno",
-      titulo: `Turno nuevo · ${resumen.inicio} hs`,
-      mensaje: `${resumen.cliente} · ${resumen.servicio} · ${resumen.fechaTexto}`,
-      url: `/admin/turnos?fecha=${resumen.fecha}`,
-    })
-    .catch(() => {});
+  const aviso = {
+    tipo: "turno",
+    titulo: `Turno nuevo · ${resumen.inicio} hs`,
+    mensaje: `${resumen.cliente} · ${resumen.servicio} · ${resumen.barbero}${resumen.sucursal ? ` (${resumen.sucursal})` : ""} · ${resumen.fechaTexto}`,
+  };
+  notificaciones.crear({ ...aviso, url: `/admin/turnos?fecha=${resumen.fecha}` }).catch(() => {});
+  const barbero = resumen.barberoId && (await db.Barbero.findByPk(resumen.barberoId, { attributes: ["usuarioId"], raw: true }));
+  if (barbero?.usuarioId) {
+    notificaciones.crear({ ...aviso, usuarioId: barbero.usuarioId, url: `/barbero?fecha=${resumen.fecha}` }).catch(() => {});
+  }
   return { ok: true, turno: resumen };
 }
 
@@ -307,16 +324,17 @@ async function cancelarPorCodigo(codigo) {
   return { ok: true, turno: resumen };
 }
 
-async function agenda(fecha) {
-  const filas = await db.Turno.findAll({ where: { fecha }, order: [["inicio", "ASC"], ["id", "ASC"]] });
+async function agenda(fecha, { barberoId = null } = {}) {
+  const filas = await db.Turno.findAll({ where: { fecha, ...(barberoId ? { barberoId } : {}) }, order: [["inicio", "ASC"], ["id", "ASC"]] });
   return filas.map(planoTurno);
 }
 
-async function proximos(limite = 8) {
+async function proximos(limite = 8, { barberoId = null } = {}) {
   const reloj = ahora();
   const filas = await db.Turno.findAll({
     where: {
       estado: { [Op.in]: ["reservado", "confirmado"] },
+      ...(barberoId ? { barberoId } : {}),
       [Op.or]: [{ fecha: { [Op.gt]: reloj.fecha } }, { fecha: reloj.fecha, inicio: { [Op.gte]: aHora(reloj.minutos) } }],
     },
     order: [["fecha", "ASC"], ["inicio", "ASC"]],
@@ -325,8 +343,8 @@ async function proximos(limite = 8) {
   return filas.map(planoTurno);
 }
 
-async function resumenDia(fecha) {
-  const lista = await agenda(fecha);
+async function resumenDia(fecha, opciones) {
+  const lista = await agenda(fecha, opciones);
   const cuenta = (e) => lista.filter((t) => t.estado === e).length;
   return {
     total: lista.filter((t) => t.estado !== "cancelado").length,
@@ -337,15 +355,15 @@ async function resumenDia(fecha) {
   };
 }
 
-async function pendientesHoy() {
+async function pendientesHoy({ barberoId = null } = {}) {
   const hoy = ahora().fecha;
-  return db.Turno.count({ where: { fecha: { [Op.gte]: hoy }, estado: "reservado" } });
+  return db.Turno.count({ where: { fecha: { [Op.gte]: hoy }, estado: "reservado", ...(barberoId ? { barberoId } : {}) } });
 }
 
-async function cambiarEstado(id, estado) {
+async function cambiarEstado(id, estado, { barberoId = null } = {}) {
   if (!ESTADOS.includes(estado)) return null;
   const turno = await db.Turno.findByPk(id);
-  if (!turno) return null;
+  if (!turno || (barberoId && turno.barberoId !== barberoId)) return null;
   await turno.update({ estado });
   const resumen = planoTurno(turno);
   eventos.emit("cambio", resumen);
@@ -374,27 +392,6 @@ async function guardarServicio(id, datos) {
 
 async function borrarServicio(id) {
   await db.ServicioTurno.destroy({ where: { id } });
-}
-
-async function guardarBarbero(id, datos) {
-  const nombre = String(datos.nombre || "").trim().slice(0, 60);
-  if (nombre.length < 2) return { ok: false, mensaje: "Ingresá un nombre" };
-  if (id) {
-    const b = await db.Barbero.findByPk(id);
-    if (!b) return { ok: false, mensaje: "No existe ese profesional" };
-    await b.update({ nombre, activo: datos.activo === "1" });
-    return { ok: true };
-  }
-  const orden = ((await db.Barbero.max("orden")) || 0) + 1;
-  await db.Barbero.create({ nombre, activo: true, orden });
-  return { ok: true };
-}
-
-async function borrarBarbero(id) {
-  const activos = await db.Barbero.count({ where: { activo: true, id: { [Op.ne]: id } } });
-  if (!activos) return { ok: false, mensaje: "Tiene que quedar al menos un profesional activo" };
-  await db.Barbero.destroy({ where: { id } });
-  return { ok: true };
 }
 
 async function guardarHorarios(cuerpo) {
@@ -436,6 +433,7 @@ module.exports = {
   etiquetaFecha,
   enlaceWhatsapp,
   servicios,
+  sucursales,
   barberos,
   horarios,
   bloqueos,
@@ -451,8 +449,6 @@ module.exports = {
   cambiarEstado,
   guardarServicio,
   borrarServicio,
-  guardarBarbero,
-  borrarBarbero,
   guardarHorarios,
   crearBloqueo,
   borrarBloqueo,

@@ -67,25 +67,8 @@
 </section>
 
 <section class="panel" id="equipo">
-  <header class="panel__cab"><h2>Equipo</h2><span class="apagado">Cada profesional tiene su propia agenda. Si hay más de uno, el cliente puede elegir.</span></header>
-  <ul class="config-lista">
-    <% barberos.forEach((b) => { %>
-      <li class="config-item <%= b.activo ? '' : 'config-item--apagado' %>">
-        <form action="/admin/turnos/equipo/<%= b.id %>?_method=PUT" method="POST" class="config-form">
-          <div class="campo"><label for="b-<%= b.id %>">Nombre</label><input id="b-<%= b.id %>" name="nombre" value="<%= b.nombre %>" maxlength="60" required></div>
-          <label class="tilde config-form__activo"><input type="checkbox" name="activo" value="1" <%= b.activo ? 'checked' : '' %>><span>Atiende</span></label>
-          <button class="btn btn--volt btn--chico">Guardar</button>
-        </form>
-        <form action="/admin/turnos/equipo/<%= b.id %>?_method=DELETE" method="POST" data-confirmar="¿Eliminar a <%= b.nombre %> del equipo?">
-          <button class="btn btn--peligro btn--chico">Eliminar</button>
-        </form>
-      </li>
-    <% }) %>
-  </ul>
-  <form action="/admin/turnos/equipo" method="POST" class="config-form config-form--nuevo">
-    <div class="campo"><label for="b-nuevo">Nuevo profesional</label><input id="b-nuevo" name="nombre" maxlength="60" placeholder="Nombre" required></div>
-    <button class="btn btn--linea btn--chico">Agregar</button>
-  </form>
+  <header class="panel__cab"><h2>Equipo</h2><span class="apagado">Los peluqueros, sus sucursales, fotos y usuarios se administran desde su propia sección.</span></header>
+  <a href="/admin/equipo" class="btn btn--linea btn--chico">Administrar equipo →</a>
 </section>
 
 <section class="panel" id="cierres">

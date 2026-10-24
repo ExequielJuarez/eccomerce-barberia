@@ -9,6 +9,7 @@ module.exports = (sequelize, DataTypes) => {
       url: DataTypes.STRING(255),
       pedidoId: DataTypes.INTEGER.UNSIGNED,
       productoId: DataTypes.INTEGER.UNSIGNED,
+      usuarioId: DataTypes.INTEGER.UNSIGNED,
       leida: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
     },
     { tableName: "notificaciones", updatedAt: false }

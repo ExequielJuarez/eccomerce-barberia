@@ -12,6 +12,7 @@ DROP TABLE IF EXISTS bloqueos_turno;
 DROP TABLE IF EXISTS horarios_turno;
 DROP TABLE IF EXISTS servicios_turno;
 DROP TABLE IF EXISTS barberos;
+DROP TABLE IF EXISTS sucursales;
 DROP TABLE IF EXISTS contenido_inicio;
 DROP TABLE IF EXISTS arrepentimientos;
 DROP TABLE IF EXISTS notificaciones;
@@ -37,7 +38,7 @@ CREATE TABLE usuarios (
   telefono        VARCHAR(20)  NULL,
   password        CHAR(60)     NULL,
   google_id       VARCHAR(64)  NULL,
-  rol             ENUM('cliente', 'admin', 'superadmin') NOT NULL DEFAULT 'cliente',
+  rol             ENUM('cliente', 'admin', 'superadmin', 'barbero') NOT NULL DEFAULT 'cliente',
   newsletter      TINYINT(1)   NOT NULL DEFAULT 0,
   dni             VARCHAR(8)   NULL,
   calle           VARCHAR(90)  NULL,
@@ -244,10 +245,12 @@ CREATE TABLE notificaciones (
   url         VARCHAR(255)  NULL,
   pedido_id   INT UNSIGNED  NULL,
   producto_id INT UNSIGNED  NULL,
+  usuario_id  INT UNSIGNED  NULL,
   leida       TINYINT(1)    NOT NULL DEFAULT 0,
   creado_en   DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (id),
   KEY idx_notificaciones_leida (leida, creado_en),
+  KEY idx_notificaciones_usuario (usuario_id, leida),
   CONSTRAINT fk_notificaciones_pedido FOREIGN KEY (pedido_id) REFERENCES pedidos (id)
     ON UPDATE CASCADE ON DELETE SET NULL,
   CONSTRAINT fk_notificaciones_producto FOREIGN KEY (producto_id) REFERENCES productos (id)
@@ -282,12 +285,30 @@ CREATE TABLE arrepentimientos (
   KEY idx_arrepentimientos_estado (estado, creado_en)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE barberos (
-  id      SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
-  nombre  VARCHAR(60)       NOT NULL,
-  activo  TINYINT(1)        NOT NULL DEFAULT 1,
-  orden   SMALLINT UNSIGNED NOT NULL DEFAULT 0,
+CREATE TABLE sucursales (
+  id         SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  nombre     VARCHAR(60)       NOT NULL,
+  direccion  VARCHAR(120)      NOT NULL,
+  activo     TINYINT(1)        NOT NULL DEFAULT 1,
+  orden      SMALLINT UNSIGNED NOT NULL DEFAULT 0,
   PRIMARY KEY (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE barberos (
+  id           SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  nombre       VARCHAR(60)       NOT NULL,
+  sucursal_id  SMALLINT UNSIGNED NULL,
+  usuario_id   INT UNSIGNED      NULL,
+  foto         VARCHAR(255)      NULL,
+  activo       TINYINT(1)        NOT NULL DEFAULT 1,
+  orden        SMALLINT UNSIGNED NOT NULL DEFAULT 0,
+  PRIMARY KEY (id),
+  UNIQUE KEY uq_barberos_usuario (usuario_id),
+  KEY idx_barberos_sucursal (sucursal_id),
+  CONSTRAINT fk_barberos_sucursal FOREIGN KEY (sucursal_id) REFERENCES sucursales (id)
+    ON UPDATE CASCADE ON DELETE SET NULL,
+  CONSTRAINT fk_barberos_usuario FOREIGN KEY (usuario_id) REFERENCES usuarios (id)
+    ON UPDATE CASCADE ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE servicios_turno (
@@ -326,8 +347,10 @@ CREATE TABLE turnos (
   codigo      VARCHAR(12)       NOT NULL,
   servicio_id SMALLINT UNSIGNED NULL,
   barbero_id  SMALLINT UNSIGNED NULL,
+  sucursal_id SMALLINT UNSIGNED NULL,
   servicio    VARCHAR(80)       NOT NULL,
   barbero     VARCHAR(60)       NOT NULL,
+  sucursal    VARCHAR(60)       NULL,
   cliente     VARCHAR(90)       NOT NULL,
   telefono    VARCHAR(25)       NOT NULL,
   notas       VARCHAR(200)      NULL,
@@ -343,6 +366,8 @@ CREATE TABLE turnos (
   CONSTRAINT fk_turnos_servicio FOREIGN KEY (servicio_id) REFERENCES servicios_turno (id)
     ON UPDATE CASCADE ON DELETE SET NULL,
   CONSTRAINT fk_turnos_barbero FOREIGN KEY (barbero_id) REFERENCES barberos (id)
+    ON UPDATE CASCADE ON DELETE SET NULL,
+  CONSTRAINT fk_turnos_sucursal FOREIGN KEY (sucursal_id) REFERENCES sucursales (id)
     ON UPDATE CASCADE ON DELETE SET NULL,
   CONSTRAINT ck_turnos_rango CHECK (fin > inicio)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

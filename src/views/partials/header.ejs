@@ -21,9 +21,9 @@
       <span class="hamburguesa"></span>
     </button>
 
-    <a href="/" class="marca-link" aria-label="Barba Black — Inicio">
+    <a href="/" class="marca-link" aria-label="La Vecindad — Inicio">
       <%- include('logo') %>
-      <span class="marca-link__texto">Barba <em>Black</em></span>
+      <span class="marca-link__texto">La <em>Vecindad</em></span>
     </a>
 
     <nav class="nav" aria-label="Principal">
@@ -51,6 +51,9 @@
             <p class="cuenta__email"><%= usuarioLocal.email %></p>
             <% if (esAdmin(usuarioLocal)) { %>
               <a href="/admin" class="cuenta__link cuenta__link--admin">Panel de administración →</a>
+            <% } %>
+            <% if (esBarbero(usuarioLocal)) { %>
+              <a href="/barbero" class="cuenta__link cuenta__link--admin">Mis turnos →</a>
             <% } %>
             <a href="/mi-cuenta/pedidos" class="cuenta__link">Mis pedidos</a>
             <a href="/mi-cuenta/datos" class="cuenta__link">Mis datos</a>

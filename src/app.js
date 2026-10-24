@@ -8,6 +8,7 @@ const app = express();
 
 const indexRouter = require("./routes/index.Routes");
 const adminRouter = require("./routes/admin.Routes");
+const barberoRouter = require("./routes/barbero.Routes");
 const db = require("./model/database/models");
 const carritoService = require("./services/carritoService");
 const favoritoService = require("./services/favoritoService");
@@ -17,7 +18,7 @@ const puerto = Number(process.env.PORT) || 3000;
 
 app.use(express.static(path.join(__dirname, "../public")));
 
-app.get("/favicon.ico", (req, res) => res.redirect(301, "/img/marca/logo.png"));
+app.get("/favicon.ico", (req, res) => res.redirect(301, "/img/marca/logo.jpg"));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(methodOverride("_method"));
@@ -86,6 +87,7 @@ app.use(async (req, res, next) => {
 });
 
 app.use("/admin", adminRouter);
+app.use("/barbero", barberoRouter);
 app.use("/", indexRouter);
 
 app.use((req, res) => {

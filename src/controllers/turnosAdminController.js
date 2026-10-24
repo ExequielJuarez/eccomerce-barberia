@@ -8,8 +8,15 @@ async function contexto(req, extra) {
     pedidoService.pendientes(),
     turnos.pendientesHoy(),
   ]);
-  return { usuario: req.session.usuarioLogueado, seccion: "turnos", totalProductos, pedidosPendientes, turnosPendientes, ...extra };
+  return { usuario: req.session.usuarioLogueado, seccion: "turnos", totalProductos, pedidosPendientes, turnosPendientes, panel, ...extra };
 }
+
+const panel = {
+  agenda: "/admin/turnos",
+  eventos: "/admin/turnos/eventos",
+  estado: (id) => `/admin/turnos/${id}/estado`,
+  esBarbero: false,
+};
 
 const volver = (req, res, destino, mensaje) => {
   if (mensaje) req.session.flash = mensaje;
@@ -63,9 +70,8 @@ module.exports = {
   },
 
   async config(req, res) {
-    const [servicios, barberos, horarios, bloqueos] = await Promise.all([
+    const [servicios, horarios, bloqueos] = await Promise.all([
       turnos.servicios({ soloActivos: false }),
-      turnos.barberos({ soloActivos: false }),
       turnos.horarios(),
       turnos.bloqueos(),
     ]);
@@ -77,7 +83,6 @@ module.exports = {
         titulo: "Servicios y horarios",
         estilo: ["admin", "admin-turnos"],
         servicios,
-        barberos,
         horarios,
         bloqueos,
         dias: turnos.DIAS,
@@ -95,16 +100,6 @@ module.exports = {
   async borrarServicio(req, res) {
     await turnos.borrarServicio(req.params.id);
     volver(req, res, "/admin/turnos/config#servicios", "Servicio eliminado.");
-  },
-
-  async guardarBarbero(req, res) {
-    const r = await turnos.guardarBarbero(req.params.id || null, req.body);
-    volver(req, res, "/admin/turnos/config#equipo", r.ok ? "Profesional guardado." : r.mensaje);
-  },
-
-  async borrarBarbero(req, res) {
-    const r = await turnos.borrarBarbero(req.params.id);
-    volver(req, res, "/admin/turnos/config#equipo", r.ok ? "Profesional eliminado." : r.mensaje);
   },
 
   async guardarHorarios(req, res) {

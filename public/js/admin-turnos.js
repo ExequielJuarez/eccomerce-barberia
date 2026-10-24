@@ -16,6 +16,9 @@
 
   if (!$("[data-agenda-viva]") || !("EventSource" in window)) return;
 
+  const raiz = $("[data-agenda-viva]");
+  const rutaAgenda = raiz.dataset.agendaUrl || "/admin/turnos";
+  const rutaEventos = raiz.dataset.eventosUrl || "/admin/turnos/eventos";
   let pendiente;
   const cargar = async (url, { avisar = false, historial = false } = {}) => {
     try {
@@ -37,18 +40,19 @@
   const refrescar = (avisar) => cargar(location.href, { avisar });
 
   document.addEventListener("click", (e) => {
-    const enlace = e.target.closest("[data-agenda-viva] a[href^='/admin/turnos?fecha='], [data-agenda-viva] a[href='/admin/turnos']");
+    const enlace = e.target.closest("[data-agenda-viva] a[href]");
     if (!enlace || e.metaKey || e.ctrlKey || e.shiftKey) return;
+    if (new URL(enlace.href, location.href).pathname !== rutaAgenda) return;
     e.preventDefault();
     cargar(enlace.href, { historial: true });
   });
   document.addEventListener("change", (e) => {
     if (!e.target.matches("[data-fecha-agenda]") || !e.target.value) return;
-    cargar(`/admin/turnos?fecha=${e.target.value}`, { historial: true });
+    cargar(`${rutaAgenda}?fecha=${e.target.value}`, { historial: true });
   });
   window.addEventListener("popstate", () => cargar(location.href));
 
-  const es = new EventSource("/admin/turnos/eventos");
+  const es = new EventSource(rutaEventos);
   es.addEventListener("cambio", () => {
     clearTimeout(pendiente);
     pendiente = setTimeout(() => refrescar(true), 250);

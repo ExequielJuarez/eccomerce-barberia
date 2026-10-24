@@ -1,4 +1,4 @@
-# Barba Black · Tienda y turnos
+# La Vecindad · Tienda y turnos
 
 Tienda online de insumos de peluquería y barbería, con reserva de turnos en un link propio (`/turnos`). Hecha con Node.js, Express, EJS, Sequelize y MySQL, sobre la estructura de `carpeta-base`.
 
@@ -42,3 +42,10 @@ public/
 database/
   schema.sql  datos-prueba.sql  instalar.js
 ```
+
+## Sucursales y peluqueros
+
+- Sucursales: Av. Leopoldo Lugones 5147 y San Ramón Nonato 5708 (tabla `sucursales`).
+- El admin crea, edita y elimina peluqueros desde `/admin/equipo` (nombre, sucursal, foto, email y contraseña). Cada uno entra con su usuario (rol `barbero`) y ve solo sus turnos y notificaciones en `/barbero`.
+- En `/turnos` el cliente elige servicio → sucursal → peluquero (con foto) → día y horario.
+- Bases ya instaladas: ejecutar `database/migracion-peluqueros.sql` una sola vez. Una base nueva (`npm run db:instalar`) ya trae todo, con dos peluqueros de ejemplo (`lucas@lavecindad.com` y `nico@lavecindad.com`, contraseña `Barbero123`).

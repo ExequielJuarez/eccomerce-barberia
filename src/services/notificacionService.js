@@ -15,6 +15,7 @@ function plano(n) {
     titulo: x.titulo,
     mensaje: x.mensaje,
     url: x.url,
+    usuarioId: x.usuarioId || null,
     leida: Boolean(x.leida),
     fecha: x.creado_en,
   };
@@ -61,22 +62,22 @@ async function pagoAprobado(pedido) {
   });
 }
 
-async function listar(limite = 15) {
+async function listar(limite = 15, usuarioId = null) {
   const [filas, noLeidas] = await Promise.all([
-    db.Notificacion.findAll({ order: [["creado_en", "DESC"], ["id", "DESC"]], limit: limite }),
-    db.Notificacion.count({ where: { leida: false } }),
+    db.Notificacion.findAll({ where: { usuarioId }, order: [["creado_en", "DESC"], ["id", "DESC"]], limit: limite }),
+    db.Notificacion.count({ where: { usuarioId, leida: false } }),
   ]);
   return { notificaciones: filas.map(plano), noLeidas };
 }
 
-async function noLeidas() {
-  return db.Notificacion.count({ where: { leida: false } });
+async function noLeidas(usuarioId = null) {
+  return db.Notificacion.count({ where: { usuarioId, leida: false } });
 }
 
-async function marcarLeidas(id = null) {
-  await db.Notificacion.update({ leida: true }, { where: id ? { id } : { leida: false } });
-  const cantidad = await noLeidas();
-  eventos.emit("leidas", { noLeidas: cantidad });
+async function marcarLeidas(id = null, usuarioId = null) {
+  await db.Notificacion.update({ leida: true }, { where: id ? { id, usuarioId } : { usuarioId, leida: false } });
+  const cantidad = await noLeidas(usuarioId);
+  eventos.emit("leidas", { noLeidas: cantidad, usuarioId });
   return cantidad;
 }
 

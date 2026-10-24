@@ -6,8 +6,10 @@ module.exports = (sequelize, DataTypes) => {
       codigo: { type: DataTypes.STRING(12), allowNull: false, unique: true },
       servicioId: DataTypes.SMALLINT.UNSIGNED,
       barberoId: DataTypes.SMALLINT.UNSIGNED,
+      sucursalId: DataTypes.SMALLINT.UNSIGNED,
       servicio: { type: DataTypes.STRING(80), allowNull: false },
       barbero: { type: DataTypes.STRING(60), allowNull: false },
+      sucursal: DataTypes.STRING(60),
       cliente: { type: DataTypes.STRING(90), allowNull: false },
       telefono: { type: DataTypes.STRING(25), allowNull: false },
       notas: DataTypes.STRING(200),
@@ -26,6 +28,7 @@ module.exports = (sequelize, DataTypes) => {
   Turno.associate = (db) => {
     Turno.belongsTo(db.ServicioTurno, { as: "servicioRef", foreignKey: "servicioId" });
     Turno.belongsTo(db.Barbero, { as: "barberoRef", foreignKey: "barberoId" });
+    Turno.belongsTo(db.Sucursal, { as: "sucursalRef", foreignKey: "sucursalId" });
   };
 
   return Turno;

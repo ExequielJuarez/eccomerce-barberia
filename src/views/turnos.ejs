@@ -2,104 +2,137 @@
 <%- include('partials/header') %>
 <%
   const precio = (n) => formatoPrecio(n).replace(',00', '');
-  const hayEquipo = barberos.length > 1;
+  const unaSucursal = sucursales.length === 1;
+  const inicial = (nombre) => String(nombre).trim().charAt(0).toUpperCase();
+  const mapaDe = (dir) => 'https://www.google.com/maps/search/' + encodeURIComponent(dir);
 %>
 
-<section class="turnos contenedor">
-  <header class="turnos__cab">
-    <p class="etiqueta-seccion">Reservá online</p>
-    <h1 class="pagina__titulo titulo">Sacá tu <em>turno</em></h1>
-    <p class="pagina__sub">Elegí el servicio, el día y el horario. Es rápido y no necesitás crear una cuenta.</p>
-  </header>
+<section class="hero-turnos">
+  <video class="hero-turnos__video" autoplay muted loop playsinline preload="auto" aria-hidden="true" tabindex="-1">
+    <source src="/video/turnos.mp4" type="video/mp4">
+  </video>
+  <div class="hero-turnos__velo" aria-hidden="true"></div>
 
-  <% if (!servicios.length) { %>
-    <div class="vacio">
-      <p class="vacio__titulo titulo">Muy pronto</p>
-      <p class="apagado">Todavía no hay servicios disponibles para reservar.</p>
-      <a href="/" class="btn btn--volt">Volver al inicio</a>
+  <div class="contenedor hero-turnos__grid">
+    <div class="hero-turnos__texto">
+      <p class="etiqueta-seccion">Reservá online</p>
+      <h1 class="hero-turnos__titulo titulo">Sacá tu <em>turno</em></h1>
+      <p class="hero-turnos__sub">Elegí el servicio, la sucursal y tu peluquero. Ves sus horarios libres al instante, sin crear una cuenta.</p>
+
+      <ul class="hero-turnos__sucursales" aria-label="Nuestras sucursales">
+        <% sucursales.forEach((s) => { %>
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11a7 7 0 0114 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
+            <span><strong><%= s.nombre %></strong><small><%= s.direccion %></small></span>
+            <a href="<%= mapaDe(s.direccion) %>" target="_blank" rel="noopener" class="enlace">Cómo llegar</a>
+          </li>
+        <% }) %>
+      </ul>
     </div>
-  <% } else { %>
-  <div class="turnos__grilla">
-    <form class="turnos__form" id="formTurno" action="/turnos" method="POST" novalidate>
-      <fieldset class="paso" data-paso="1">
-        <legend><span class="paso__n">1</span> Elegí el servicio</legend>
-        <div class="servicios">
-          <% servicios.forEach((s) => { %>
-            <label class="servicio">
-              <input type="radio" name="servicio" value="<%= s.id %>" data-nombre="<%= s.nombre %>" data-duracion="<%= s.duracion %>" data-precio="<%= s.precio === null ? '' : precio(s.precio) %>">
-              <span class="servicio__cuerpo">
-                <strong><%= s.nombre %></strong>
-                <% if (s.detalle) { %><small><%= s.detalle %></small><% } %>
-                <span class="servicio__meta"><%= s.duracion %> min<%= s.precio !== null ? ' · ' + precio(s.precio) : '' %></span>
+
+    <div class="hero-turnos__tarjeta">
+      <% if (!servicios.length || !sucursales.length) { %>
+        <div class="vacio">
+          <p class="vacio__titulo titulo">Muy pronto</p>
+          <p class="apagado">Todavía no hay turnos disponibles para reservar.</p>
+          <a href="/" class="btn btn--volt">Volver al inicio</a>
+        </div>
+      <% } else { %>
+      <form class="wiz" id="formTurno" action="/turnos" method="POST" novalidate>
+        <ol class="wiz__pasos" id="wizPasos" aria-label="Pasos de la reserva"></ol>
+        <p class="wiz__resumen" id="wizResumen" aria-live="polite"></p>
+
+        <fieldset class="paso" data-clave="servicio" data-titulo="Servicio">
+          <legend>¿Qué te vas a hacer?</legend>
+          <div class="servicios">
+            <% servicios.forEach((s) => { %>
+              <label class="servicio">
+                <input type="radio" name="servicio" value="<%= s.id %>" data-nombre="<%= s.nombre %>" data-duracion="<%= s.duracion %>" data-precio="<%= s.precio === null ? '' : precio(s.precio) %>">
+                <span class="servicio__cuerpo">
+                  <strong><%= s.nombre %></strong>
+                  <% if (s.detalle) { %><small><%= s.detalle %></small><% } %>
+                  <span class="servicio__meta"><%= s.duracion %> min<%= s.precio !== null ? ' · ' + precio(s.precio) : '' %></span>
+                </span>
+              </label>
+            <% }) %>
+          </div>
+        </fieldset>
+
+        <fieldset class="paso" data-clave="sucursal" data-titulo="Sucursal" <%= unaSucursal ? 'data-saltar' : '' %>>
+          <legend>¿En qué sucursal?</legend>
+          <div class="sucursales">
+            <% sucursales.forEach((s) => { %>
+              <label class="sucursal">
+                <input type="radio" name="sucursal" value="<%= s.id %>" data-nombre="<%= s.nombre %>" <%= unaSucursal ? 'checked' : '' %>>
+                <span class="sucursal__cuerpo">
+                  <strong><%= s.nombre %></strong>
+                  <small><%= s.direccion %></small>
+                </span>
+              </label>
+            <% }) %>
+          </div>
+        </fieldset>
+
+        <fieldset class="paso" data-clave="barbero" data-titulo="Peluquero">
+          <legend>¿Con quién?</legend>
+          <div class="equipo" id="equipo">
+            <label class="peluquero">
+              <input type="radio" name="barbero" value="" checked data-nombre="Sin preferencia">
+              <span class="peluquero__cuerpo">
+                <span class="peluquero__foto peluquero__foto--cualquiera" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="9" cy="8" r="3.2"/><circle cx="17" cy="9" r="2.4"/><path d="M3 20c.8-3.4 3-5 6-5s5.2 1.6 6 5M16 15.2c2.6-.2 4.4 1.2 5 4"/></svg></span>
+                <strong>El primero libre</strong>
+                <small>Sin preferencia</small>
               </span>
             </label>
-          <% }) %>
-        </div>
-      </fieldset>
+            <% barberos.forEach((b) => { %>
+              <label class="peluquero" data-sucursal="<%= b.sucursalId %>" hidden>
+                <input type="radio" name="barbero" value="<%= b.id %>" data-nombre="<%= b.nombre %>">
+                <span class="peluquero__cuerpo">
+                  <span class="peluquero__foto" aria-hidden="true">
+                    <% if (b.foto) { %><img src="<%= b.foto %>" alt="" loading="lazy"><% } else { %><b><%= inicial(b.nombre) %></b><% } %>
+                  </span>
+                  <strong><%= b.nombre %></strong>
+                  <small>Ver horarios</small>
+                </span>
+              </label>
+            <% }) %>
+          </div>
+        </fieldset>
 
-      <% if (hayEquipo) { %>
-      <fieldset class="paso paso--bloqueado" data-paso="2" data-opcional>
-        <legend><span class="paso__n">2</span> ¿Con quién?</legend>
-        <div class="equipo">
-          <label class="chip-opcion"><input type="radio" name="barbero" value="" checked data-nombre="Sin preferencia"><span>Sin preferencia</span></label>
-          <% barberos.forEach((b) => { %>
-            <label class="chip-opcion"><input type="radio" name="barbero" value="<%= b.id %>" data-nombre="<%= b.nombre %>"><span><%= b.nombre %></span></label>
-          <% }) %>
-        </div>
-      </fieldset>
+        <fieldset class="paso" data-clave="fecha" data-titulo="Fecha">
+          <legend>Elegí el día y el horario</legend>
+          <div class="dias" role="radiogroup" aria-label="Días disponibles">
+            <% dias.forEach((d) => { %>
+              <label class="dia <%= d.abierto ? '' : 'dia--cerrado' %>" <%- d.motivo ? `title="${d.motivo}"` : '' %>>
+                <input type="radio" name="fecha" value="<%= d.fecha %>" data-texto="<%= d.semana %> <%= d.dia %> de <%= d.mes %>" <%= d.abierto ? '' : 'disabled' %>>
+                <span class="dia__cuerpo">
+                  <small><%= d.hoy ? 'Hoy' : d.semana %></small>
+                  <strong><%= d.dia %></strong>
+                  <small><%= d.mes %></small>
+                </span>
+              </label>
+            <% }) %>
+          </div>
+          <p class="apagado wiz__ayuda" id="horasAyuda">Elegí un día para ver los horarios libres.</p>
+          <div class="horas" id="horas" role="radiogroup" aria-label="Horarios disponibles" aria-live="polite"></div>
+        </fieldset>
+
+        <fieldset class="paso" data-clave="datos" data-titulo="Tus datos">
+          <legend>Tus datos</legend>
+          <div class="grilla-form">
+            <div class="campo"><label for="t-cliente">Nombre y apellido</label><input id="t-cliente" name="cliente" autocomplete="name" maxlength="90" required></div>
+            <div class="campo"><label for="t-telefono">Teléfono / WhatsApp</label><input id="t-telefono" name="telefono" type="tel" inputmode="tel" autocomplete="tel" maxlength="25" placeholder="385 555 1234" required></div>
+            <div class="campo completo"><label for="t-notas">Aclaraciones (opcional)</label><input id="t-notas" name="notas" maxlength="200" placeholder="Ej: quiero fade bajo"></div>
+          </div>
+          <button type="submit" class="btn btn--volt btn--bloque turnos__enviar" id="btnReservar"><span>Reservar turno</span></button>
+          <p class="apagado wiz__ayuda">Te mostramos el código de tu turno al terminar. Podés cancelarlo desde ese mismo link.</p>
+        </fieldset>
+
+        <button type="button" class="wiz__atras enlace" id="wizAtras" hidden>← Volver</button>
+      </form>
       <% } %>
-
-      <fieldset class="paso paso--bloqueado" data-paso="<%= hayEquipo ? 3 : 2 %>" data-clave="fecha">
-        <legend><span class="paso__n"><%= hayEquipo ? 3 : 2 %></span> Elegí el día</legend>
-        <div class="dias" role="radiogroup" aria-label="Días disponibles">
-          <% dias.forEach((d) => { %>
-            <label class="dia <%= d.abierto ? '' : 'dia--cerrado' %>" <%- d.motivo ? `title="${d.motivo}"` : '' %>>
-              <input type="radio" name="fecha" value="<%= d.fecha %>" data-texto="<%= d.semana %> <%= d.dia %> de <%= d.mes %>" <%= d.abierto ? '' : 'disabled' %>>
-              <span class="dia__cuerpo">
-                <small><%= d.hoy ? 'Hoy' : d.semana %></small>
-                <strong><%= d.dia %></strong>
-                <small><%= d.mes %></small>
-              </span>
-            </label>
-          <% }) %>
-        </div>
-      </fieldset>
-
-      <fieldset class="paso paso--bloqueado" data-paso="<%= hayEquipo ? 4 : 3 %>" data-clave="hora">
-        <legend><span class="paso__n"><%= hayEquipo ? 4 : 3 %></span> Elegí el horario</legend>
-        <p class="apagado paso__ayuda" id="horasAyuda">Primero elegí el servicio y el día.</p>
-        <div class="horas" id="horas" role="radiogroup" aria-label="Horarios disponibles" aria-live="polite"></div>
-      </fieldset>
-
-      <fieldset class="paso paso--bloqueado" data-paso="<%= hayEquipo ? 5 : 4 %>" data-clave="datos">
-        <legend><span class="paso__n"><%= hayEquipo ? 5 : 4 %></span> Tus datos</legend>
-        <div class="grilla-form">
-          <div class="campo"><label for="t-cliente">Nombre y apellido</label><input id="t-cliente" name="cliente" autocomplete="name" maxlength="90" required></div>
-          <div class="campo"><label for="t-telefono">Teléfono / WhatsApp</label><input id="t-telefono" name="telefono" type="tel" inputmode="tel" autocomplete="tel" maxlength="25" placeholder="385 555 1234" required></div>
-          <div class="campo completo"><label for="t-notas">Aclaraciones (opcional)</label><input id="t-notas" name="notas" maxlength="200" placeholder="Ej: quiero fade bajo"></div>
-        </div>
-        <button type="submit" class="btn btn--volt btn--bloque turnos__enviar" id="btnReservar"><span>Reservar turno</span></button>
-        <p class="apagado paso__ayuda">Te mostramos el código de tu turno al terminar. Podés cancelarlo desde ese mismo link.</p>
-      </fieldset>
-    </form>
-
-    <aside class="turnos__resumen" aria-label="Resumen de tu turno">
-      <h2 class="titulo">Tu turno</h2>
-      <dl class="resumen-turno" id="resumenTurno">
-        <div><dt>Servicio</dt><dd data-r="servicio">—</dd></div>
-        <% if (hayEquipo) { %><div><dt>Profesional</dt><dd data-r="barbero">Sin preferencia</dd></div><% } %>
-        <div><dt>Día</dt><dd data-r="fecha">—</dd></div>
-        <div><dt>Hora</dt><dd data-r="hora">—</dd></div>
-        <div><dt>Duración</dt><dd data-r="duracion">—</dd></div>
-      </dl>
-      <div class="turnos__local">
-        <span class="etiqueta-seccion">Dónde</span>
-        <p><%= tienda.direccion %></p>
-        <% if (tienda.mapa) { %><a href="<%= tienda.mapa %>" target="_blank" rel="noopener" class="enlace">Cómo llegar</a><% } %>
-      </div>
-    </aside>
+    </div>
   </div>
-  <% } %>
 </section>
 
 <%- include('partials/footer') %>

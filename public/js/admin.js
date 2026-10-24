@@ -35,6 +35,7 @@
 
   const btn = $("#notifBtn");
   if (!btn) return;
+  const base = $("#notif").dataset.base || "/admin/notificaciones";
   const panel = $("#notifPanel"), lista = $("#notifLista"), contador = $("#notifContador");
   let items = [];
   const hace = (f) => {
@@ -49,7 +50,7 @@
       : '<li class="notif__vacio">Sin notificaciones</li>';
   };
   async function cargar() {
-    const r = await pedir("/admin/notificaciones");
+    const r = await pedir(base);
     if (r.ok) { items = r.notificaciones; pintar(r.noLeidas); }
   }
   btn.addEventListener("click", (e) => { e.stopPropagation(); panel.hidden = !panel.hidden; btn.setAttribute("aria-expanded", String(!panel.hidden)); });
@@ -57,14 +58,14 @@
   lista.addEventListener("click", async (e) => {
     const li = e.target.closest("[data-id]");
     if (!li) return;
-    await pedir("/admin/notificaciones/leidas", { metodo: "POST", datos: { id: li.dataset.id } });
+    await pedir(base + "/leidas", { metodo: "POST", datos: { id: li.dataset.id } });
     if (li.dataset.url) location.href = li.dataset.url; else cargar();
   });
-  $("#notifLeerTodas").addEventListener("click", async () => { await pedir("/admin/notificaciones/leidas", { metodo: "POST", datos: {} }); cargar(); });
+  $("#notifLeerTodas").addEventListener("click", async () => { await pedir(base + "/leidas", { metodo: "POST", datos: {} }); cargar(); });
   cargar();
 
   if ("EventSource" in window) {
-    const es = new EventSource("/admin/notificaciones/stream");
+    const es = new EventSource(base + "/stream");
     es.addEventListener("notificacion", (e) => {
       const n = JSON.parse(e.data);
       toast(n.titulo + (n.mensaje ? " · " + n.mensaje : ""));
