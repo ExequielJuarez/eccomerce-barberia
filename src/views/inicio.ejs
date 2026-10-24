@@ -80,20 +80,6 @@
 </section>
 <% } %>
 
-<% if (c.turnos.visible) { %>
-<section class="bloque" id="turnos">
-  <div class="contenedor turnos-banner rev">
-    <div class="turnos-banner__texto">
-      <p class="etiqueta-seccion"><%= c.turnos.etiqueta %></p>
-      <h2 class="bloque__titulo titulo"><%- textoRico(c.turnos.titulo) %></h2>
-      <p class="turnos-banner__bajada"><%= c.turnos.bajada %></p>
-      <a href="<%= c.turnos.botonLink %>" class="btn btn--volt"><%= c.turnos.botonTexto %> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3.5" y="5" width="17" height="15" rx="1"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg></a>
-    </div>
-    <div class="turnos-banner__logo" aria-hidden="true"><%- include('partials/logo') %></div>
-  </div>
-</section>
-<% } %>
-
 <% if (c.beneficios.visible) { %>
 <section class="beneficios">
   <div class="contenedor beneficios__grilla">
@@ -120,21 +106,6 @@
         <% if (tienda.whatsapp) { %><div><dt>WhatsApp</dt><dd><a href="<%= tienda.whatsapp %>" target="_blank" rel="noopener" class="enlace">Escribinos</a></dd></div><% } %>
       </dl>
       <a href="<%= c.local.botonLink %>" target="_blank" rel="noopener" class="btn btn--volt"><%= c.local.botonTexto %> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 21s-7-6.2-7-11a7 7 0 0114 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></a>
-    </div>
-  </div>
-</section>
-<% } %>
-
-<% if (c.cierre.visible) { %>
-<section class="cierre">
-  <div class="contenedor cierre__interior rev">
-    <p class="etiqueta-seccion"><%= c.cierre.etiqueta %></p>
-    <h2 class="cierre__titulo titulo">
-      <% lineas(c.cierre.titulo).forEach((l) => { %><span><%- textoRico(l) %></span><% }) %>
-    </h2>
-    <div class="hero__botones">
-      <a href="<%= c.cierre.botonLink %>" target="_blank" rel="noopener" class="btn btn--volt"><%= c.cierre.botonTexto %></a>
-      <a href="<%= c.cierre.secundarioLink %>" class="btn btn--linea"><%= c.cierre.secundarioTexto %></a>
     </div>
   </div>
 </section>

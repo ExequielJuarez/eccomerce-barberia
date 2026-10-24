@@ -2,6 +2,17 @@
   const { $, $$, toast, pedir } = window.BB;
 
   document.addEventListener("click", async (e) => {
+    const enlace = e.target.closest("#copiarLink");
+    if (enlace) {
+      const url = `${location.origin}/turnos/${enlace.dataset.codigo}`;
+      try {
+        await navigator.clipboard.writeText(url);
+        toast("Link copiado ✓ Pegalo para ver el estado de tu turno");
+      } catch {
+        toast("No se pudo copiar", "error");
+      }
+      return;
+    }
     const copiar = e.target.closest("#copiarCodigo");
     if (!copiar) return;
     try {
@@ -74,9 +85,9 @@
     const hora = valor("hora");
     if (sucursal) partes.push(sucursal.dataset.nombre);
     if (servicio) partes.push(servicio.dataset.nombre);
-    if (sucursal && barbero && (barbero.value || actual > visibles.findIndex((p) => p.dataset.clave === "barbero"))) partes.push(barbero.dataset.nombre);
     if (fecha) partes.push(fecha.dataset.texto);
     if (hora) partes.push(`${hora.value} hs`);
+    if (hora && barbero && (barbero.value || actual > visibles.findIndex((p) => p.dataset.clave === "barbero"))) partes.push(barbero.dataset.nombre);
     textoResumen.innerHTML = partes.length ? partes.map((t) => `<b>${t.replace(/[&<>"]/g, "")}</b>`).join(" · ") : "Primero elegí en qué sucursal querés atenderte.";
   };
 
@@ -110,19 +121,27 @@
   });
   atras.addEventListener("click", () => ir(actual - 1));
 
+  let libres = {};
   const filtrarPeluqueros = () => {
     const sucursal = valor("sucursal")?.value;
+    const hora = valor("hora")?.value;
+    const ids = (libres[hora] || []).map(String);
     let hay = 0;
     $$(".peluquero", form).forEach((el) => {
-      const sirve = !el.dataset.sucursal || el.dataset.sucursal === sucursal;
+      const sirve = !el.dataset.sucursal || (el.dataset.sucursal === sucursal && ids.includes(el.querySelector("input").value));
       el.hidden = !sirve;
       if (sirve && el.dataset.sucursal) hay++;
     });
     const equipo = $("#equipo");
     equipo.querySelector(".equipo__vacio")?.remove();
-    if (!hay) equipo.insertAdjacentHTML("beforeend", '<p class="apagado equipo__vacio">Todavía no hay peluqueros cargados en esta sucursal.</p>');
+    if (!hay) equipo.insertAdjacentHTML("beforeend", '<p class="apagado equipo__vacio">Todavía no hay peluqueros con ese horario libre. Podés elegir "El primero libre".</p>');
     const elegido = valor("barbero");
     if (elegido?.value && elegido.closest(".peluquero").hidden) form.querySelector('input[name="barbero"][value=""]').checked = true;
+  };
+  const reiniciarPeluquero = () => {
+    form.querySelector('input[name="barbero"][value=""]').checked = true;
+    libres = {};
+    filtrarPeluqueros();
   };
 
   let token = 0;
@@ -130,6 +149,7 @@
     const servicio = valor("servicio");
     const fecha = valor("fecha");
     horas.innerHTML = "";
+    reiniciarPeluquero();
     if (!servicio || !fecha) {
       ayuda.textContent = "Elegí un día para ver los horarios libres.";
       return;
@@ -137,10 +157,7 @@
     ayuda.textContent = "Buscando horarios…";
     const yo = ++token;
     const sucursal = valor("sucursal")?.value || "";
-    const barbero = valor("barbero")?.value || "";
-    const r = await pedir(
-      `/turnos/disponibilidad?servicio=${servicio.value}&fecha=${fecha.value}${sucursal ? `&sucursal=${sucursal}` : ""}${barbero ? `&barbero=${barbero}` : ""}`
-    );
+    const r = await pedir(`/turnos/disponibilidad?servicio=${servicio.value}&fecha=${fecha.value}${sucursal ? `&sucursal=${sucursal}` : ""}`);
     if (yo !== token) return;
     if (!r.ok) {
       ayuda.textContent = r.mensaje || "No pudimos cargar los horarios.";
@@ -150,28 +167,27 @@
       ayuda.textContent = r.aviso || "No quedan horarios para ese día. Probá con otro.";
       return;
     }
-    const quien = barbero ? valor("barbero").dataset.nombre : "";
-    ayuda.textContent = `${r.slots.length} ${r.slots.length === 1 ? "horario libre" : "horarios libres"}${quien ? ` con ${quien}` : ""}`;
+    libres = r.barberos || {};
+    ayuda.textContent = `${r.slots.length} ${r.slots.length === 1 ? "horario libre" : "horarios libres"}`;
     horas.innerHTML = r.slots.map((h) => `<label class="hora"><input type="radio" name="hora" value="${h}"><span>${h}</span></label>`).join("");
   }
 
   form.addEventListener("change", (e) => {
     const nombre = e.target.name;
+    if (nombre === "sucursal") {
+      cargarHoras();
+      siguiente();
+    }
     if (nombre === "servicio") {
       cargarHoras();
       siguiente();
     }
-    if (nombre === "sucursal") {
-      filtrarPeluqueros();
-      cargarHoras();
-      siguiente();
-    }
-    if (nombre === "barbero") {
-      cargarHoras();
-      siguiente();
-    }
     if (nombre === "fecha") cargarHoras();
-    if (nombre === "hora") siguiente();
+    if (nombre === "hora") {
+      filtrarPeluqueros();
+      siguiente();
+    }
+    if (nombre === "barbero") siguiente();
     pintarResumen();
   });
 
@@ -185,7 +201,7 @@
     const hora = valor("hora");
     const cliente = form.cliente.value.trim();
     const telefono = form.telefono.value.trim();
-    if (!servicio || !sucursal || !fecha || !hora) return toast("Completá servicio, sucursal, día y horario", "error");
+    if (!servicio || !sucursal || !fecha || !hora) return toast("Completá sucursal, servicio, día y horario", "error");
     if (cliente.length < 2) {
       form.cliente.focus();
       return toast("Ingresá tu nombre", "error");

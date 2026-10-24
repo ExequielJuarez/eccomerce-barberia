@@ -79,8 +79,27 @@
           </div>
         </fieldset>
 
+        <fieldset class="paso" data-clave="fecha" data-titulo="Fecha">
+          <legend>Elegí el día y el horario</legend>
+          <div class="dias" role="radiogroup" aria-label="Días disponibles">
+            <% dias.forEach((d) => { %>
+              <label class="dia <%= d.abierto ? '' : 'dia--cerrado' %>" <%- d.motivo ? `title="${d.motivo}"` : '' %>>
+                <input type="radio" name="fecha" value="<%= d.fecha %>" data-texto="<%= d.semana %> <%= d.dia %> de <%= d.mes %>" <%= d.abierto ? '' : 'disabled' %>>
+                <span class="dia__cuerpo">
+                  <small><%= d.hoy ? 'Hoy' : d.semana %></small>
+                  <strong><%= d.dia %></strong>
+                  <small><%= d.mes %></small>
+                </span>
+              </label>
+            <% }) %>
+          </div>
+          <p class="apagado wiz__ayuda" id="horasAyuda">Elegí un día para ver los horarios libres.</p>
+          <div class="horas" id="horas" role="radiogroup" aria-label="Horarios disponibles" aria-live="polite"></div>
+        </fieldset>
+
         <fieldset class="paso" data-clave="barbero" data-titulo="Peluquero">
-          <legend>¿Con quién?</legend>
+          <legend>¿Con quién querés atenderte?</legend>
+          <p class="apagado wiz__ayuda">Estos peluqueros tienen libre el horario que elegiste.</p>
           <div class="equipo" id="equipo">
             <label class="peluquero">
               <input type="radio" name="barbero" value="" checked data-nombre="Sin preferencia">
@@ -103,24 +122,6 @@
               </label>
             <% }) %>
           </div>
-        </fieldset>
-
-        <fieldset class="paso" data-clave="fecha" data-titulo="Fecha">
-          <legend>Elegí el día y el horario</legend>
-          <div class="dias" role="radiogroup" aria-label="Días disponibles">
-            <% dias.forEach((d) => { %>
-              <label class="dia <%= d.abierto ? '' : 'dia--cerrado' %>" <%- d.motivo ? `title="${d.motivo}"` : '' %>>
-                <input type="radio" name="fecha" value="<%= d.fecha %>" data-texto="<%= d.semana %> <%= d.dia %> de <%= d.mes %>" <%= d.abierto ? '' : 'disabled' %>>
-                <span class="dia__cuerpo">
-                  <small><%= d.hoy ? 'Hoy' : d.semana %></small>
-                  <strong><%= d.dia %></strong>
-                  <small><%= d.mes %></small>
-                </span>
-              </label>
-            <% }) %>
-          </div>
-          <p class="apagado wiz__ayuda" id="horasAyuda">Elegí un día para ver los horarios libres.</p>
-          <div class="horas" id="horas" role="radiogroup" aria-label="Horarios disponibles" aria-live="polite"></div>
         </fieldset>
 
         <fieldset class="paso" data-clave="datos" data-titulo="Tus datos">

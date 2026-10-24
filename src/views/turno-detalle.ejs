@@ -46,6 +46,7 @@
     </dl>
     <div class="ticket__acciones">
       <% if (whatsapp) { %><a href="<%= whatsapp %>" target="_blank" rel="noopener" class="btn btn--volt">Avisar por WhatsApp</a><% } %>
+      <button type="button" class="btn btn--linea" id="copiarLink" data-codigo="<%= turno.codigo %>">Copiar link del turno</button>
       <a href="/turnos" class="btn btn--linea">Sacar otro turno</a>
       <% if (puedeCancelar) { %>
         <form action="/turnos/<%= turno.codigo %>/cancelar" method="POST" data-confirmar="¿Querés cancelar este turno?"><button type="submit" class="btn btn--peligro">Cancelar turno</button></form>

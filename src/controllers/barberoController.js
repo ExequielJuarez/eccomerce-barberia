@@ -18,7 +18,61 @@ async function miPerfil(req, res) {
   return perfil;
 }
 
+const perfilDe = async (req) => equipo.porUsuario(req.session.usuarioLogueado.id);
+
 module.exports = {
+  async nuevo(req, res) {
+    const perfil = await miPerfil(req, res);
+    if (!perfil) return;
+    const [servicios, dias] = await Promise.all([turnos.servicios(), turnos.diasDisponibles()]);
+    res.render("admin/turno-nuevo", {
+      titulo: "Agregar turno",
+      estilo: ["admin", "admin-turnos"],
+      usuario: req.session.usuarioLogueado,
+      seccion: "mis-turnos",
+      turnosPendientes: await turnos.pendientesHoy({ barberoId: perfil.id }),
+      rutaNotificaciones: panel.notificaciones,
+      perfil,
+      servicios,
+      dias: dias.filter((d) => d.abierto),
+      hoy: turnos.ahora().fecha,
+    });
+  },
+
+  async disponibilidad(req, res) {
+    const perfil = await perfilDe(req);
+    if (!perfil) return res.status(403).json({ ok: false, mensaje: "Sin permiso" });
+    const r = await turnos.disponibilidad({
+      servicioId: req.query.servicio,
+      fecha: String(req.query.fecha || ""),
+      barberoId: perfil.id,
+      interno: true,
+    });
+    res.status(r.ok ? 200 : 400).json({ ok: r.ok, slots: r.slots, aviso: r.aviso, mensaje: r.mensaje });
+  },
+
+  async crear(req, res) {
+    const perfil = await perfilDe(req);
+    if (!perfil) return res.redirect("/");
+    const r = await turnos.crear({
+      servicioId: req.body.servicio,
+      sucursalId: perfil.sucursalId,
+      barberoId: perfil.id,
+      fecha: String(req.body.fecha || ""),
+      hora: String(req.body.hora || ""),
+      cliente: req.body.cliente,
+      telefono: req.body.telefono,
+      notas: req.body.notas,
+      interno: true,
+    });
+    if (!r.ok) {
+      req.session.flash = r.mensaje;
+      return res.redirect("/barbero/turnos/nuevo");
+    }
+    req.session.flash = `Turno cargado: ${r.turno.cliente}, ${r.turno.fechaTexto} a las ${r.turno.inicio} hs.`;
+    res.redirect(`/barbero?fecha=${r.turno.fecha}`);
+  },
+
   async agenda(req, res) {
     const perfil = await miPerfil(req, res);
     if (!perfil) return;

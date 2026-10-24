@@ -83,6 +83,9 @@
 </header>
 
 <aside class="drawer" id="drawer" aria-label="Menú">
+  <button type="button" class="icono-btn drawer__cerrar" id="btnCerrarMenu" aria-label="Cerrar menú">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 5l14 14M19 5L5 19"/></svg>
+  </button>
   <nav class="drawer__lista">
     <% cats.forEach(cat => { %>
       <a href="<%= cat.url %>"><%= cat.nombre %> <small>→</small></a>

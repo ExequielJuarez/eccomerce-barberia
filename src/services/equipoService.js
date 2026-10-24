@@ -143,7 +143,7 @@ async function porUsuario(usuarioId) {
   const b = await db.Barbero.findOne({ where: { usuarioId }, include: [{ model: db.Sucursal, as: "sucursal" }] });
   if (!b) return null;
   const x = b.get({ plain: true });
-  return { id: x.id, nombre: x.nombre, foto: x.foto, activo: x.activo, sucursal: x.sucursal?.nombre || "" };
+  return { id: x.id, nombre: x.nombre, foto: x.foto, activo: x.activo, sucursalId: x.sucursalId, sucursal: x.sucursal?.nombre || "" };
 }
 
 module.exports = { listar, crear, actualizar, eliminar, porUsuario };

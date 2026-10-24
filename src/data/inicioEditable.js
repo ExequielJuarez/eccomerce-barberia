@@ -89,17 +89,6 @@ const SECCIONES = {
     },
   },
 
-  turnos: {
-    titulo: "Turnos",
-    descripcion: "El bloque que invita a reservar un turno online.",
-    campos: {
-      etiqueta: etiquetaSeccion("Reservá online"),
-      titulo: tituloSeccion("Tu turno, *sin esperas*"),
-      bajada: parrafo("Texto", "Elegí el servicio, el día y el horario. Te confirmamos al instante y no necesitás crear una cuenta.", 200),
-      botonTexto: texto("Botón", "Sacar turno", 30, { ancho: "medio" }),
-      botonLink: link("A dónde lleva", "/turnos"),
-    },
-  },
 
   beneficios: {
     titulo: "Beneficios",
@@ -139,25 +128,6 @@ const SECCIONES = {
     },
   },
 
-  cierre: {
-    titulo: "Cierre",
-    descripcion: "La invitación final antes del pie de página.",
-    campos: {
-      etiqueta: etiquetaSeccion("Siempre hay algo nuevo"),
-      titulo: {
-        tipo: "lineas",
-        etiqueta: "Título",
-        defecto: "Equipá tu\nbarbería *hoy*",
-        max: 60,
-        maxLineas: 3,
-        ayuda: "*Entre asteriscos* queda resaltado.",
-      },
-      botonTexto: texto("Botón", "Ver la tienda", 30, { ancho: "medio" }),
-      botonLink: link("Link del botón", "/categoria/clippers"),
-      secundarioTexto: texto("Link secundario", "Sacar turno", 40, { ancho: "medio" }),
-      secundarioLink: link("A dónde lleva", "/turnos"),
-    },
-  },
 };
 
 module.exports = { SECCIONES, FONDOS };

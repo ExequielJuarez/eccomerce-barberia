@@ -175,9 +175,9 @@ async function reglasDelDia(fecha) {
   return { rangos, hoy };
 }
 
-function calcularSlots({ rangos, hoy, fecha, duracion, barberosIds, ocupados }) {
+function calcularSlots({ rangos, hoy, fecha, duracion, barberosIds, ocupados, interno = false }) {
   const reloj = ahora();
-  const minimo = fecha === hoy ? reloj.minutos + ANTELACION_MIN : 0;
+  const minimo = fecha === hoy ? (interno ? Math.floor(reloj.minutos / PASO) * PASO : reloj.minutos + ANTELACION_MIN) : 0;
   const slots = [];
   for (const { desde, hasta } of rangos) {
     const a = aMinutos(desde);
@@ -191,7 +191,7 @@ function calcularSlots({ rangos, hoy, fecha, duracion, barberosIds, ocupados }) 
   return slots;
 }
 
-async function disponibilidad({ servicioId, fecha, barberoId = null, sucursalId = null }) {
+async function disponibilidad({ servicioId, fecha, barberoId = null, sucursalId = null, interno = false }) {
   const servicio = await db.ServicioTurno.findOne({ where: { id: Number(servicioId) || 0, activo: true }, raw: true });
   if (!servicio) return { ok: false, mensaje: "Elegí un servicio válido" };
   const reglas = await reglasDelDia(fecha);
@@ -209,8 +209,14 @@ async function disponibilidad({ servicioId, fecha, barberoId = null, sucursalId 
     duracion: servicio.duracion,
     barberosIds: lista.map((b) => b.id),
     ocupados,
+    interno,
   });
-  return { ok: true, slots: slots.map((s) => s.hora), aviso: slots.length ? null : "No quedan horarios para ese día" };
+  return {
+    ok: true,
+    slots: slots.map((s) => s.hora),
+    barberos: Object.fromEntries(slots.map((s) => [s.hora, s.barberos])),
+    aviso: slots.length ? null : "No quedan horarios para ese día",
+  };
 }
 
 function nuevoCodigo() {
@@ -218,8 +224,8 @@ function nuevoCodigo() {
   return [...bytes].map((b) => ALFABETO[b % ALFABETO.length]).join("");
 }
 
-async function crear({ servicioId, sucursalId = null, barberoId = null, fecha, hora, cliente, telefono, notas = "" }) {
-  const tel = limpiarTelefono(telefono);
+async function crear({ servicioId, sucursalId = null, barberoId = null, fecha, hora, cliente, telefono, notas = "", interno = false }) {
+  const tel = limpiarTelefono(telefono) || (interno && !String(telefono || "").trim() ? "-" : null);
   if (!tel) return { ok: false, mensaje: "Ingresá un teléfono válido, con característica" };
   const nombre = String(cliente || "").trim().replace(/\s+/g, " ");
   if (nombre.length < 2) return { ok: false, mensaje: "Ingresá tu nombre" };
@@ -230,7 +236,7 @@ async function crear({ servicioId, sucursalId = null, barberoId = null, fecha, h
   const reglas = await reglasDelDia(fecha);
   if (reglas.error) return { ok: false, mensaje: reglas.error };
 
-  const activos = await db.Turno.count({
+  const activos = interno || tel === "-" ? 0 : await db.Turno.count({
     where: { telefono: tel, estado: { [Op.in]: ["reservado", "confirmado"] }, fecha: { [Op.gte]: reglas.hoy } },
   });
   if (activos >= MAX_ACTIVOS_POR_TELEFONO) {
@@ -253,6 +259,7 @@ async function crear({ servicioId, sucursalId = null, barberoId = null, fecha, h
       duracion: servicio.duracion,
       barberosIds: lista.map((b) => b.id),
       ocupados,
+      interno,
     });
     const slot = slots.find((s) => s.hora === hora);
     if (!slot) return null;
@@ -276,7 +283,7 @@ async function crear({ servicioId, sucursalId = null, barberoId = null, fecha, h
             fecha,
             inicio: aHora(inicio),
             fin: aHora(inicio + servicio.duracion),
-            estado: "reservado",
+            estado: interno ? "confirmado" : "reservado",
           },
           { transaction: t }
         );
@@ -297,7 +304,7 @@ async function crear({ servicioId, sucursalId = null, barberoId = null, fecha, h
     mensaje: `${resumen.cliente} · ${resumen.servicio} · ${resumen.barbero}${resumen.sucursal ? ` (${resumen.sucursal})` : ""} · ${resumen.fechaTexto}`,
   };
   notificaciones.crear({ ...aviso, url: `/admin/turnos?fecha=${resumen.fecha}` }).catch(() => {});
-  const barbero = resumen.barberoId && (await db.Barbero.findByPk(resumen.barberoId, { attributes: ["usuarioId"], raw: true }));
+  const barbero = !interno && resumen.barberoId && (await db.Barbero.findByPk(resumen.barberoId, { attributes: ["usuarioId"], raw: true }));
   if (barbero?.usuarioId) {
     notificaciones.crear({ ...aviso, usuarioId: barbero.usuarioId, url: `/barbero?fecha=${resumen.fecha}` }).catch(() => {});
   }

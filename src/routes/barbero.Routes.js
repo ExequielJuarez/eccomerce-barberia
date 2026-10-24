@@ -9,6 +9,9 @@ router.use(soloBarbero);
 
 router.get("/", barbero.agenda);
 router.get("/eventos", barbero.eventos);
+router.get("/turnos/nuevo", barbero.nuevo);
+router.get("/disponibilidad", barbero.disponibilidad);
+router.post("/turnos", barbero.crear);
 router.patch("/turnos/:id/estado", barbero.cambiarEstado);
 
 router.get("/notificaciones", notificaciones.listar);

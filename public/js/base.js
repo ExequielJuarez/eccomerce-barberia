@@ -46,6 +46,8 @@
     btnMenu.setAttribute("aria-expanded", String(abierto));
   });
   $$("#drawer a").forEach((a) => a.addEventListener("click", cerrarMenu));
+  $("#btnCerrarMenu")?.addEventListener("click", cerrarMenu);
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") cerrarMenu(); });
 
   const cuentaBtn = $("#cuentaBtn");
   const cuentaMenu = $("#cuentaMenu");
