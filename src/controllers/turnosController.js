@@ -1,4 +1,12 @@
+const fs = require("fs");
+const path = require("path");
 const turnos = require("../services/turnoService");
+
+// Foto opcional de cada sucursal: public/img/sucursales/sucursal-<id>.(jpg|jpeg|png|webp)
+function fotoSucursal(id) {
+  const ext = ["jpg", "jpeg", "png", "webp"].find((e) => fs.existsSync(path.join(__dirname, `../../public/img/sucursales/sucursal-${id}.${e}`)));
+  return ext ? `/img/sucursales/sucursal-${id}.${ext}` : null;
+}
 
 function abrirStream(req, res, filtro) {
   res.set({
@@ -24,7 +32,7 @@ const quiereJson = (req) => req.accepts(["html", "json"]) === "json";
 
 module.exports = {
   async ver(req, res) {
-    const [servicios, sucursales, barberos, dias] = await Promise.all([
+    const [servicios, sucursalesBase, barberos, dias] = await Promise.all([
       turnos.servicios(),
       turnos.sucursales(),
       turnos.barberos(),
@@ -37,7 +45,7 @@ module.exports = {
       descripcion: "Reservá tu turno online en La Vecindad Barber Shop: elegí sucursal, peluquero, día y horario.",
       hero: true,
       servicios,
-      sucursales,
+      sucursales: sucursalesBase.map((x) => ({ ...x, foto: fotoSucursal(x.id) })),
       barberos,
       dias,
     });

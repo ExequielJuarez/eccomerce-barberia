@@ -14,30 +14,24 @@ const SECCIONES = {
     descripcion: "Lo primero que se ve al entrar: título, botones y el collage de fotos.",
     siempreVisible: true,
     campos: {
-      etiqueta: texto("Texto chico de arriba", "Insumos de peluquería y barbería", 70),
+      etiqueta: texto("Texto chico de arriba", "Barber Shop", 70),
       titulo: {
         tipo: "lineas",
         etiqueta: "Título grande",
-        defecto: "Todo para\nel *barbero*\nde verdad.",
+        defecto: "La\n*Vecindad*",
         max: 60,
         maxLineas: 3,
         ayuda: "Cada renglón entra con una animación. *Entre asteriscos* queda resaltado.",
       },
       bajada: parrafo(
         "Texto debajo del título",
-        "Clippers, shavers, tijeras e insumos profesionales elegidos uno por uno. Comprá online o sacá tu turno en nuestras sucursales.",
+        "Barbería y peluquería con dos sucursales. Cortes, barba e insumos profesionales para que salgas como querés.",
         220
       ),
       botonTexto: texto("Botón principal", "Ver la tienda", 30, { ancho: "medio" }),
       botonLink: link("Link del botón principal", "#categorias"),
       secundarioTexto: texto("Botón secundario", "Sacar turno", 30, { ancho: "medio" }),
       secundarioLink: link("A dónde lleva", "/turnos"),
-      imagen: imagen("Foto principal", "/img/productos/wahl-magic-clip-1.jpg", {
-        ayuda: "Mejor una foto vertical.",
-        fondo: "oscuro",
-      }),
-      imagen2: imagen("Foto chica 1", "/img/productos/viggo-volt-clipper-1.jpg", { ancho: "medio" }),
-      imagen3: imagen("Foto chica 2", "/img/productos/tijeras-viggo-2.jpg", { ancho: "medio" }),
     },
   },
 

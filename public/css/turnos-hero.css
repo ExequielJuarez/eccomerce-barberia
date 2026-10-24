@@ -38,9 +38,10 @@
 .paso label { position: relative; }
 .paso input[type="radio"] { position: absolute; opacity: 0; pointer-events: none; }
 
-.servicios, .sucursales { display: grid; gap: 10px; }
+.servicios { display: grid; gap: 10px; }
+.sucursales { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
 .servicios { max-height: min(52vh, 420px); overflow-y: auto; padding-right: 4px; overscroll-behavior: contain; scrollbar-width: thin; }
-.servicio, .sucursal { display: block; cursor: pointer; }
+.servicio { display: block; cursor: pointer; }
 .servicio__cuerpo, .sucursal__cuerpo { display: grid; gap: 4px; height: 100%; padding: 15px 18px; border: 1px solid var(--linea-fuerte); background: var(--tinta); transition: border-color 160ms ease, background-color 160ms ease, transform 160ms var(--ease); }
 .servicio:active .servicio__cuerpo, .sucursal:active .sucursal__cuerpo { transform: scale(0.98); }
 .servicio strong, .sucursal strong { font-weight: 600; font-size: 15px; letter-spacing: 0.08em; text-transform: uppercase; }
@@ -109,3 +110,20 @@
   .equipo { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .horas { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
+
+.sucursal { display: block; cursor: pointer; }
+.sucursal__cuerpo { display: grid; grid-template-rows: 130px auto auto; height: 100%; overflow: hidden; border: 1px solid var(--linea-fuerte); background: var(--tinta); transition: border-color 160ms ease, transform 160ms var(--ease); }
+.sucursal:active .sucursal__cuerpo { transform: scale(0.98); }
+.sucursal__foto { position: relative; background: #151515 url("/img/marca/logo.jpg") center / auto 85% no-repeat; }
+.sucursal__foto[style] { background-size: cover; background-position: center; background-repeat: no-repeat; }
+.sucursal__foto::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 40%, rgba(11, 11, 11, 0.85)); }
+.sucursal__chip { position: absolute; z-index: 1; top: 10px; left: 10px; padding: 5px 10px; background: rgba(11, 11, 11, 0.8); border-radius: 999px; font-size: 10.5px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; }
+.sucursal__info { display: grid; gap: 4px; padding: 12px 14px 4px; }
+.sucursal__info strong { font-size: 14px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; }
+.sucursal__info small { display: flex; gap: 6px; align-items: flex-start; color: var(--papel-2); font-size: 13px; line-height: 1.35; }
+.sucursal__info svg { flex: none; width: 15px; height: 15px; margin-top: 2px; }
+.sucursal__boton { margin: 10px 14px 14px; padding: 11px; text-align: center; border-radius: 999px; background: var(--papel); color: var(--tinta); font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; white-space: nowrap; }
+.sucursal input:focus-visible + .sucursal__cuerpo { outline: 2px solid var(--oro); outline-offset: 3px; }
+.sucursal input:checked + .sucursal__cuerpo { border-color: var(--oro); }
+@media (hover: hover) and (pointer: fine) { .sucursal:hover .sucursal__cuerpo { border-color: var(--papel-2); } }
+@media (max-width: 520px) { .sucursales { grid-template-columns: minmax(0, 1fr); } }

@@ -106,7 +106,7 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .anuncios__pista span:nth-child(even) { color: var(--oro); }
 @keyframes marquesina { to { transform: translateX(-50%); } }
 
-.header { position: sticky; top: 0; z-index: 50; padding-top: var(--seguro-arriba); background: rgba(11, 11, 11, 0.9); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); border-bottom: 1px solid var(--linea); }
+.header { position: sticky; top: 0; z-index: 50; padding-top: var(--seguro-arriba); background: rgba(11, 11, 11, 0.55); -webkit-backdrop-filter: blur(16px) saturate(1.2); backdrop-filter: blur(16px) saturate(1.2); border-bottom: 1px solid var(--linea); }
 .header__barra { height: var(--alto-header); display: flex; align-items: center; gap: 28px; }
 .nav { margin-inline: auto 0; }
 .nav__lista { display: flex; gap: 2px; }

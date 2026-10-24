@@ -6,8 +6,12 @@
   const precio = (n) => formatoPrecio(n).replace(',00', '');
 %>
 
-<section class="hero" id="portada">
-    <div class="contenedor hero__grilla">
+<section class="hero hero--video" id="portada">
+  <video class="hero__video" autoplay muted loop playsinline preload="auto" aria-hidden="true" tabindex="-1">
+    <source src="/video/turnos.mp4" type="video/mp4">
+  </video>
+  <div class="hero__velo" aria-hidden="true"></div>
+  <div class="contenedor hero__grilla">
     <div class="hero__texto">
       <p class="etiqueta-seccion hero__etiqueta"><%= c.portada.etiqueta %></p>
       <h1 class="hero__titulo titulo">
@@ -16,26 +20,11 @@
         <% }) %>
       </h1>
       <p class="hero__bajada"><%= c.portada.bajada %></p>
-      <div class="hero__botones">
-        <a href="<%= c.portada.botonLink %>" class="btn btn--volt"><%= c.portada.botonTexto %> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
-        <a href="<%= c.portada.secundarioLink %>" class="btn btn--linea"><%= c.portada.secundarioTexto %></a>
-      </div>
     </div>
 
-    <div class="hero__collage" data-parallax>
-      <figure class="hero__foto hero__foto--principal" data-capa="1">
-        <img src="<%= c.portada.imagen %>" alt="Wahl Magic Clip" fetchpriority="high">
-        <span class="chip hero__sticker">Profesional</span>
-      </figure>
-      <figure class="hero__foto hero__foto--a" data-capa="2"><img src="<%= c.portada.imagen2 %>" alt="" loading="lazy"></figure>
-      <figure class="hero__foto hero__foto--b" data-capa="3"><img src="<%= c.portada.imagen3 %>" alt="" loading="lazy"></figure>
-      <div class="hero__sello" aria-hidden="true">
-        <svg viewBox="0 0 200 200" class="hero__sello-texto">
-          <defs><path id="circulo" d="M100,100 m-78,0 a78,78 0 1,1 156,0 a78,78 0 1,1 -156,0"/></defs>
-          <text><textPath href="#circulo" startOffset="0">BARBA BLACK ✦ INSUMOS DE BARBERÍA ✦ LA PLATA 212 ✦</textPath></text>
-        </svg>
-        <span class="hero__sello-logo"><%- include('partials/logo') %></span>
-      </div>
+    <div class="hero__botones hero__botones--grandes">
+      <a href="<%= c.portada.botonLink %>" class="btn btn--volt"><%= c.portada.botonTexto %> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <a href="<%= c.portada.secundarioLink %>" class="btn btn--linea"><%= c.portada.secundarioTexto %></a>
     </div>
   </div>
 </section>

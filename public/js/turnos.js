@@ -72,16 +72,17 @@
     const barbero = valor("barbero");
     const fecha = valor("fecha");
     const hora = valor("hora");
-    if (servicio) partes.push(servicio.dataset.nombre);
     if (sucursal) partes.push(sucursal.dataset.nombre);
+    if (servicio) partes.push(servicio.dataset.nombre);
     if (sucursal && barbero && (barbero.value || actual > visibles.findIndex((p) => p.dataset.clave === "barbero"))) partes.push(barbero.dataset.nombre);
     if (fecha) partes.push(fecha.dataset.texto);
     if (hora) partes.push(`${hora.value} hs`);
-    textoResumen.innerHTML = partes.length ? partes.map((t) => `<b>${t.replace(/[&<>"]/g, "")}</b>`).join(" · ") : "Armá tu turno en 5 pasos rápidos.";
+    textoResumen.innerHTML = partes.length ? partes.map((t) => `<b>${t.replace(/[&<>"]/g, "")}</b>`).join(" · ") : "Primero elegí en qué sucursal querés atenderte.";
   };
 
   const pintarPasos = () => {
-    indicador.innerHTML = visibles
+    const lista = valor("sucursal") ? visibles : visibles.slice(0, 1);
+    indicador.innerHTML = lista
       .map((p, n) => {
         const estado = n === actual ? "actual" : n < actual ? "hecho" : "";
         return `<li class="${estado}"><button type="button" data-ir="${n}" ${n < actual ? "" : "disabled"} ${n === actual ? 'aria-current="step"' : ""}>${p.dataset.titulo}</button></li>`;

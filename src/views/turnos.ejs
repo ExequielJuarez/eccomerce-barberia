@@ -42,6 +42,27 @@
         <ol class="wiz__pasos" id="wizPasos" aria-label="Pasos de la reserva"></ol>
         <p class="wiz__resumen" id="wizResumen" aria-live="polite"></p>
 
+        <fieldset class="paso" data-clave="sucursal" data-titulo="Sucursal" <%= unaSucursal ? 'data-saltar' : '' %>>
+          <legend>Elegí la sucursal</legend>
+          <div class="sucursales">
+            <% sucursales.forEach((s, n) => { %>
+              <label class="sucursal">
+                <input type="radio" name="sucursal" value="<%= s.id %>" data-nombre="<%= s.nombre %>" <%= unaSucursal ? 'checked' : '' %>>
+                <span class="sucursal__cuerpo">
+                  <span class="sucursal__foto" <%- s.foto ? `style="background-image:url('${s.foto}')"` : '' %>>
+                    <span class="sucursal__chip">Sucursal <%= n + 1 %></span>
+                  </span>
+                  <span class="sucursal__info">
+                    <strong><%= s.nombre %></strong>
+                    <small><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11a7 7 0 0114 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg><%= s.direccion %></small>
+                  </span>
+                  <span class="sucursal__boton">Seleccionar →</span>
+                </span>
+              </label>
+            <% }) %>
+          </div>
+        </fieldset>
+
         <fieldset class="paso" data-clave="servicio" data-titulo="Servicio">
           <legend>¿Qué te vas a hacer?</legend>
           <div class="servicios">
@@ -52,21 +73,6 @@
                   <strong><%= s.nombre %></strong>
                   <% if (s.detalle) { %><small><%= s.detalle %></small><% } %>
                   <span class="servicio__meta"><%= s.duracion %> min<%= s.precio !== null ? ' · ' + precio(s.precio) : '' %></span>
-                </span>
-              </label>
-            <% }) %>
-          </div>
-        </fieldset>
-
-        <fieldset class="paso" data-clave="sucursal" data-titulo="Sucursal" <%= unaSucursal ? 'data-saltar' : '' %>>
-          <legend>¿En qué sucursal?</legend>
-          <div class="sucursales">
-            <% sucursales.forEach((s) => { %>
-              <label class="sucursal">
-                <input type="radio" name="sucursal" value="<%= s.id %>" data-nombre="<%= s.nombre %>" <%= unaSucursal ? 'checked' : '' %>>
-                <span class="sucursal__cuerpo">
-                  <strong><%= s.nombre %></strong>
-                  <small><%= s.direccion %></small>
                 </span>
               </label>
             <% }) %>
