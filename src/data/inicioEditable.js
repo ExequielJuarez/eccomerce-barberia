@@ -25,7 +25,7 @@ const SECCIONES = {
       },
       bajada: parrafo(
         "Texto debajo del título",
-        "Barbería y peluquería con dos sucursales. Cortes, barba e insumos profesionales para que salgas como querés.",
+        "Barbería y venta de insumos profesionales. Cortes, barba y todo para el barbero de verdad.",
         220
       ),
       botonTexto: texto("Botón principal", "Ver la tienda", 30, { ancho: "medio" }),
@@ -107,7 +107,7 @@ const SECCIONES = {
           { titulo: "Envío gratis", texto: "En compras desde $150.000 a todo el país." },
           { titulo: "10% off", texto: "Pagando por transferencia bancaria." },
           { titulo: "Hasta 6 cuotas", texto: "Con tarjeta de crédito, por Mercado Pago." },
-          { titulo: "Retiro sin costo", texto: "En nuestras sucursales." },
+          { titulo: "Retiro sin costo", texto: "En La Plata 212." },
         ],
       },
     },
@@ -118,9 +118,9 @@ const SECCIONES = {
     descripcion: "Dirección, contacto y mapa.",
     campos: {
       etiqueta: etiquetaSeccion("Visitanos"),
-      titulo: tituloSeccion("Pasá por *nuestras sucursales*"),
+      titulo: tituloSeccion("Pasá por *La Plata 212*"),
       bajada: parrafo("Texto", "Mirá las máquinas en persona, consultá lo que necesites o pasá a retirar tu pedido.", 200),
-      direccion: texto("Dirección", "Av. Leopoldo Lugones 5147 y San Ramón Nonato 5708", 60, { ancho: "medio" }),
+      direccion: texto("Dirección", "La Plata 212", 60, { ancho: "medio" }),
       horarios: texto("Horarios", "Consultanos por WhatsApp", 60, { ancho: "medio" }),
       botonTexto: texto("Botón", "Cómo llegar", 30, { ancho: "medio" }),
       botonLink: link("Link del mapa", "https://www.google.com/maps/search/La+Plata+212"),

@@ -67,6 +67,7 @@
   const reducido = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   const visibles = pasos.filter((p) => !p.hasAttribute("data-saltar"));
+  const sucursalFija = pasos.some((p) => p.dataset.clave === "sucursal" && p.hasAttribute("data-saltar"));
   let actual = 0;
 
   const completo = (clave) => {
@@ -83,12 +84,12 @@
     const barbero = valor("barbero");
     const fecha = valor("fecha");
     const hora = valor("hora");
-    if (sucursal) partes.push(sucursal.dataset.nombre);
+    if (sucursal && !sucursalFija) partes.push(sucursal.dataset.nombre);
     if (servicio) partes.push(servicio.dataset.nombre);
     if (fecha) partes.push(fecha.dataset.texto);
     if (hora) partes.push(`${hora.value} hs`);
     if (hora && barbero && (barbero.value || actual > visibles.findIndex((p) => p.dataset.clave === "barbero"))) partes.push(barbero.dataset.nombre);
-    textoResumen.innerHTML = partes.length ? partes.map((t) => `<b>${t.replace(/[&<>"]/g, "")}</b>`).join(" · ") : "Primero elegí en qué sucursal querés atenderte.";
+    textoResumen.innerHTML = partes.length ? partes.map((t) => `<b>${t.replace(/[&<>"]/g, "")}</b>`).join(" · ") : sucursalFija ? "Armá tu turno en pocos pasos." : "Primero elegí en qué sucursal querés atenderte.";
   };
 
   const pintarPasos = () => {

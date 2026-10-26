@@ -45,7 +45,7 @@ database/
 
 ## Sucursales y peluqueros
 
-- Sucursales: Av. Leopoldo Lugones 5147 y San Ramón Nonato 5708 (tabla `sucursales`).
+- Local de venta de insumos: La Plata 212. Barbería (turnos): Av. Belgrano y Ameghino (tabla `sucursales`, hoy con una sola fila; si hay una sola, el cliente no ve el paso de sucursal).
 - El admin crea, edita y elimina peluqueros desde `/admin/equipo` (nombre, sucursal, foto, email y contraseña). Cada uno entra con su usuario (rol `barbero`) y ve solo sus turnos y notificaciones en `/barbero`.
-- En `/turnos` el cliente elige servicio → sucursal → peluquero (con foto) → día y horario.
+- En `/turnos` el cliente elige servicio → día y horario → peluquero (con foto).
 - Bases ya instaladas: ejecutar `database/migracion-peluqueros.sql` una sola vez. Una base nueva (`npm run db:instalar`) ya trae todo, con dos peluqueros de ejemplo (`lucas@barbablack.com` y `nico@barbablack.com`, contraseña `Barbero123`).

@@ -42,7 +42,7 @@ module.exports = {
       titulo: "Sacá tu turno",
       estilo: ["turnos", "turnos-hero"],
       navActivo: "turnos",
-      descripcion: "Reservá tu turno online en Barba Black: elegí sucursal, peluquero, día y horario.",
+      descripcion: "Reservá tu turno online en Barba Black: elegí servicio, día, horario y peluquero.",
       hero: true,
       servicios,
       sucursales: sucursalesBase.map((x) => ({ ...x, foto: fotoSucursal(x.id) })),

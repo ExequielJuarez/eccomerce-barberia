@@ -137,12 +137,11 @@ INSERT INTO cupones (codigo, descripcion, porcentaje, activo, vence_en) VALUES
   ('BIENVENIDA', '10% off en tu primera compra', 0.1000, 1, NULL);
 
 INSERT INTO sucursales (id, nombre, direccion, activo, orden) VALUES
-  (1, 'Leopoldo Lugones', 'Av. Leopoldo Lugones 5147', 1, 1),
-  (2, 'San Ramón Nonato', 'San Ramón Nonato 5708', 1, 2);
+  (1, 'Barbería', 'Av. Belgrano y Ameghino', 1, 1);
 
 INSERT INTO barberos (id, nombre, sucursal_id, usuario_id, foto, activo, orden) VALUES
   (1, 'Lucas', 1, 4, NULL, 1, 1),
-  (2, 'Nico', 2, 5, NULL, 1, 2);
+  (2, 'Nico', 1, 5, NULL, 1, 2);
 
 INSERT INTO servicios_turno (id, nombre, detalle, duracion, precio, activo, orden) VALUES
   (1, 'Corte de pelo', 'Corte a tijera o máquina, con perfilado.', 30, NULL, 1, 1),

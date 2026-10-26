@@ -15,8 +15,7 @@ CREATE TABLE IF NOT EXISTS sucursales (
 
 INSERT INTO sucursales (nombre, direccion, activo, orden)
 SELECT * FROM (
-  SELECT 'Leopoldo Lugones' AS nombre, 'Av. Leopoldo Lugones 5147' AS direccion, 1 AS activo, 1 AS orden
-  UNION ALL SELECT 'San Ramón Nonato', 'San Ramón Nonato 5708', 1, 2
+  SELECT 'Barbería' AS nombre, 'Av. Belgrano y Ameghino' AS direccion, 1 AS activo, 1 AS orden
 ) AS nuevas
 WHERE NOT EXISTS (SELECT 1 FROM sucursales);
 
