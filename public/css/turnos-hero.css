@@ -1,5 +1,5 @@
 .hero-turnos { position: relative; isolation: isolate; display: grid; align-items: center; min-height: calc(100vh - var(--alto-header) - 36px); min-height: calc(100dvh - var(--alto-header) - 36px); padding-block: clamp(28px, 5vw, 64px); overflow: hidden; background: var(--tinta); }
-.hero-turnos__video { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; object-fit: cover; filter: grayscale(1) contrast(1.05); }
+.hero-turnos__video { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; object-fit: cover; }
 .hero-turnos__velo { position: absolute; inset: 0; z-index: -1; background: linear-gradient(90deg, rgba(11, 11, 11, 0.9) 0%, rgba(11, 11, 11, 0.62) 48%, rgba(11, 11, 11, 0.8) 100%), linear-gradient(180deg, rgba(11, 11, 11, 0.55), transparent 30%, rgba(11, 11, 11, 0.85)); }
 .hero-turnos__grid { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr); gap: clamp(28px, 6vw, 96px); align-items: center; }
 .hero-turnos__texto { display: grid; gap: 18px; justify-items: start; }
@@ -47,7 +47,7 @@
 .servicio strong, .sucursal strong { font-weight: 600; font-size: 15px; letter-spacing: 0.08em; text-transform: uppercase; }
 .servicio small, .sucursal small { color: var(--apagado); font-size: 13.5px; line-height: 1.4; }
 .servicio__meta { margin-top: 4px; color: var(--oro); font-size: 12.5px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; }
-.servicio input:checked + .servicio__cuerpo, .sucursal input:checked + .sucursal__cuerpo { border-color: var(--oro); background: #1c1c1c; }
+.servicio input:checked + .servicio__cuerpo, .sucursal input:checked + .sucursal__cuerpo { border-color: var(--oro); background: #17140d; }
 .servicio input:focus-visible + .servicio__cuerpo, .sucursal input:focus-visible + .sucursal__cuerpo { outline: 2px solid var(--oro); outline-offset: 3px; }
 
 .equipo { display: grid; grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); gap: 12px; }
@@ -61,7 +61,7 @@
 .peluquero__foto svg { width: 38px; height: 38px; color: var(--apagado); }
 .peluquero strong { font-size: 14px; font-weight: 600; letter-spacing: 0.04em; }
 .peluquero small { color: var(--apagado); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; }
-.peluquero input:checked + .peluquero__cuerpo { border-color: var(--oro); background: #1c1c1c; }
+.peluquero input:checked + .peluquero__cuerpo { border-color: var(--oro); background: #17140d; }
 .peluquero input:checked + .peluquero__cuerpo .peluquero__foto { border-color: var(--oro); }
 .peluquero input:focus-visible + .peluquero__cuerpo { outline: 2px solid var(--oro); outline-offset: 3px; }
 .equipo__vacio { grid-column: 1 / -1; font-size: 14px; }
@@ -114,7 +114,7 @@
 .sucursal { display: block; cursor: pointer; }
 .sucursal__cuerpo { display: grid; grid-template-rows: 130px auto auto; height: 100%; overflow: hidden; border: 1px solid var(--linea-fuerte); background: var(--tinta); transition: border-color 160ms ease, transform 160ms var(--ease); }
 .sucursal:active .sucursal__cuerpo { transform: scale(0.98); }
-.sucursal__foto { position: relative; background: #151515 url("/img/marca/logo.jpg") center / auto 85% no-repeat; }
+.sucursal__foto { position: relative; background: #151515 url("/img/marca/logo.png") center / auto 85% no-repeat; }
 .sucursal__foto[style] { background-size: cover; background-position: center; background-repeat: no-repeat; }
 .sucursal__foto::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 40%, rgba(11, 11, 11, 0.85)); }
 .sucursal__chip { position: absolute; z-index: 1; top: 10px; left: 10px; padding: 5px 10px; background: rgba(11, 11, 11, 0.8); border-radius: 999px; font-size: 10.5px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; }

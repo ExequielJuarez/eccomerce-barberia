@@ -6,7 +6,7 @@ function limpiarWhatsapp(numero) {
 module.exports = function datosTienda() {
   const e = process.env;
   return {
-    nombre: "La Vecindad",
+    nombre: "Barba Black",
     rubro: "Barber Shop · Insumos de peluquería y barbería",
     usuario: e.TIENDA_USUARIO || "",
     razonSocial: e.TIENDA_RAZON_SOCIAL || "",

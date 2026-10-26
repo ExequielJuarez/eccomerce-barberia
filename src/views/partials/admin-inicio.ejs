@@ -14,7 +14,7 @@
 %>
 <div class="adm">
   <aside class="adm-lateral" id="admLateral" aria-label="Menú del panel">
-    <a href="<%= soyBarbero ? '/barbero' : '/admin' %>" class="adm-marca" aria-label="Panel La Vecindad"><span><%- include('logo') %></span><small><%= soyBarbero ? 'Peluquero' : 'Panel' %></small></a>
+    <a href="<%= soyBarbero ? '/barbero' : '/admin' %>" class="adm-marca" aria-label="Panel Barba Black"><span><%- include('logo') %></span><small><%= soyBarbero ? 'Peluquero' : 'Panel' %></small></a>
     <nav class="adm-nav">
       <% menu.forEach(([k, url, nombre, icono, n]) => { %>
         <a href="<%= url %>" class="<%= sec === k ? 'activo' : '' %>" <%- sec === k ? 'aria-current="page"' : '' %>>

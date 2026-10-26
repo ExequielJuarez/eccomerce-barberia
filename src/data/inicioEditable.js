@@ -18,7 +18,7 @@ const SECCIONES = {
       titulo: {
         tipo: "lineas",
         etiqueta: "Título grande",
-        defecto: "La\n*Vecindad*",
+        defecto: "Barba\n*Black*",
         max: 60,
         maxLineas: 3,
         ayuda: "Cada renglón entra con una animación. *Entre asteriscos* queda resaltado.",

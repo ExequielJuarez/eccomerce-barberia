@@ -10,13 +10,13 @@
   --apagado: #9a968c;
   --volt: #f4f1ea;
   --volt-oscuro: #d8d4ca;
-  --oro: #f4f1ea;
-  --oro-oscuro: #cfcbc0;
+  --oro: #c9a45c;
+  --oro-oscuro: #a8863f;
   --rojo: #ff5a4f;
   --verde: #46e08a;
   --ambar: #ffc247;
 
-  --ff-titulo: "Playfair Display", "Bodoni MT", "Times New Roman", serif;
+  --ff-titulo: "Cinzel", "Optima", "Palatino Linotype", serif;
   --ff-texto: "Jost", system-ui, -apple-system, "Segoe UI", sans-serif;
 
   --ancho: 1360px;
@@ -94,7 +94,7 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .icono-btn svg { width: 22px; height: 22px; }
 .contador { position: absolute; top: 3px; right: 1px; min-width: 18px; height: 18px; padding: 0 4px; display: grid; place-items: center; border-radius: 9px; background: var(--oro); color: var(--tinta); font-size: 11px; font-weight: 700; }
 
-.bb-logo { width: 100%; height: auto; border-radius: 4px; box-shadow: 0 0 0 1px var(--linea-fuerte); }
+.bb-logo { width: 100%; height: auto; border-radius: 50%; box-shadow: 0 0 0 1px var(--linea-fuerte); }
 .marca-link { display: flex; align-items: center; gap: 12px; flex: none; color: var(--papel); }
 .marca-link .bb-logo { width: 48px; height: 48px; }
 .marca-link__texto { font-family: var(--ff-titulo); font-weight: 600; font-size: 17px; letter-spacing: 0.16em; text-transform: uppercase; white-space: nowrap; }

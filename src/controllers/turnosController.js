@@ -42,7 +42,7 @@ module.exports = {
       titulo: "Sacá tu turno",
       estilo: ["turnos", "turnos-hero"],
       navActivo: "turnos",
-      descripcion: "Reservá tu turno online en La Vecindad Barber Shop: elegí sucursal, peluquero, día y horario.",
+      descripcion: "Reservá tu turno online en Barba Black: elegí sucursal, peluquero, día y horario.",
       hero: true,
       servicios,
       sucursales: sucursalesBase.map((x) => ({ ...x, foto: fotoSucursal(x.id) })),
@@ -85,7 +85,7 @@ module.exports = {
     if (!turno) return next();
     const t = req.app.locals.tienda;
     const sucursal = turno.sucursalId ? (await turnos.sucursales({ soloActivas: false })).find((s) => s.id === turno.sucursalId) : null;
-    const texto = `Hola La Vecindad! Reservé un turno (${turno.codigo}): ${turno.servicio}, ${turno.fechaTexto} a las ${turno.inicio} hs. A nombre de ${turno.cliente}.`;
+    const texto = `Hola Barba Black! Reservé un turno (${turno.codigo}): ${turno.servicio}, ${turno.fechaTexto} a las ${turno.inicio} hs. A nombre de ${turno.cliente}.`;
     res.render("turno-detalle", {
       titulo: `Turno ${turno.codigo}`,
       estilo: "turnos",

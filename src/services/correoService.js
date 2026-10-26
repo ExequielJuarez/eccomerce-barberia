@@ -23,7 +23,7 @@ function obtenerTransporte() {
   return transporte;
 }
 
-const TIENDA = () => "La Vecindad";
+const TIENDA = () => "Barba Black";
 
 const ASUNTOS = {
   login: "Tu código para entrar",

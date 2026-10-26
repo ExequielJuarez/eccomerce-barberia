@@ -9,7 +9,7 @@
 .hero__botones { display: flex; flex-wrap: wrap; gap: 14px; }
 
 .hero--video { isolation: isolate; display: grid; align-items: center; min-height: calc(100vh - var(--alto-header) - 36px); min-height: calc(100dvh - var(--alto-header) - 36px); background: var(--tinta); }
-.hero__video { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; object-fit: cover; filter: grayscale(1) contrast(1.05); }
+.hero__video { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; object-fit: cover; }
 .hero__velo { position: absolute; inset: 0; z-index: -1; background: linear-gradient(90deg, rgba(11, 11, 11, 0.9) 0%, rgba(11, 11, 11, 0.62) 50%, rgba(11, 11, 11, 0.8) 100%), linear-gradient(180deg, rgba(11, 11, 11, 0.55), transparent 30%, rgba(11, 11, 11, 0.85)); }
 .hero__botones--grandes { flex-direction: column; justify-self: end; align-self: center; width: min(100%, 340px); gap: 16px; }
 .hero__botones--grandes .btn { width: 100%; min-height: 60px; justify-content: center; font-size: 14px; }

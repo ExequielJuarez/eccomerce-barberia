@@ -18,7 +18,7 @@ const puerto = Number(process.env.PORT) || 3000;
 
 app.use(express.static(path.join(__dirname, "../public")));
 
-app.get("/favicon.ico", (req, res) => res.redirect(301, "/img/marca/logo.jpg"));
+app.get("/favicon.ico", (req, res) => res.redirect(301, "/img/marca/logo.png"));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(methodOverride("_method"));

@@ -54,7 +54,7 @@
             <strong><%= t.cliente %></strong>
             <span><%= t.servicio %><%= r ? '' : ' · ' + t.barbero %><%= t.sucursal ? ' · ' + t.sucursal : '' %></span>
             <% if (t.notas) { %><small class="apagado">“<%= t.notas %>”</small><% } %>
-            <% if (/\d{8}/.test(t.telefono)) { %><a class="enlace-suave" href="<%= whatsapp(t.telefono, 'Hola ' + t.cliente.split(' ')[0] + '! Te escribimos de La Vecindad por tu turno del ' + t.fechaTexto + ' a las ' + t.inicio + ' hs.') %>" target="_blank" rel="noopener"><%= t.telefono %> ↗</a><% } else { %><small class="apagado">Sin teléfono</small><% } %>
+            <% if (/\d{8}/.test(t.telefono)) { %><a class="enlace-suave" href="<%= whatsapp(t.telefono, 'Hola ' + t.cliente.split(' ')[0] + '! Te escribimos de Barba Black por tu turno del ' + t.fechaTexto + ' a las ' + t.inicio + ' hs.') %>" target="_blank" rel="noopener"><%= t.telefono %> ↗</a><% } else { %><small class="apagado">Sin teléfono</small><% } %>
           </div>
           <div class="turno-fila__estado">
             <span class="estado <%= clasesEstado[t.estado] %>"><%= nombresEstado[t.estado] %></span>

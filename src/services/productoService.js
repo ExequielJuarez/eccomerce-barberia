@@ -6,9 +6,9 @@ const MAX_IMAGENES = 8;
 
 const POR_DEFECTO = {
   cuotas: 6,
-  resumen: "Producto profesional seleccionado por La Vecindad.",
+  resumen: "Producto profesional seleccionado por Barba Black.",
   descripcion: ["Descripción del producto."],
-  destacados: ["Seleccionado por La Vecindad"],
+  destacados: ["Seleccionado por Barba Black"],
 };
 
 const incluir = [

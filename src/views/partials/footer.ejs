@@ -16,7 +16,7 @@
   <div class="footer__gigante" aria-hidden="true">BARBA BLACK</div>
   <div class="contenedor footer__grilla">
     <div class="footer__marca">
-      <a href="/" class="marca-link" aria-label="Inicio"><%- include('logo') %><span class="marca-link__texto">La <em>Vecindad</em></span></a>
+      <a href="/" class="marca-link" aria-label="Inicio"><%- include('logo') %><span class="marca-link__texto">Barba <em>Black</em></span></a>
       <p>Insumos de peluquería y barbería. Máquinas, tijeras y todo para trabajar, elegidos uno por uno.</p>
       <div class="footer__redes">
         <% if (t.instagram) { %><a href="<%= t.instagram %>" target="_blank" rel="noopener">Instagram</a><% } %>
@@ -54,7 +54,7 @@
   </div>
   <div class="contenedor footer__legal">
     <span>
-      © <%= new Date().getFullYear() %> <%= t.nombre || 'La Vecindad' %>.
+      © <%= new Date().getFullYear() %> <%= t.nombre || 'Barba Black' %>.
       <% if (t.razonSocial) { %><%= t.razonSocial %><% if (t.cuit) { %> · CUIT <%= t.cuit %><% } %>.<% } %>
       Todos los derechos reservados.
     </span>
