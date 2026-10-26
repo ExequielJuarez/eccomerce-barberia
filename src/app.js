@@ -117,7 +117,14 @@ db.sequelize
   .authenticate()
   .then(() => {
     console.log(`✅ Conectado a la base de datos "${db.sequelize.config.database}"`);
-    app.listen(puerto, () => console.log(`🚀 Servidor Express corriendo en el puerto ${puerto}`));
+    app.listen(puerto, "0.0.0.0", () => {
+      console.log(`🚀 Servidor Express corriendo en el puerto ${puerto}`);
+      console.log(`   Local:   http://localhost:${puerto}`);
+      Object.values(require("os").networkInterfaces())
+        .flat()
+        .filter((i) => i.family === "IPv4" && !i.internal)
+        .forEach((i) => console.log(`   Celular: http://${i.address}:${puerto}  (misma red Wi-Fi)`));
+    });
 
     const pagos = require("./services/pagoService");
     console.log(
