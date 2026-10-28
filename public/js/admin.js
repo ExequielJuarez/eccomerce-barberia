@@ -64,12 +64,40 @@
   $("#notifLeerTodas").addEventListener("click", async () => { await pedir(base + "/leidas", { metodo: "POST", datos: {} }); cargar(); });
   cargar();
 
+  // Sonido de aviso: el navegador solo lo permite después de que el admin toca la página una vez.
+  let audio = null;
+  const desbloquear = () => {
+    try {
+      audio = audio || new (window.AudioContext || window.webkitAudioContext)();
+      if (audio.state === "suspended") audio.resume();
+    } catch { audio = null; }
+  };
+  ["pointerdown", "keydown", "touchstart"].forEach((ev) => document.addEventListener(ev, desbloquear, { passive: true }));
+  const sonar = () => {
+    if (!audio || audio.state !== "running") return false;
+    [[880, 0], [1175, 0.18], [1568, 0.36]].forEach(([hz, t]) => {
+      const osc = audio.createOscillator(), gan = audio.createGain();
+      const ini = audio.currentTime + t;
+      osc.type = "sine";
+      osc.frequency.value = hz;
+      gan.gain.setValueAtTime(0.0001, ini);
+      gan.gain.exponentialRampToValueAtTime(0.35, ini + 0.02);
+      gan.gain.exponentialRampToValueAtTime(0.0001, ini + 0.4);
+      osc.connect(gan).connect(audio.destination);
+      osc.start(ini);
+      osc.stop(ini + 0.42);
+    });
+    return true;
+  };
+
   if ("EventSource" in window) {
     const es = new EventSource(base + "/stream");
     es.addEventListener("notificacion", (e) => {
       const n = JSON.parse(e.data);
-      toast(n.titulo + (n.mensaje ? " · " + n.mensaje : ""));
+      const sono = sonar();
+      toast(n.titulo + (n.mensaje ? " · " + n.mensaje : "") + (sono ? "" : " · tocá la página para activar el sonido"));
       cargar();
+      document.dispatchEvent(new CustomEvent("adm:notificacion", { detail: n }));
     });
     es.addEventListener("leidas", cargar);
     window.addEventListener("beforeunload", () => es.close());

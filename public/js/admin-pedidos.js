@@ -25,5 +25,31 @@
     toast(`Pedido #${art.dataset.numero}: ${texto}` + (r.stockMovido ? (r.stockMovido > 0 ? ` · volvieron ${r.stockMovido} u. al stock` : ` · se descontaron ${-r.stockMovido} u.`) : ""));
   });
 
+  // Pedido nuevo: se actualiza la lista y los contadores sin recargar, respetando los detalles abiertos.
+  let actualizando = false;
+  document.addEventListener("adm:notificacion", async (e) => {
+    if (e.detail.tipo !== "pedido" || actualizando) return;
+    actualizando = true;
+    try {
+      const html = await (await fetch(location.href, { headers: { Accept: "text/html" } })).text();
+      const doc = new DOMParser().parseFromString(html, "text/html");
+      const nueva = doc.querySelector("#pedidosLista");
+      if (!nueva) return;
+      const abiertos = new Set($$(".pedido__cuerpo:not([hidden])", lista).map((c) => c.closest(".pedido").dataset.numero));
+      lista.innerHTML = nueva.innerHTML;
+      abiertos.forEach((n) => {
+        const art = lista.querySelector(`.pedido[data-numero="${n}"]`);
+        if (!art) return;
+        art.querySelector(".pedido__cuerpo").hidden = false;
+        const b = art.querySelector("[data-abrir]");
+        b.setAttribute("aria-expanded", "true");
+        b.textContent = "Cerrar";
+      });
+      $(".vacio-panel")?.closest(".panel")?.remove();
+      const chips = $(".adm-rango"), nuevos = doc.querySelector(".adm-rango");
+      if (chips && nuevos) chips.innerHTML = nuevos.innerHTML;
+    } catch { /* si falla, queda la notificación */ } finally { actualizando = false; }
+  });
+
   if (lista.children.length === 1) lista.querySelector("[data-abrir]")?.click();
 })();
