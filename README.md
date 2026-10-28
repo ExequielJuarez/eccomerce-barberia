@@ -17,6 +17,11 @@ Completá en `.env` los datos de conexión a MySQL (`DB_*`) y, si querés, los d
 
 Al iniciar, la consola muestra una línea `Celular: http://<ip>:3000`. Con el celular en el mismo Wi-Fi que la PC, abrí esa dirección en el navegador. Si no carga, permití Node.js (puerto 3000) en el Firewall de Windows para redes privadas.
 
+### Compartir la tienda con otras personas desde tu PC
+
+`npm run compartir` arranca la tienda y, con un túnel gratuito de Cloudflare, genera un link `https://...trycloudflare.com` para pasar a otras
+personas. Todo (base de datos y archivos) queda en tu PC. Guía completa en **[COMPARTIR.md](COMPARTIR.md)**.
+
 ## Usuarios de prueba
 
 | Rol | Email | Clave |

@@ -6,7 +6,9 @@
     "start": "node src/app.js",
     "dev": "nodemon src/app.js",
     "db:instalar": "node database/instalar.js",
-    "db:vacia": "node database/instalar.js --vacia"
+    "db:vacia": "node database/instalar.js --vacia",
+    "compartir": "node scripts/compartir.js",
+    "test": "node --test tests/*.test.js"
   },
   "keywords": [],
   "author": "",
