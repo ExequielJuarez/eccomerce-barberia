@@ -30,11 +30,8 @@ Con `NODE_ENV=production` no se muestran en el login.
 ## Pedidos por WhatsApp
 
 - El cliente arma el carrito, carga sus datos (**WhatsApp y email obligatorios**) y confirma. No se cobra en la web: ve el mensaje "nos estaremos poniendo en contacto" y recibe un email de confirmación.
-- El sistema manda el pedido completo al WhatsApp del local (`WHATSAPP_PEDIDOS_NUMERO`, con código de país, ej. `5493854000000`) y lo registra en `/admin/pedidos` con una notificación.
-- Si el envío por WhatsApp falla o no está configurado, el pedido igual queda guardado y visible en el panel.
-- Opciones de envío (`WHATSAPP_PROVIDER`):
-  - `callmebot`: gratis, para un número propio. Se activa desde el WhatsApp del local siguiendo las instrucciones de callmebot.com, que te dan una apikey para `CALLMEBOT_APIKEY`.
-  - `cloud`: API oficial de Meta (WhatsApp Business Platform). Necesita `WHATSAPP_CLOUD_TOKEN`, `WHATSAPP_CLOUD_PHONE_ID` y, para escribir primero al local, una plantilla aprobada (`WHATSAPP_CLOUD_TEMPLATE`, con un solo parámetro en el cuerpo).
+- El pedido llega a `/admin/pedidos` con una notificación. Cada pedido tiene el botón **Enviar por WhatsApp**: abre WhatsApp (Web o app) al número del cliente con el mensaje ya armado (productos, total, datos y dirección de envío a confirmar). Solo falta apretar enviar.
+- No hace falta ninguna API ni configuración: usa links `wa.me`. El número del cliente se normaliza al formato argentino (549 + área + número).
 - Bases ya instaladas: correr `database/migracion-whatsapp.sql` una sola vez.
 
 ## Estructura

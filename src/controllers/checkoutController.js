@@ -2,7 +2,6 @@ const { validationResult } = require("express-validator");
 const carrito = require("../services/carritoService");
 const pedidos = require("../services/pedidoService");
 const notificaciones = require("../services/notificacionService");
-const whatsapp = require("../services/whatsappService");
 const correo = require("../services/correoService");
 const tienda = require("../helpers/tienda");
 const usuarios = require("../services/usuarioService");
@@ -95,7 +94,6 @@ module.exports = {
     }
 
     notificaciones.nuevoPedido(pedido).catch((e) => console.error("No se pudo notificar la compra:", e.message));
-    whatsapp.enviarPedido(pedido);
     avisarPorCorreo(pedido);
     if (u) await usuarios.guardarDireccionSiFalta(u.id, datos).catch((e) => console.error("No se guardó la dirección:", e.message));
 

@@ -24,6 +24,7 @@
         <div class="pedido__cliente"><strong><%= p.cliente %></strong><small><%= p.email %><%= p.telefono ? ' · ' + p.telefono : '' %></small></div>
         <span class="estado estado--<%= s.clave %>" data-situacion><%= s.texto %></span>
         <strong class="precio"><%= precio(p.total) %></strong>
+        <% if (linkWhatsapp(p)) { %><a class="btn btn--chico" href="<%= linkWhatsapp(p) %>" target="_blank" rel="noopener">Enviar por WhatsApp</a><% } %>
         <button type="button" class="enlace" data-abrir aria-expanded="false">Detalle</button>
       </header>
       <div class="pedido__cuerpo" hidden>

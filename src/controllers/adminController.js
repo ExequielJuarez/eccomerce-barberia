@@ -2,6 +2,7 @@ const fs = require("fs");
 const path = require("path");
 const { validationResult } = require("express-validator");
 const productoService = require("../services/productoService");
+const whatsapp = require("../services/whatsappService");
 const pedidoService = require("../services/pedidoService");
 const categoriaService = require("../services/categoriaService");
 
@@ -216,6 +217,7 @@ module.exports = {
         estilo: ["admin", "admin-pedidos"],
         seccion: "pedidos",
         lista,
+        linkWhatsapp: whatsapp.linkAdmin,
         filtros: { estado, q },
         estados: pedidoService.ESTADOS,
         conteo,
