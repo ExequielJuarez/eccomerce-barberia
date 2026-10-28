@@ -25,13 +25,13 @@ const SECCIONES = {
       },
       bajada: parrafo(
         "Texto debajo del título",
-        "Barbería y venta de insumos profesionales. Cortes, barba y todo para el barbero de verdad.",
+        "Insumos profesionales para barberías y peluquerías. Máquinas, tijeras y todo para el barbero de verdad.",
         220
       ),
       botonTexto: texto("Botón principal", "Ver la tienda", 30, { ancho: "medio" }),
       botonLink: link("Link del botón principal", "#categorias"),
-      secundarioTexto: texto("Botón secundario", "Sacar turno", 30, { ancho: "medio" }),
-      secundarioLink: link("A dónde lleva", "/turnos"),
+      secundarioTexto: texto("Botón secundario", "Visitar el local", 30, { ancho: "medio" }),
+      secundarioLink: link("A dónde lleva", "#local"),
     },
   },
 
@@ -42,7 +42,7 @@ const SECCIONES = {
       palabras: {
         tipo: "lineas",
         etiqueta: "Palabras",
-        defecto: "Clippers\n*Shavers*\nTijeras\n*Insumos*\nTurnos online\n*Envíos a todo el país*",
+        defecto: "Clippers\n*Shavers*\nTijeras\n*Insumos*\nPedidos por WhatsApp\n*Envíos a todo el país*",
         max: 240,
         maxLineas: 10,
         ayuda: "Una por renglón. *Entre asteriscos* va resaltada.",
@@ -105,8 +105,8 @@ const SECCIONES = {
         },
         defecto: [
           { titulo: "Envío gratis", texto: "En compras desde $150.000 a todo el país." },
-          { titulo: "10% off", texto: "Pagando por transferencia bancaria." },
-          { titulo: "Hasta 6 cuotas", texto: "Con tarjeta de crédito, por Mercado Pago." },
+          { titulo: "Pedí por WhatsApp", texto: "Hacé tu pedido y te contactamos para coordinar." },
+          { titulo: "Coordinamos con vos", texto: "El pago y la entrega los acordamos por WhatsApp." },
           { titulo: "Retiro sin costo", texto: "En La Plata 212." },
         ],
       },

@@ -62,12 +62,6 @@
         </form>
       </fieldset>
 
-      <fieldset class="resumen__bloque">
-        <legend>Cómo pagás</legend>
-        <label class="opcion"><input type="radio" name="medio" value="tarjeta" <%= r.medioPago === 'tarjeta' ? 'checked' : '' %>><span><strong>Tarjeta</strong><small>Hasta <%= r.cuotas %> cuotas · Mercado Pago</small></span></label>
-        <label class="opcion"><input type="radio" name="medio" value="transferencia" <%= r.medioPago === 'transferencia' ? 'checked' : '' %>><span><strong>Transferencia</strong><small>10% de descuento</small></span></label>
-      </fieldset>
-
       <div class="resumen__bloque">
         <form class="cupon" id="formCupon" <%= r.cupon ? 'hidden' : '' %>>
           <input type="text" id="codigoCupon" placeholder="Cupón de descuento" autocomplete="off" aria-label="Cupón de descuento" maxlength="30">
@@ -83,13 +77,11 @@
       <dl class="totales">
         <div><dt>Subtotal</dt><dd data-r="subtotal"><%= precio(r.subtotal) %></dd></div>
         <div id="filaCupon" <%= r.descuentoCupon ? '' : 'hidden' %>><dt>Cupón</dt><dd class="resaltado">−<span data-r="descuentoCupon"><%= precio(r.descuentoCupon) %></span></dd></div>
-        <div id="filaPago" <%= r.descuentoPago ? '' : 'hidden' %>><dt>Transferencia (10%)</dt><dd class="resaltado">−<span data-r="descuentoPago"><%= precio(r.descuentoPago) %></span></dd></div>
         <div><dt>Envío</dt><dd data-r="envio"><%= r.envio === null ? 'A calcular' : (r.envio === 0 ? 'Gratis' : precio(r.envio)) %></dd></div>
         <div class="totales__total"><dt>Total</dt><dd class="precio precio--grande" data-r="total"><%= precio(r.total) %></dd></div>
       </dl>
-      <p class="resumen__cuotas" id="textoCuotas">Hasta <%= r.cuotas %> cuotas de <%= precio(r.total / r.cuotas) %> con tarjeta</p>
 
-      <a href="/checkout/datos" class="btn btn--volt btn--bloque" id="irCheckout">Finalizar compra</a>
+      <a href="/checkout/datos" class="btn btn--volt btn--bloque" id="irCheckout">Continuar con mi pedido</a>
       <a href="<%= urlProductos %>" class="resumen__seguir">← Seguir comprando</a>
     </aside>
   </div>

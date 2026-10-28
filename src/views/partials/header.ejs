@@ -3,11 +3,9 @@
 <div class="anuncios" aria-label="Promociones">
   <div class="anuncios__pista">
     <% for (let i = 0; i < 4; i++) { %>
-      <span>Sacá tu turno online</span>
-      <span>✦</span>
       <span>Envío gratis desde <%= formatoPrecio(150000).replace(',00', '') %></span>
       <span>✦</span>
-      <span>10% off por transferencia</span>
+      <span>Hacé tu pedido y te contactamos por WhatsApp</span>
       <span>✦</span>
       <span>Retirá en <%= tienda.direccion %></span>
       <span>✦</span>
@@ -36,7 +34,6 @@
     </nav>
 
     <div class="header__acciones">
-      <a href="/turnos" class="btn btn--linea btn--chico header__turno">Sacar turno</a>
       <button class="icono-btn" id="btnBuscar" aria-label="Buscar" aria-expanded="false" aria-controls="busqueda">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4" stroke-linecap="round"/></svg>
       </button>
@@ -51,9 +48,6 @@
             <p class="cuenta__email"><%= usuarioLocal.email %></p>
             <% if (esAdmin(usuarioLocal)) { %>
               <a href="/admin" class="cuenta__link cuenta__link--admin">Panel de administración →</a>
-            <% } %>
-            <% if (esBarbero(usuarioLocal)) { %>
-              <a href="/barbero" class="cuenta__link cuenta__link--admin">Mis turnos →</a>
             <% } %>
             <a href="/mi-cuenta/pedidos" class="cuenta__link">Mis pedidos</a>
             <a href="/mi-cuenta/datos" class="cuenta__link">Mis datos</a>
@@ -91,7 +85,6 @@
       <a href="<%= cat.url %>"><%= cat.nombre %> <small>→</small></a>
     <% }) %>
     <a href="/#local">El local <small>→</small></a>
-    <a href="/turnos" class="drawer__turno">Sacar turno <small>→</small></a>
     <a href="/favoritos">Favoritos <small><%= cantFav ? '(' + cantFav + ')' : '→' %></small></a>
   </nav>
   <div class="drawer__pie">

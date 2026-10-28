@@ -1,6 +1,6 @@
-# Barba Black · Tienda y turnos
+# Barba Black · Tienda
 
-Tienda online de insumos de peluquería y barbería, con reserva de turnos en un link propio (`/turnos`). Hecha con Node.js, Express, EJS, Sequelize y MySQL, sobre la estructura de `carpeta-base`.
+Tienda online de insumos de peluquería y barbería. Los pedidos se coordinan por WhatsApp. Hecha con Node.js, Express, EJS, Sequelize y MySQL, sobre la estructura de `carpeta-base`.
 
 ## Puesta en marcha
 
@@ -27,11 +27,15 @@ Al iniciar, la consola muestra una línea `Celular: http://<ip>:3000`. Con el ce
 
 Con `NODE_ENV=production` no se muestran en el login.
 
-## Turnos
+## Pedidos por WhatsApp
 
-- Página pública para reservar: `/turnos` (sin cuenta, con código de seguimiento para consultar o cancelar).
-- Agenda del día: `/admin/turnos`.
-- Servicios, horarios, equipo y días cerrados: `/admin/turnos/config`. Ahí mismo está el link para compartir con los clientes.
+- El cliente arma el carrito, carga sus datos (**WhatsApp y email obligatorios**) y confirma. No se cobra en la web: ve el mensaje "nos estaremos poniendo en contacto" y recibe un email de confirmación.
+- El sistema manda el pedido completo al WhatsApp del local (`WHATSAPP_PEDIDOS_NUMERO`, con código de país, ej. `5493854000000`) y lo registra en `/admin/pedidos` con una notificación.
+- Si el envío por WhatsApp falla o no está configurado, el pedido igual queda guardado y visible en el panel.
+- Opciones de envío (`WHATSAPP_PROVIDER`):
+  - `callmebot`: gratis, para un número propio. Se activa desde el WhatsApp del local siguiendo las instrucciones de callmebot.com, que te dan una apikey para `CALLMEBOT_APIKEY`.
+  - `cloud`: API oficial de Meta (WhatsApp Business Platform). Necesita `WHATSAPP_CLOUD_TOKEN`, `WHATSAPP_CLOUD_PHONE_ID` y, para escribir primero al local, una plantilla aprobada (`WHATSAPP_CLOUD_TEMPLATE`, con un solo parámetro en el cuerpo).
+- Bases ya instaladas: correr `database/migracion-whatsapp.sql` una sola vez.
 
 ## Estructura
 
@@ -47,9 +51,6 @@ database/
   schema.sql  datos-prueba.sql  instalar.js
 ```
 
-## Sucursales y peluqueros
+## Local
 
-- Local de venta de insumos: La Plata 212. Barbería (turnos): Av. Belgrano y Ameghino (tabla `sucursales`, hoy con una sola fila; si hay una sola, el cliente no ve el paso de sucursal).
-- El admin crea, edita y elimina peluqueros desde `/admin/equipo` (nombre, sucursal, foto, email y contraseña). Cada uno entra con su usuario (rol `barbero`) y ve solo sus turnos y notificaciones en `/barbero`.
-- En `/turnos` el cliente elige servicio → día y horario → peluquero (con foto).
-- Bases ya instaladas: ejecutar `database/migracion-peluqueros.sql` una sola vez. Una base nueva (`npm run db:instalar`) ya trae todo, con dos peluqueros de ejemplo (`lucas@barbablack.com` y `nico@barbablack.com`, contraseña `Barbero123`).
+- Venta de insumos y retiro de pedidos: La Plata 212.

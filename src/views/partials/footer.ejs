@@ -4,8 +4,7 @@
 <section class="beneficios">
   <div class="contenedor beneficios__grilla">
     <div class="beneficio"><h3>Envío gratis</h3><p>En compras desde <%= formatoPrecio(150000).replace(',00', '') %> a todo el país.</p></div>
-    <div class="beneficio"><h3>10% off</h3><p>Pagando por transferencia bancaria.</p></div>
-    <div class="beneficio"><h3>Hasta 6 cuotas</h3><p>Con tarjeta, por Mercado Pago.</p></div>
+    <div class="beneficio"><h3>Pedí por WhatsApp</h3><p>Hacé tu pedido y te contactamos para coordinar.</p></div>
     <div class="beneficio"><h3>Retiro sin costo</h3><p>En La Plata 212.</p></div>
   </div>
 </section>
@@ -41,7 +40,6 @@
     <div>
       <h4>Ayuda</h4>
       <ul>
-        <li><a href="/turnos">Sacar turno</a></li>
         <li><a href="/terminos#envios">Envíos</a></li>
         <li><a href="/terminos#pagos">Medios de pago</a></li>
         <li><a href="/cambios-y-devoluciones">Cambios y devoluciones</a></li>
@@ -62,7 +60,6 @@
       <a href="https://www.argentina.gob.ar/produccion/defensadelconsumidor/formulario" target="_blank" rel="noopener">Defensa de las y los consumidores. Para reclamos ingrese aquí</a>
       <% if (t.dataFiscal) { %><a href="<%= t.dataFiscal %>" target="_blank" rel="noopener">Data fiscal</a><% } %>
     </span>
-    <span>Visa · Mastercard · Amex · Naranja · Mercado Pago · Transferencia</span>
   </div>
 </footer>
 

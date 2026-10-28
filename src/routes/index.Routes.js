@@ -16,7 +16,6 @@ const pagosController = require("../controllers/pagosController");
 const cuentaController = require("../controllers/cuentaController");
 const soloLogueados = require("../middlewares/soloLogueados");
 const legal = require("../controllers/legalController");
-const turnosController = require("../controllers/turnosController");
 const perfilValidator = require("../validations/perfilValidator");
 const claveValidator = require("../validations/claveValidator");
 
@@ -38,12 +37,6 @@ async function coloresDe(productos) {
     .filter((c) => c.cantidad > 0);
 }
 
-router.get("/turnos", turnosController.ver);
-router.get("/turnos/disponibilidad", turnosController.disponibilidad);
-router.post("/turnos", turnosController.crear);
-router.get("/turnos/:codigo/eventos", turnosController.eventos);
-router.get("/turnos/:codigo", turnosController.detalle);
-router.post("/turnos/:codigo/cancelar", turnosController.cancelar);
 
 router.get("/categoria/:slug", async (req, res, next) => {
   const categoria = await categoriaService.porSlug(req.params.slug);
@@ -155,7 +148,6 @@ router.delete("/carrito/item/:clave", carritoController.quitar);
 router.delete("/carrito", carritoController.vaciar);
 router.post("/carrito/cupon", carritoController.cupon);
 router.delete("/carrito/cupon", carritoController.quitarCupon);
-router.post("/carrito/medio-pago", carritoController.medioPago);
 router.post("/carrito/envio", carritoController.envio);
 router.post("/carrito/entrega", carritoController.entrega);
 
@@ -165,16 +157,9 @@ router.delete("/favoritos", favoritosController.vaciar);
 
 router.get("/checkout/datos", checkoutController.ver);
 router.post("/checkout/datos", checkoutValidator, checkoutController.guardar);
-router.get("/checkout/pago", checkoutController.verPago);
-router.post("/checkout/confirmar", checkoutController.confirmar);
 
 router.get("/pedido/:numero", pagosController.detalle);
-router.post("/pedido/:numero/pagar", pagosController.pagar);
 router.post("/pedido/:numero/cancelar", pagosController.cancelar);
-router.get("/pagos/retorno", pagosController.retorno);
-router.post("/pagos/webhook", pagosController.webhook);
-router.get("/pagos/demo/:numero", pagosController.verDemo);
-router.post("/pagos/demo/:numero", pagosController.confirmarDemo);
 
 router.get("/mi-cuenta", soloLogueados, (req, res) => res.redirect("/mi-cuenta/pedidos"));
 router.get("/mi-cuenta/pedidos", soloLogueados, cuentaController.pedidos);

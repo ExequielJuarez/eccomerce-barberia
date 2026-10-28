@@ -1,20 +1,17 @@
-<% const sec = locals.seccion || ''; const pend = locals.pedidosPendientes || 0; const arrep = locals.arrepentimientosPendientes || 0; const turn = locals.turnosPendientes || 0;
+<% const sec = locals.seccion || ''; const pend = locals.pedidosPendientes || 0; const arrep = locals.arrepentimientosPendientes || 0;
    const items = [
      ['dashboard', '/admin', 'Resumen', '<path d="M4 13h6V4H4zM14 20h6V11h-6zM14 4v4h6V4zM4 20h6v-3H4z"/>', 0],
      ['pedidos', '/admin/pedidos', 'Pedidos', '<path d="M5 8h14l-1.2 12H6.2zM9 8V6a3 3 0 016 0v2"/>', pend],
-     ['turnos', '/admin/turnos', 'Turnos', '<rect x="3.5" y="5" width="17" height="15" rx="1"/><path d="M3.5 10h17M8 3v4M16 3v4"/>', turn],
      ['productos', '/admin/productos', 'Productos', '<path d="M4 7l8-4 8 4v10l-8 4-8-4zM4 7l8 4 8-4M12 11v10"/>', 0],
      ['categorias', '/admin/categorias', 'Categorías', '<path d="M4 6h16M4 12h16M4 18h10"/>', 0],
      ['arrepentimientos', '/admin/arrepentimientos', 'Arrepentimientos', '<path d="M3 12a9 9 0 109-9M3 4v5h5"/>', arrep],
    ];
-   const soyBarbero = esBarbero(locals.usuario);
-   if (!soyBarbero) items.splice(3, 0, ['equipo', '/admin/equipo', 'Equipo', '<circle cx="9" cy="8" r="3.2"/><circle cx="17" cy="9" r="2.4"/><path d="M3 20c.8-3.4 3-5 6-5s5.2 1.6 6 5M16 15.2c2.6-.2 4.4 1.2 5 4"/>', 0]);
-   const menu = soyBarbero ? [['mis-turnos', '/barbero', 'Mis turnos', items[2][3], turn]] : items;
+   const menu = items;
    if (esSuperAdmin(locals.usuario)) menu.push(['inicio', '/admin/inicio', 'Página de inicio', '<path d="M3 11l9-8 9 8v9a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1z"/>', 0]);
 %>
 <div class="adm">
   <aside class="adm-lateral" id="admLateral" aria-label="Menú del panel">
-    <a href="<%= soyBarbero ? '/barbero' : '/admin' %>" class="adm-marca" aria-label="Panel Barba Black"><span><%- include('logo') %></span><small><%= soyBarbero ? 'Peluquero' : 'Panel' %></small></a>
+    <a href="/admin" class="adm-marca" aria-label="Panel Barba Black"><span><%- include('logo') %></span><small>Panel</small></a>
     <nav class="adm-nav">
       <% menu.forEach(([k, url, nombre, icono, n]) => { %>
         <a href="<%= url %>" class="<%= sec === k ? 'activo' : '' %>" <%- sec === k ? 'aria-current="page"' : '' %>>
@@ -26,7 +23,7 @@
     </nav>
     <div class="adm-lateral__pie">
       <a href="/" class="adm-ver-tienda" target="_blank" rel="noopener">Ver la tienda ↗</a>
-      <p class="adm-usuario"><strong><%= usuario.nombre %></strong><small><%= soyBarbero ? 'Peluquero' : esSuperAdmin(usuario) ? 'Superadmin' : 'Admin' %></small></p>
+      <p class="adm-usuario"><strong><%= usuario.nombre %></strong><small><%= esSuperAdmin(usuario) ? 'Superadmin' : 'Admin' %></small></p>
       <form action="/logout" method="POST"><button class="enlace adm-salir">Cerrar sesión</button></form>
     </div>
   </aside>

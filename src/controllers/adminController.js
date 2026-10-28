@@ -3,7 +3,6 @@ const path = require("path");
 const { validationResult } = require("express-validator");
 const productoService = require("../services/productoService");
 const pedidoService = require("../services/pedidoService");
-const pagoService = require("../services/pagoService");
 const categoriaService = require("../services/categoriaService");
 
 const CARPETA_PUBLICA = path.join(__dirname, "../../public");
@@ -209,7 +208,6 @@ module.exports = {
   async pedidos(req, res) {
     const { estado = "", q = "" } = req.query;
 
-    await pagoService.revisarSinPagarRapido();
     const [lista, conteo] = await Promise.all([pedidoService.listar({ estado, q }), pedidoService.conteoPorEstado()]);
     res.render(
       "admin/pedidos",

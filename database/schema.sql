@@ -7,12 +7,6 @@ USE barba_black;
 SET NAMES utf8mb4;
 
 SET FOREIGN_KEY_CHECKS = 0;
-DROP TABLE IF EXISTS turnos;
-DROP TABLE IF EXISTS bloqueos_turno;
-DROP TABLE IF EXISTS horarios_turno;
-DROP TABLE IF EXISTS servicios_turno;
-DROP TABLE IF EXISTS barberos;
-DROP TABLE IF EXISTS sucursales;
 DROP TABLE IF EXISTS contenido_inicio;
 DROP TABLE IF EXISTS arrepentimientos;
 DROP TABLE IF EXISTS notificaciones;
@@ -38,7 +32,7 @@ CREATE TABLE usuarios (
   telefono        VARCHAR(20)  NULL,
   password        CHAR(60)     NULL,
   google_id       VARCHAR(64)  NULL,
-  rol             ENUM('cliente', 'admin', 'superadmin', 'barbero') NOT NULL DEFAULT 'cliente',
+  rol             ENUM('cliente', 'admin', 'superadmin') NOT NULL DEFAULT 'cliente',
   newsletter      TINYINT(1)   NOT NULL DEFAULT 0,
   dni             VARCHAR(8)   NULL,
   calle           VARCHAR(90)  NULL,
@@ -194,7 +188,7 @@ CREATE TABLE pedidos (
   facturacion     ENUM('consumidor', 'facturaA') NOT NULL DEFAULT 'consumidor',
   cuit            VARCHAR(13)    NULL,
   razon_social    VARCHAR(120)   NULL,
-  medio_pago      ENUM('tarjeta', 'transferencia') NOT NULL DEFAULT 'tarjeta',
+  medio_pago      ENUM('tarjeta', 'transferencia', 'whatsapp') NOT NULL DEFAULT 'whatsapp',
   cupon_codigo    VARCHAR(30)    NULL,
   estado          ENUM('pendiente', 'pagado', 'enviado', 'entregado', 'cancelado') NOT NULL DEFAULT 'pendiente',
   pago_estado     ENUM('pendiente', 'aprobado', 'rechazado', 'reembolsado') NOT NULL DEFAULT 'pendiente',
@@ -239,7 +233,7 @@ CREATE TABLE pedido_items (
 
 CREATE TABLE notificaciones (
   id          INT UNSIGNED  NOT NULL AUTO_INCREMENT,
-  tipo        ENUM('pedido', 'stock', 'turno') NOT NULL DEFAULT 'pedido',
+  tipo        ENUM('pedido', 'stock') NOT NULL DEFAULT 'pedido',
   titulo      VARCHAR(120)  NOT NULL,
   mensaje     VARCHAR(255)  NULL,
   url         VARCHAR(255)  NULL,
@@ -283,91 +277,4 @@ CREATE TABLE arrepentimientos (
   PRIMARY KEY (id),
   UNIQUE KEY uq_arrepentimientos_codigo (codigo),
   KEY idx_arrepentimientos_estado (estado, creado_en)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-CREATE TABLE sucursales (
-  id         SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
-  nombre     VARCHAR(60)       NOT NULL,
-  direccion  VARCHAR(120)      NOT NULL,
-  activo     TINYINT(1)        NOT NULL DEFAULT 1,
-  orden      SMALLINT UNSIGNED NOT NULL DEFAULT 0,
-  PRIMARY KEY (id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-CREATE TABLE barberos (
-  id           SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
-  nombre       VARCHAR(60)       NOT NULL,
-  sucursal_id  SMALLINT UNSIGNED NULL,
-  usuario_id   INT UNSIGNED      NULL,
-  foto         VARCHAR(255)      NULL,
-  activo       TINYINT(1)        NOT NULL DEFAULT 1,
-  orden        SMALLINT UNSIGNED NOT NULL DEFAULT 0,
-  PRIMARY KEY (id),
-  UNIQUE KEY uq_barberos_usuario (usuario_id),
-  KEY idx_barberos_sucursal (sucursal_id),
-  CONSTRAINT fk_barberos_sucursal FOREIGN KEY (sucursal_id) REFERENCES sucursales (id)
-    ON UPDATE CASCADE ON DELETE SET NULL,
-  CONSTRAINT fk_barberos_usuario FOREIGN KEY (usuario_id) REFERENCES usuarios (id)
-    ON UPDATE CASCADE ON DELETE SET NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-CREATE TABLE servicios_turno (
-  id        SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
-  nombre    VARCHAR(80)       NOT NULL,
-  detalle   VARCHAR(160)      NULL,
-  duracion  SMALLINT UNSIGNED NOT NULL,
-  precio    DECIMAL(12, 2)    NULL,
-  activo    TINYINT(1)        NOT NULL DEFAULT 1,
-  orden     SMALLINT UNSIGNED NOT NULL DEFAULT 0,
-  PRIMARY KEY (id),
-  CONSTRAINT ck_servicios_duracion CHECK (duracion BETWEEN 5 AND 480)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-CREATE TABLE horarios_turno (
-  id          SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
-  dia_semana  TINYINT UNSIGNED  NOT NULL,
-  desde       TIME              NOT NULL,
-  hasta       TIME              NOT NULL,
-  PRIMARY KEY (id),
-  KEY idx_horarios_dia (dia_semana),
-  CONSTRAINT ck_horarios_dia CHECK (dia_semana BETWEEN 0 AND 6),
-  CONSTRAINT ck_horarios_rango CHECK (hasta > desde)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-CREATE TABLE bloqueos_turno (
-  id      INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  fecha   DATE         NOT NULL,
-  motivo  VARCHAR(80)  NULL,
-  PRIMARY KEY (id),
-  UNIQUE KEY uq_bloqueos_fecha (fecha)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-CREATE TABLE turnos (
-  id          INT UNSIGNED      NOT NULL AUTO_INCREMENT,
-  codigo      VARCHAR(12)       NOT NULL,
-  servicio_id SMALLINT UNSIGNED NULL,
-  barbero_id  SMALLINT UNSIGNED NULL,
-  sucursal_id SMALLINT UNSIGNED NULL,
-  servicio    VARCHAR(80)       NOT NULL,
-  barbero     VARCHAR(60)       NOT NULL,
-  sucursal    VARCHAR(60)       NULL,
-  cliente     VARCHAR(90)       NOT NULL,
-  telefono    VARCHAR(25)       NOT NULL,
-  notas       VARCHAR(200)      NULL,
-  fecha       DATE              NOT NULL,
-  inicio      TIME              NOT NULL,
-  fin         TIME              NOT NULL,
-  estado      ENUM('reservado', 'confirmado', 'completado', 'cancelado', 'ausente') NOT NULL DEFAULT 'reservado',
-  creado_en   DATETIME          NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (id),
-  UNIQUE KEY uq_turnos_codigo (codigo),
-  KEY idx_turnos_agenda (fecha, barbero_id, inicio),
-  KEY idx_turnos_estado (estado),
-  CONSTRAINT fk_turnos_servicio FOREIGN KEY (servicio_id) REFERENCES servicios_turno (id)
-    ON UPDATE CASCADE ON DELETE SET NULL,
-  CONSTRAINT fk_turnos_barbero FOREIGN KEY (barbero_id) REFERENCES barberos (id)
-    ON UPDATE CASCADE ON DELETE SET NULL,
-  CONSTRAINT fk_turnos_sucursal FOREIGN KEY (sucursal_id) REFERENCES sucursales (id)
-    ON UPDATE CASCADE ON DELETE SET NULL,
-  CONSTRAINT ck_turnos_rango CHECK (fin > inicio)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

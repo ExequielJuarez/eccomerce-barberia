@@ -28,6 +28,9 @@
       vacios.forEach((n) => form[n].closest(".campo").classList.add("campo--error"));
       form[vacios[0]].focus();
       window.BB.toast("Completá los campos marcados", "error");
+      return;
     }
+    const boton = form.querySelector("button[type=submit]");
+    if (boton) { boton.disabled = true; boton.textContent = "Enviando pedido…"; }
   });
 })();

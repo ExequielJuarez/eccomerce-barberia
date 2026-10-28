@@ -10,12 +10,9 @@
     fijar('[data-r="cantidad"]', r.cantidad);
     fijar('[data-r="subtotal"]', peso(r.subtotal));
     fijar('[data-r="descuentoCupon"]', peso(r.descuentoCupon));
-    fijar('[data-r="descuentoPago"]', peso(r.descuentoPago));
     fijar('[data-r="envio"]', r.envio === null ? "A calcular" : r.envio === 0 ? "Gratis" : peso(r.envio));
     fijar('[data-r="total"]', peso(r.total));
     $("#filaCupon").hidden = !r.descuentoCupon;
-    $("#filaPago").hidden = !r.descuentoPago;
-    $("#textoCuotas").textContent = `Hasta ${r.cuotas} cuotas de ${peso(r.total / r.cuotas)} con tarjeta`;
     $("#envioProgreso").style.width = r.progresoEnvio + "%";
     $("#envioTexto").innerHTML = r.envioGratis
       ? "🎉 <strong>¡Tenés envío gratis!</strong>"
@@ -59,7 +56,6 @@
   $("#vaciarCarrito").addEventListener("click", () => { if (confirm("¿Vaciar el carrito?")) accion("/carrito", "DELETE"); });
 
   $$('input[name="entrega"]').forEach((i) => i.addEventListener("change", () => accion("/carrito/entrega", "POST", { entrega: i.value })));
-  $$('input[name="medio"]').forEach((i) => i.addEventListener("change", () => accion("/carrito/medio-pago", "POST", { medio: i.value })));
   $("#formCp").addEventListener("submit", async (e) => {
     e.preventDefault();
     const r = await accion("/carrito/envio", "POST", { codigoPostal: $("#cp").value.trim() });

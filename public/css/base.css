@@ -115,7 +115,6 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .nav__item--activo a { color: var(--papel); }
 .nav__item--activo a::after { transform: scaleX(1); }
 .header__acciones { display: flex; align-items: center; gap: 2px; }
-.header__turno { margin-right: 10px; border-color: var(--oro); color: var(--oro); }
 .header__menu-btn { display: none; }
 .hamburguesa, .hamburguesa::before, .hamburguesa::after { display: block; width: 22px; height: 2px; background: currentColor; transition: transform 260ms var(--ease), background-color 200ms ease; }
 .hamburguesa { position: relative; }
@@ -162,7 +161,6 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .drawer-abierto .header { background: var(--tinta); }
 .drawer__lista a { display: flex; align-items: baseline; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid var(--linea); font-family: var(--ff-titulo); font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; font-size: clamp(24px, 7vw, 38px); line-height: 1.1; }
 .drawer__lista a small { font-family: var(--ff-texto); font-size: 12px; color: var(--apagado); letter-spacing: 0.1em; }
-.drawer__turno { color: var(--oro); }
 .drawer__pie { margin-top: 28px; color: var(--apagado); font-size: 13px; display: grid; gap: 4px; }
 .drawer__pie a { color: var(--papel); font-weight: 600; }
 
@@ -290,7 +288,6 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   .btn--volt:hover { background: var(--oro); border-color: var(--oro); color: var(--tinta); }
   .btn--oro:hover { background: transparent; color: var(--oro); }
   .btn--linea:hover { border-color: var(--papel); background: transparent; }
-  .header__turno:hover { background: var(--oro); color: var(--tinta); border-color: var(--oro); }
   .btn--peligro:hover { background: var(--rojo); color: var(--tinta); }
   .enlace:hover { color: var(--oro); }
   .icono-btn:hover { background: var(--tinta-4); color: var(--oro); }
@@ -339,7 +336,6 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   .aviso-cookies { right: 18px; flex-direction: column; align-items: stretch; }
   .marca-link .bb-logo { width: 42px; height: 42px; }
   .marca-link__texto { font-size: 14px; letter-spacing: 0.12em; }
-  .header__turno { display: none; }
   .sugerencia { grid-template-columns: 52px 1fr auto; gap: 12px; }
   .sugerencia img { width: 52px; height: 66px; }
 }

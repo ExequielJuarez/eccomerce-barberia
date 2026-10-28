@@ -32,7 +32,7 @@
         </ul>
         <div class="pedido__info">
           <div><span class="campo__label">Entrega</span><p><%= p.entrega === 'retiro' ? 'Retiro en el local' : [p.calle + ' ' + p.altura + (p.piso ? ', ' + p.piso : ''), p.ciudad + ', ' + p.provincia + ' (' + p.codigoPostal + ')'].join(' — ') %></p><% if (p.notas) { %><p class="apagado">“<%= p.notas %>”</p><% } %></div>
-          <div><span class="campo__label">Pago</span><p><%= p.medioPago === 'transferencia' ? 'Transferencia' : 'Tarjeta' %> · <%= p.pagoEstado %><%= p.pagoDetalle ? ' · ' + p.pagoDetalle : '' %></p>
+          <div><span class="campo__label">Pago</span><p><%= {transferencia: 'Transferencia', tarjeta: 'Tarjeta'}[p.medioPago] || 'WhatsApp' %> · <%= p.pagoEstado %><%= p.pagoDetalle ? ' · ' + p.pagoDetalle : '' %></p>
             <% if (p.facturacion === 'facturaA') { %><p class="apagado">Factura A · CUIT <%= p.cuit %> · <%= p.razonSocial %></p><% } %><% if (p.dni) { %><p class="apagado">DNI <%= p.dni %></p><% } %></div>
           <div><span class="campo__label">Importes</span><p>Subtotal <%= precio(p.subtotal) %><% if (p.descuento > 0) { %> · Desc. −<%= precio(p.descuento) %><% } %> · Envío <%= p.envio ? precio(p.envio) : 'gratis' %></p><p class="apagado">Ganancia <span data-ganancia><%= precio(p.ganancia) %></span></p></div>
         </div>

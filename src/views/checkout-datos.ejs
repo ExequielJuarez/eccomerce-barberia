@@ -15,11 +15,12 @@
 
       <fieldset class="bloque-form">
         <legend><span>1</span> Contacto</legend>
+        <p class="apagado">Te escribimos por WhatsApp y por email para coordinar el pago y la entrega.</p>
         <div class="grilla-form">
           <%- include('partials/campo', { nombre: 'email', etiqueta: 'Email', tipo: 'email', valor: v('email'), errores: e, atributos: 'autocomplete="email" required', clase: 'completo' }) %>
           <%- include('partials/campo', { nombre: 'nombre', etiqueta: 'Nombre', valor: v('nombre'), errores: e, atributos: 'autocomplete="given-name" required' }) %>
           <%- include('partials/campo', { nombre: 'apellido', etiqueta: 'Apellido', valor: v('apellido'), errores: e, atributos: 'autocomplete="family-name" required' }) %>
-          <%- include('partials/campo', { nombre: 'telefono', etiqueta: 'Teléfono', tipo: 'tel', valor: v('telefono'), errores: e, atributos: 'autocomplete="tel" placeholder="385 4000000" required' }) %>
+          <%- include('partials/campo', { nombre: 'telefono', etiqueta: 'WhatsApp', tipo: 'tel', valor: v('telefono'), errores: e, atributos: 'autocomplete="tel" placeholder="Con código de área. Ej: 385 4000000" required' }) %>
           <%- include('partials/campo', { nombre: 'dni', etiqueta: 'DNI', valor: v('dni'), errores: e, atributos: 'inputmode="numeric" maxlength="8" placeholder="Sin puntos" required' }) %>
         </div>
       </fieldset>
@@ -70,7 +71,7 @@
 
       <div class="checkout__acciones">
         <a href="/carrito" class="btn btn--linea">Volver</a>
-        <button type="submit" class="btn btn--volt">Continuar al pago →</button>
+        <button type="submit" class="btn btn--volt">Confirmar pedido</button>
       </div>
     </form>
 

@@ -65,11 +65,6 @@ module.exports = {
     await responder(req, res);
   },
 
-  async medioPago(req, res) {
-    carrito.fijarMedioPago(req.session, req.body.medio);
-    await responder(req, res);
-  },
-
   async entrega(req, res) {
     carrito.fijarEntrega(req.session, req.body.entrega);
     await responder(req, res);

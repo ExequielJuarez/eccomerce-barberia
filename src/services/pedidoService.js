@@ -122,7 +122,7 @@ async function crearDesdeCarrito(resumen, datos, usuario) {
     }
 
     const costo = resumen.items.reduce((acc, i) => acc + i.producto.costo * i.cantidad, 0);
-    const descuento = resumen.descuentoCupon + resumen.descuentoPago;
+    const descuento = resumen.descuentoCupon;
     const domicilio = datos.entrega === "domicilio";
 
     const pedido = await db.Pedido.create(
@@ -143,7 +143,7 @@ async function crearDesdeCarrito(resumen, datos, usuario) {
         facturacion: datos.facturacion,
         cuit: datos.facturacion === "facturaA" ? datos.cuit : null,
         razonSocial: datos.facturacion === "facturaA" ? datos.razonSocial : null,
-        medioPago: resumen.medioPago,
+        medioPago: "whatsapp",
         cuponCodigo: resumen.cupon?.codigo || null,
 
         estado: "pendiente",

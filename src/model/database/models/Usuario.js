@@ -16,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
       telefono: DataTypes.STRING(20),
       password: DataTypes.CHAR(60),
       googleId: { type: DataTypes.STRING(64), unique: true },
-      rol: { type: DataTypes.ENUM("cliente", "admin", "superadmin", "barbero"), allowNull: false, defaultValue: "cliente" },
+      rol: { type: DataTypes.ENUM("cliente", "admin", "superadmin"), allowNull: false, defaultValue: "cliente" },
       newsletter: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
 
       dni: DataTypes.STRING(8),

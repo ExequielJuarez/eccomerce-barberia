@@ -39,10 +39,6 @@
 .cat__flecha { position: absolute; right: 0; bottom: 0; display: grid; place-items: center; width: 40px; height: 40px; border: 1px solid var(--oro); color: var(--oro); }
 .cat__flecha svg { width: 20px; height: 20px; }
 
-.turnos-banner { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 0.7fr); gap: clamp(24px, 5vw, 80px); align-items: center; padding-block: clamp(34px, 5vw, 64px); border: 1px solid var(--linea-fuerte); background: linear-gradient(120deg, var(--tinta-2), #17140d); }
-.turnos-banner__texto { display: grid; gap: 20px; justify-items: start; }
-.turnos-banner__bajada { color: var(--papel-2); max-width: 48ch; font-size: 17px; }
-.turnos-banner__logo { width: min(100%, 280px); margin-inline: auto; filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.6)); }
 
 .local { display: grid; grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr); gap: clamp(28px, 6vw, 90px); align-items: center; }
 .local__foto { position: relative; aspect-ratio: 4 / 5; max-width: 480px; border: 1px solid var(--linea-fuerte); }
@@ -76,8 +72,6 @@
   .hero__botones--grandes { justify-self: stretch; width: 100%; flex-direction: row; flex-wrap: wrap; }
   .hero__botones--grandes .btn { flex: 1 1 200px; }
   .categorias { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .turnos-banner { grid-template-columns: 1fr; }
-  .turnos-banner__logo { width: 150px; margin-inline: 0; order: -1; }
   .local { grid-template-columns: 1fr; }
 }
 @media (max-width: 640px) {

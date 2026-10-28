@@ -9,7 +9,7 @@
   <section class="comp__datos">
     <div><h2>Cliente</h2><p><strong><%= p.cliente %></strong></p><p><%= p.email %></p><% if (p.telefono) { %><p>Tel. <%= p.telefono %></p><% } %><% if (p.dni) { %><p>DNI <%= p.dni %></p><% } %><% if (p.facturacion === 'facturaA') { %><p>Factura A · CUIT <%= p.cuit %> · <%= p.razonSocial %></p><% } %></div>
     <div><h2><%= p.entrega === 'retiro' ? 'Retiro' : 'Envío' %></h2><% if (p.entrega === 'retiro') { %><p>Retira en el local</p><% } else { %><p><%= p.calle %> <%= p.altura %><%= p.piso ? ', ' + p.piso : '' %></p><p><%= p.ciudad %>, <%= p.provincia %> (<%= p.codigoPostal %>)</p><% } %></div>
-    <div><h2>Pago</h2><p><%= p.medioPago === 'transferencia' ? 'Transferencia bancaria' : 'Tarjeta (Mercado Pago)' %></p><p><%= p.pagoEstado %></p></div>
+    <div><h2>Pago</h2><p><%= {transferencia: 'Transferencia bancaria', tarjeta: 'Tarjeta (Mercado Pago)'}[p.medioPago] || 'A coordinar por WhatsApp' %></p><p><%= p.pagoEstado %></p></div>
   </section>
   <table class="comp__tabla">
     <thead><tr><th>Descripción</th><th>Color</th><th class="der">Cant.</th><th class="der">Precio</th><th class="der">Subtotal</th></tr></thead>

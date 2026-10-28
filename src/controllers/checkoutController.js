@@ -2,7 +2,9 @@ const { validationResult } = require("express-validator");
 const carrito = require("../services/carritoService");
 const pedidos = require("../services/pedidoService");
 const notificaciones = require("../services/notificacionService");
-const pagos = require("../services/pagoService");
+const whatsapp = require("../services/whatsappService");
+const correo = require("../services/correoService");
+const tienda = require("../helpers/tienda");
 const usuarios = require("../services/usuarioService");
 const provincias = require("../data/provincias");
 
@@ -38,6 +40,15 @@ function recordarPedido(req, numero) {
   req.session.pedidosRecientes = [numero, ...(req.session.pedidosRecientes || [])].slice(0, 10);
 }
 
+function avisarPorCorreo(pedido) {
+  const lineas = pedido.items.map((i) => `- ${i.cantidad} x ${i.nombre}${i.color ? ` (${i.color})` : ""}`).join("\n");
+  const cuando = pedido.entrega === "retiro" ? `el retiro en ${tienda().direccion}` : "el envío";
+  const saludo = `Hola ${pedido.cliente.split(" ")[0]}! Recibimos tu pedido #${pedido.numero}:`;
+  const aviso = `Nos estaremos poniendo en contacto con vos por WhatsApp (${pedido.telefono}) para coordinar el pago y ${cuando}.`;
+  const texto = [saludo, "", lineas, "", aviso].join("\n");
+  correo.enviarTexto({ email: pedido.email, asunto: `Recibimos tu pedido #${pedido.numero}`, texto }).catch(() => {});
+}
+
 function render(res, { req, resumen, datos, errores = {}, status = 200 }) {
   res.status(status).render("checkout-datos", {
     titulo: "Tus datos",
@@ -70,46 +81,13 @@ module.exports = {
 
     carrito.fijarEntrega(req.session, datos.entrega);
     if (datos.entrega === "domicilio") carrito.fijarCodigoPostal(req.session, datos.codigoPostal);
-
-    req.session.checkout = { datos };
+    const final = await carrito.resumen(req.session);
+    if (!final.items.length) return res.redirect("/carrito");
 
     const u = req.session.usuarioLogueado;
-    if (u) await usuarios.guardarDireccionSiFalta(u.id, datos).catch((e) => console.error("No se guardó la dirección:", e.message));
-    res.redirect("/checkout/pago");
-  },
-
-  async verPago(req, res) {
-    const resumen = await carrito.resumen(req.session);
-    const datos = req.session.checkout?.datos;
-    if (!resumen.items.length) return res.redirect("/carrito");
-    if (!datos) return res.redirect("/checkout/datos");
-
-    if (pagos.modo() === "desactivado" && resumen.medioPago !== "transferencia") {
-      carrito.fijarMedioPago(req.session, "transferencia");
-      return res.redirect("/checkout/pago");
-    }
-    res.render("checkout-pago", {
-      titulo: "Pago",
-      estilo: ["checkout-datos", "checkout-pago"],
-      resumen,
-      datos,
-      modoPago: pagos.modo(),
-      pagoDePrueba: pagos.esTokenDePrueba(),
-      venceHoras: pagos.venceHoras(),
-    });
-  },
-
-  async confirmar(req, res) {
-    if (["tarjeta", "transferencia"].includes(req.body.medio)) carrito.fijarMedioPago(req.session, req.body.medio);
-    if (pagos.modo() === "desactivado") carrito.fijarMedioPago(req.session, "transferencia");
-    const resumen = await carrito.resumen(req.session);
-    const datos = req.session.checkout?.datos;
-    if (!resumen.items.length) return res.redirect("/carrito");
-    if (!datos) return res.redirect("/checkout/datos");
-
     let pedido;
     try {
-      pedido = await pedidos.crearDesdeCarrito(resumen, datos, req.session.usuarioLogueado);
+      pedido = await pedidos.crearDesdeCarrito(final, datos, u);
     } catch (error) {
       if (!error.sinStock) throw error;
       req.session.flash = `${error.message}. Revisá tu carrito.`;
@@ -117,22 +95,15 @@ module.exports = {
     }
 
     notificaciones.nuevoPedido(pedido).catch((e) => console.error("No se pudo notificar la compra:", e.message));
+    whatsapp.enviarPedido(pedido);
+    avisarPorCorreo(pedido);
+    if (u) await usuarios.guardarDireccionSiFalta(u.id, datos).catch((e) => console.error("No se guardó la dirección:", e.message));
+
     carrito.vaciar(req.session);
     delete req.session.checkout;
     recordarPedido(req, pedido.numero);
-
-    if (pedido.medioPago === "transferencia") {
-      req.session.flash = `¡Gracias! Tu pedido #${pedido.numero} quedó reservado. Te pasamos los datos para transferir.`;
-      return res.redirect(`/pedido/${pedido.numero}`);
-    }
-
-    try {
-      res.redirect(await pagos.iniciar(pedido));
-    } catch (error) {
-      console.error(`No se pudo iniciar el pago del pedido #${pedido.numero}:`, error.message);
-      req.session.flash = "Tu pedido quedó guardado, pero no pudimos conectar con Mercado Pago. Probá pagar de nuevo en un momento.";
-      res.redirect(`/pedido/${pedido.numero}`);
-    }
+    req.session.flash = `¡Gracias! Recibimos tu pedido #${pedido.numero}. Nos estaremos poniendo en contacto con vos.`;
+    res.redirect(`/pedido/${pedido.numero}`);
   },
 
   recordarPedido,

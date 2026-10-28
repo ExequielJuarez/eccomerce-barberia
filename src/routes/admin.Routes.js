@@ -12,9 +12,6 @@ const inicio = require("../controllers/inicioAdminController");
 const categorias = require("../controllers/categoriasAdminController");
 const arrepentimientos = require("../controllers/arrepentimientosAdminController");
 const arrepentimientoService = require("../services/arrepentimientoService");
-const turnosAdmin = require("../controllers/turnosAdminController");
-const equipoAdmin = require("../controllers/equipoAdminController");
-const subirFotoEquipo = require("../middlewares/subirFotoEquipo");
 const multer = require("multer");
 
 const soloCampos = (req, res, next) =>
@@ -53,20 +50,6 @@ router.delete("/subcategorias/:id", categorias.borrarSubcategoria);
 router.get("/arrepentimientos", arrepentimientos.ver);
 router.patch("/arrepentimientos/:id", arrepentimientos.cambiarEstado);
 
-router.get("/turnos/eventos", turnosAdmin.eventos);
-router.get("/turnos", turnosAdmin.agenda);
-router.get("/turnos/config", turnosAdmin.config);
-router.patch("/turnos/:id/estado", turnosAdmin.cambiarEstado);
-router.post("/turnos/servicios", turnosAdmin.guardarServicio);
-router.put("/turnos/servicios/:id", turnosAdmin.guardarServicio);
-router.delete("/turnos/servicios/:id", turnosAdmin.borrarServicio);
-router.get("/equipo", equipoAdmin.ver);
-router.post("/equipo", subirFotoEquipo, equipoAdmin.crear);
-router.put("/equipo/:id", subirFotoEquipo, equipoAdmin.actualizar);
-router.delete("/equipo/:id", equipoAdmin.eliminar);
-router.put("/turnos/horarios", turnosAdmin.guardarHorarios);
-router.post("/turnos/cierres", turnosAdmin.crearBloqueo);
-router.delete("/turnos/cierres/:id", turnosAdmin.borrarBloqueo);
 
 router.get("/pedidos", admin.pedidos);
 router.patch("/pedidos/:numero/estado", admin.cambiarEstado);

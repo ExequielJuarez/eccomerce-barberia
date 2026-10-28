@@ -32,9 +32,7 @@ async function nuevoPedido(pedido) {
   await crear({
     tipo: "pedido",
     titulo: `Nueva compra #${pedido.numero}`,
-    mensaje: `${pedido.cliente} · ${pesos(pedido.total)} · ${unidades} ${unidades === 1 ? "unidad" : "unidades"} · ${
-      pedido.medioPago === "transferencia" ? "espera transferencia" : "pagando con tarjeta"
-    }`,
+    mensaje: `${pedido.cliente} · ${pesos(pedido.total)} · ${unidades} ${unidades === 1 ? "unidad" : "unidades"} · por coordinar (WhatsApp)`,
     url: `/admin/pedidos?q=${pedido.numero}`,
     pedidoId: pedido.numero,
   });

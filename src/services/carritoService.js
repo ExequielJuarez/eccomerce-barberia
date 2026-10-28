@@ -4,13 +4,11 @@ const productoService = require("./productoService");
 
 const ENVIO_GRATIS_DESDE = 150000;
 const COSTO_ENVIO = 6500;
-const DESCUENTO_TRANSFERENCIA = 0.1;
 const MAX_POR_ITEM = 20;
-const CUOTAS = 6;
 
 function obtener(session) {
   if (!session.carrito) {
-    session.carrito = { items: [], cupon: null, medioPago: "tarjeta", entrega: "domicilio", codigoPostal: null };
+    session.carrito = { items: [], cupon: null, entrega: "domicilio", codigoPostal: null };
   }
   return session.carrito;
 }
@@ -86,10 +84,6 @@ function quitarCupon(session) {
   obtener(session).cupon = null;
 }
 
-function fijarMedioPago(session, medio) {
-  if (["tarjeta", "transferencia"].includes(medio)) obtener(session).medioPago = medio;
-}
-
 function fijarEntrega(session, entrega) {
   if (["domicilio", "retiro"].includes(entrega)) obtener(session).entrega = entrega;
 }
@@ -118,8 +112,6 @@ async function resumen(session) {
   if (!cuponDb) carrito.cupon = null;
   const cupon = cuponDb ? { codigo: cuponDb.codigo, descripcion: cuponDb.descripcion, porcentaje: Number(cuponDb.porcentaje) } : null;
   const descuentoCupon = cupon ? Math.round(subtotal * cupon.porcentaje) : 0;
-  const descuentoPago =
-    carrito.medioPago === "transferencia" ? Math.round((subtotal - descuentoCupon) * DESCUENTO_TRANSFERENCIA) : 0;
 
   const entrega = carrito.entrega || "domicilio";
   const envioGratis = subtotal >= ENVIO_GRATIS_DESDE;
@@ -133,8 +125,6 @@ async function resumen(session) {
     subtotal,
     cupon,
     descuentoCupon,
-    medioPago: carrito.medioPago,
-    descuentoPago,
     codigoPostal: carrito.codigoPostal,
     entrega,
     costoEnvio: COSTO_ENVIO,
@@ -143,8 +133,7 @@ async function resumen(session) {
     envioGratisDesde: ENVIO_GRATIS_DESDE,
     faltaEnvioGratis: Math.max(0, ENVIO_GRATIS_DESDE - subtotal),
     progresoEnvio: Math.min(100, Math.round((subtotal / ENVIO_GRATIS_DESDE) * 100)),
-    total: subtotal - descuentoCupon - descuentoPago + (envio || 0),
-    cuotas: CUOTAS,
+    total: subtotal - descuentoCupon + (envio || 0),
   };
 }
 
@@ -156,7 +145,6 @@ module.exports = {
   vaciar,
   aplicarCupon,
   quitarCupon,
-  fijarMedioPago,
   fijarEntrega,
   fijarCodigoPostal,
   resumen,

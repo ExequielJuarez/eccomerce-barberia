@@ -15,7 +15,6 @@
     <span class="tarjeta__cat"><%= p.categoria %><%= p.subcategoria ? ' · ' + p.subcategoria : '' %></span>
     <h3 class="tarjeta__nombre"><a href="/producto/<%= p.id %>"><%= p.nombre %></a></h3>
     <div class="tarjeta__precio"><span class="precio"><%= formatoPrecio(p.precio).replace(',00', '') %></span></div>
-    <span class="tarjeta__cuotas">o 6 cuotas de <%= formatoPrecio(p.precio / 6).replace(',00', '') %></span>
     <% if (p.colores.length > 1) { %>
       <div class="puntos-color" aria-label="Colores: <%= p.colores.map(c => c.nombre).join(', ') %>">
         <% p.colores.forEach(c => { %><span class="punto-color" data-bg="<%= c.hex %>" title="<%= c.nombre %>"></span><% }) %>

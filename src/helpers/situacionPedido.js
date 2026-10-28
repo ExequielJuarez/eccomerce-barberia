@@ -14,6 +14,9 @@ function situacionPedido(p) {
   if (p.pagoEstado === "aprobado") {
     return { clave: "curso", texto: "Pago aprobado", detalle: "Estamos preparando tu pedido." };
   }
+  if (p.medioPago === "whatsapp") {
+    return { clave: "alerta", texto: "Pedido recibido", detalle: "Nos vamos a contactar por WhatsApp para coordinar el pago y la entrega." };
+  }
   if (p.medioPago === "transferencia") {
     return { clave: "alerta", texto: "Esperando la transferencia", detalle: "Lo preparamos apenas se acredite." };
   }
@@ -29,7 +32,7 @@ function pasosPedido(p) {
   const retiro = p.entrega === "retiro";
   return [
     { texto: "Recibido", fecha: p.fecha },
-    { texto: p.medioPago === "transferencia" ? "Transferencia acreditada" : "Pago aprobado", fecha: p.pagadoEn },
+    { texto: p.medioPago === "transferencia" ? "Transferencia acreditada" : p.medioPago === "whatsapp" ? "Pago coordinado" : "Pago aprobado", fecha: p.pagadoEn },
     { texto: retiro ? "Listo para retirar" : "Enviado" },
     { texto: retiro ? "Retirado" : "Entregado" },
   ].map((paso, i) => ({ ...paso, hecho: i <= actual, actual: i === actual }));

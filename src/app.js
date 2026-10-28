@@ -8,7 +8,6 @@ const app = express();
 
 const indexRouter = require("./routes/index.Routes");
 const adminRouter = require("./routes/admin.Routes");
-const barberoRouter = require("./routes/barbero.Routes");
 const db = require("./model/database/models");
 const carritoService = require("./services/carritoService");
 const favoritoService = require("./services/favoritoService");
@@ -44,7 +43,6 @@ app.use(
 
 app.locals.formatoPrecio = (n) =>
   "$" + n.toLocaleString("es-AR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-app.locals.descuentoTransferencia = 0.1;
 
 app.locals.tienda = require("./helpers/tienda")();
 
@@ -87,7 +85,6 @@ app.use(async (req, res, next) => {
 });
 
 app.use("/admin", adminRouter);
-app.use("/barbero", barberoRouter);
 app.use("/", indexRouter);
 
 app.use((req, res) => {
@@ -126,15 +123,6 @@ db.sequelize
         .forEach((i) => console.log(`   Celular: http://${i.address}:${puerto}  (misma red Wi-Fi)`));
     });
 
-    const pagos = require("./services/pagoService");
-    console.log(
-      {
-        demo: "💳 Pagos en MODO DEMO (no se cobra). Configurá MP_ACCESS_TOKEN en .env para cobrar con Mercado Pago.",
-        desactivado: "⚠️  Falta MP_ACCESS_TOKEN: el pago con tarjeta está desactivado (solo transferencia).",
-        mercadopago: `💳 Pagos con Mercado Pago${pagos.esTokenDePrueba() ? " (credenciales de PRUEBA)" : ""}`,
-      }[pagos.modo()]
-    );
-    pagos.vencerPeriodicamente();
 
     console.log(
       {

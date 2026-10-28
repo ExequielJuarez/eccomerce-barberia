@@ -22,7 +22,7 @@ module.exports = (sequelize, DataTypes) => {
       facturacion: { type: DataTypes.ENUM("consumidor", "facturaA"), allowNull: false, defaultValue: "consumidor" },
       cuit: DataTypes.STRING(13),
       razonSocial: DataTypes.STRING(120),
-      medioPago: { type: DataTypes.ENUM("tarjeta", "transferencia"), allowNull: false, defaultValue: "tarjeta" },
+      medioPago: { type: DataTypes.ENUM("tarjeta", "transferencia", "whatsapp"), allowNull: false, defaultValue: "whatsapp" },
       cuponCodigo: DataTypes.STRING(30),
       estado: {
         type: DataTypes.ENUM("pendiente", "pagado", "enviado", "entregado", "cancelado"),

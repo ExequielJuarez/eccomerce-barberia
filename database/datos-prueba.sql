@@ -3,12 +3,6 @@ SET NAMES utf8mb4;
 SET time_zone = '-03:00';
 
 SET FOREIGN_KEY_CHECKS = 0;
-TRUNCATE TABLE turnos;
-TRUNCATE TABLE bloqueos_turno;
-TRUNCATE TABLE horarios_turno;
-TRUNCATE TABLE servicios_turno;
-TRUNCATE TABLE barberos;
-TRUNCATE TABLE sucursales;
 TRUNCATE TABLE notificaciones;
 TRUNCATE TABLE arrepentimientos;
 TRUNCATE TABLE pedido_items;
@@ -29,9 +23,7 @@ ALTER TABLE pedidos AUTO_INCREMENT = 1001;
 INSERT INTO usuarios (id, nombre, apellido, email, telefono, password, google_id, rol, newsletter) VALUES
   (1, 'Cliente', 'Demo', 'demo@tienda.com', NULL, '$2b$10$jX3V6AhKp.Par41X/kOWfelfguSzaU4z/IZkvYOv0UHGBQ/6Rl2Oy', NULL, 'cliente', 0),
   (2, 'Admin', 'Barba Black', 'admin@tienda.com', NULL, '$2b$10$OUwf1N16MEgHBa5jhFt6K.cGjo4yUyiF/cOwUOBsyttSBQqgwMRYq', NULL, 'admin', 0),
-  (3, 'Super', 'Admin', 'super@tienda.com', NULL, '$2b$10$AhElj/1kwG2mSrQCEpRKI.eaaUIicEpYgvqxK2sckmrfVXodWJpke', NULL, 'superadmin', 0),
-  (4, 'Lucas', 'Gómez', 'lucas@barbablack.com', NULL, '$2b$10$zHLP03zrGolna.uA8M.rNe3PHbOONbZx46YNGUZnEFpS4TGcjxBty', NULL, 'barbero', 0),
-  (5, 'Nico', 'Ferreyra', 'nico@barbablack.com', NULL, '$2b$10$zHLP03zrGolna.uA8M.rNe3PHbOONbZx46YNGUZnEFpS4TGcjxBty', NULL, 'barbero', 0);
+  (3, 'Super', 'Admin', 'super@tienda.com', NULL, '$2b$10$AhElj/1kwG2mSrQCEpRKI.eaaUIicEpYgvqxK2sckmrfVXodWJpke', NULL, 'superadmin', 0);
 
 INSERT INTO categorias (id, nombre, slug, orden) VALUES
   (1, 'Clippers', 'clippers', 1),
@@ -135,24 +127,3 @@ INSERT INTO especificaciones (producto_id, clave, valor, orden) VALUES
 
 INSERT INTO cupones (codigo, descripcion, porcentaje, activo, vence_en) VALUES
   ('BIENVENIDA', '10% off en tu primera compra', 0.1000, 1, NULL);
-
-INSERT INTO sucursales (id, nombre, direccion, activo, orden) VALUES
-  (1, 'Barbería', 'Av. Belgrano y Ameghino', 1, 1);
-
-INSERT INTO barberos (id, nombre, sucursal_id, usuario_id, foto, activo, orden) VALUES
-  (1, 'Lucas', 1, 4, NULL, 1, 1),
-  (2, 'Nico', 1, 5, NULL, 1, 2);
-
-INSERT INTO servicios_turno (id, nombre, detalle, duracion, precio, activo, orden) VALUES
-  (1, 'Corte de pelo', 'Corte a tijera o máquina, con perfilado.', 30, NULL, 1, 1),
-  (2, 'Corte y barba', 'El combo completo.', 60, NULL, 1, 2),
-  (3, 'Perfilado de barba', 'Barba prolija, con toalla caliente.', 30, NULL, 1, 3),
-  (4, 'Fade', 'Degradado con terminación al ras.', 45, NULL, 1, 4);
-
-INSERT INTO horarios_turno (dia_semana, desde, hasta) VALUES
-  (1, '10:00', '20:00'),
-  (2, '10:00', '20:00'),
-  (3, '10:00', '20:00'),
-  (4, '10:00', '20:00'),
-  (5, '10:00', '20:00'),
-  (6, '10:00', '18:00');

@@ -3,7 +3,7 @@ module.exports = (sequelize, DataTypes) => {
     "Notificacion",
     {
       id: { type: DataTypes.INTEGER.UNSIGNED, primaryKey: true, autoIncrement: true },
-      tipo: { type: DataTypes.ENUM("pedido", "stock", "turno"), allowNull: false, defaultValue: "pedido" },
+      tipo: { type: DataTypes.ENUM("pedido", "stock"), allowNull: false, defaultValue: "pedido" },
       titulo: { type: DataTypes.STRING(120), allowNull: false },
       mensaje: DataTypes.STRING(255),
       url: DataTypes.STRING(255),

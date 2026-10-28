@@ -6,20 +6,10 @@
   const s = situacionPedido(p);
   const pasos = pasosPedido(p);
   const primerNombre = String(p.cliente).split(' ')[0];
-  const esTransferencia = p.medioPago === 'transferencia';
-  const esperaTransferencia = esTransferencia && p.estado === 'pendiente' && p.pagoEstado !== 'aprobado';
-
+  const nuevo = p.medioPago === 'whatsapp' && p.estado === 'pendiente';
   let encabezado, bajada;
-  if (resultado === 'aprobado' || (resultado === null && p.pagoEstado === 'aprobado' && p.estado === 'pagado')) {
-    encabezado = `¡Gracias, ${primerNombre}!`; bajada = 'Tu pago fue aprobado y ya estamos preparando tu pedido.';
-  } else if (resultado === 'rechazado' || (p.pagoEstado === 'rechazado' && p.estado === 'pendiente')) {
-    encabezado = 'El pago no se pudo completar'; bajada = motivo || 'No se hizo ningún cobro. Podés intentar de nuevo con otra tarjeta u otro medio.';
-  } else if (esperaTransferencia) {
-    encabezado = `¡Gracias, ${primerNombre}!`; bajada = 'Tu pedido quedó reservado. Transferí el total a la cuenta de abajo y lo preparamos apenas se acredite.';
-  } else if (p.estado === 'pendiente' && p.pagoEstado === 'pendiente' && !p.pagoId && resultado !== 'pendiente') {
-    encabezado = 'Falta pagar tu pedido'; bajada = `Lo tenemos reservado por ${venceHoras} hs. Pagalo con tarjeta cuando quieras desde esta página.`;
-  } else if (resultado === 'pendiente' || (p.estado === 'pendiente' && p.pagoEstado === 'pendiente')) {
-    encabezado = 'Tu pago está en proceso'; bajada = 'Mercado Pago está revisando el pago. Te avisamos por email cuando se acredite; no hace falta que pagues de nuevo.';
+  if (nuevo) {
+    encabezado = `¡Gracias, ${primerNombre}!`; bajada = 'Recibimos tu pedido. Nos estaremos poniendo en contacto con vos por WhatsApp para coordinar el pago y ' + (p.entrega === 'retiro' ? 'el retiro.' : 'el envío.');
   } else {
     encabezado = `Pedido #${p.numero}`; bajada = s.detalle;
   }
@@ -38,11 +28,9 @@
     <span class="estado estado--<%= s.clave %>"><%= s.texto %></span>
   </header>
 
-  <% if (sePuedePagar || sePuedeCancelar) { %>
+  <% if (sePuedeCancelar || (nuevo && linkWhatsapp)) { %>
     <div class="pedido-acciones">
-      <% if (sePuedePagar) { %>
-        <form action="/pedido/<%= p.numero %>/pagar" method="POST"><button class="btn btn--volt"><%= p.pagoEstado === 'rechazado' ? 'Intentar de nuevo' : 'Pagar ahora' %> · <%= precio(p.total) %></button></form>
-      <% } %>
+      <% if (nuevo && linkWhatsapp) { %><a href="<%= linkWhatsapp %>" target="_blank" rel="noopener" class="btn btn--volt">Escribinos por WhatsApp</a><% } %>
       <% if (sePuedeCancelar) { %>
         <form action="/pedido/<%= p.numero %>/cancelar" method="POST" data-confirmar="¿Cancelar este pedido?"><button class="btn btn--linea">Cancelar pedido</button></form>
       <% } %>
@@ -63,20 +51,6 @@
 
   <div class="detalle-grilla">
     <div class="detalle-col">
-      <% if (esperaTransferencia) { %>
-        <section class="caja-transferencia">
-          <h2 class="titulo">Datos para transferir</h2>
-          <p>Importe a transferir: <strong class="precio" data-copiar-valor="<%= Number(p.total).toFixed(2).replace('.', ',') %>"><%= precio(p.total) %></strong></p>
-          <dl class="datos-banco">
-            <div><dt>Alias</dt><dd data-copiar-valor="<%= transferencia.alias %>"><%= transferencia.alias %></dd><button type="button" class="enlace" data-copiar>Copiar</button></div>
-            <div><dt>CBU / CVU</dt><dd data-copiar-valor="<%= transferencia.cbu %>"><%= transferencia.cbu %></dd><button type="button" class="enlace" data-copiar>Copiar</button></div>
-            <div><dt>Titular</dt><dd><%= transferencia.titular %></dd></div>
-            <div><dt>Banco</dt><dd><%= transferencia.banco %></dd></div>
-          </dl>
-          <p class="apagado">Poné <strong class="texto-papel">#<%= p.numero %></strong> en el concepto y mandanos el comprobante por WhatsApp<% if (tienda.whatsapp) { %> (<a class="enlace" href="<%= tienda.whatsapp %>" target="_blank" rel="noopener">abrir chat</a>)<% } %>. Reservamos tu pedido por <%= venceHoras %> hs.</p>
-        </section>
-      <% } %>
-
       <section class="caja">
         <h2 class="caja__titulo">Productos</h2>
         <ul class="mini-items mini-items--grande">
@@ -100,7 +74,7 @@
           <div><dt>Envío</dt><dd><%= p.envio > 0 ? precio(p.envio) : 'Gratis' %></dd></div>
           <div class="totales__total"><dt>Total</dt><dd class="precio"><%= precio(p.total) %></dd></div>
         </dl>
-        <p class="apagado texto-chico"><%= p.medioPago === 'transferencia' ? 'Transferencia bancaria' : 'Tarjeta · Mercado Pago' %><%= p.pagoDetalle ? ' — ' + p.pagoDetalle : '' %></p>
+        <p class="apagado texto-chico"><%= {transferencia: 'Transferencia bancaria', tarjeta: 'Tarjeta · Mercado Pago'}[p.medioPago] || 'Pago a coordinar por WhatsApp' %><%= p.pagoDetalle ? ' — ' + p.pagoDetalle : '' %></p>
       </section>
       <section class="caja">
         <h2 class="caja__titulo"><%= p.entrega === 'retiro' ? 'Retiro en el local' : 'Envío a' %></h2>
@@ -110,7 +84,7 @@
           <p><%= p.calle %> <%= p.altura %><%= p.piso ? ', ' + p.piso : '' %></p>
           <p class="apagado"><%= p.ciudad %>, <%= p.provincia %> (<%= p.codigoPostal %>)</p>
         <% } %>
-        <p class="apagado separado-arriba"><%= p.cliente %> · <%= p.email %></p>
+        <p class="apagado separado-arriba"><%= p.cliente %> · <%= p.email %> · <%= p.telefono %></p>
       </section>
       <% if (!conCuenta) { %><p class="aviso">Guardá el número <strong>#<%= p.numero %></strong>. Con una <a class="enlace" href="/registro">cuenta</a> podés seguir tus pedidos cuando quieras.</p><% } %>
     </aside>
