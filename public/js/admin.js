@@ -73,7 +73,28 @@
     } catch { audio = null; }
   };
   ["pointerdown", "keydown", "touchstart"].forEach((ev) => document.addEventListener(ev, desbloquear, { passive: true }));
+  // Mientras el navegador no deje sonar, se ve un botón fijo para activarlo con un toque.
+  const btnSonido = document.createElement("button");
+  btnSonido.type = "button";
+  btnSonido.className = "adm-sonido";
+  btnSonido.textContent = "🔔 Activar sonido de pedidos";
+  document.body.appendChild(btnSonido);
+  const revisarSonido = () => { btnSonido.hidden = Boolean(audio && audio.state === "running"); };
+  btnSonido.addEventListener("click", () => { desbloquear(); setTimeout(revisarSonido, 150); });
+  ["pointerdown", "keydown", "touchstart"].forEach((ev) => document.addEventListener(ev, () => setTimeout(revisarSonido, 150), { passive: true }));
+  const tituloOriginal = document.title;
+  let parpadeo = null;
+  const avisarEnTitulo = (texto) => {
+    if (!document.hidden) return;
+    clearInterval(parpadeo);
+    let on = false;
+    parpadeo = setInterval(() => { document.title = (on = !on) ? "🔔 " + texto : tituloOriginal; }, 1000);
+  };
+  document.addEventListener("visibilitychange", () => { if (!document.hidden) { clearInterval(parpadeo); document.title = tituloOriginal; } });
+  let ultimoSonido = 0;
   const sonar = () => {
+    if (Date.now() - ultimoSonido < 1500) return true;
+    ultimoSonido = Date.now();
     if (!audio || audio.state !== "running") return false;
     [[880, 0], [1175, 0.18], [1568, 0.36]].forEach(([hz, t]) => {
       const osc = audio.createOscillator(), gan = audio.createGain();
@@ -95,7 +116,8 @@
     es.addEventListener("notificacion", (e) => {
       const n = JSON.parse(e.data);
       const sono = sonar();
-      toast(n.titulo + (n.mensaje ? " · " + n.mensaje : "") + (sono ? "" : " · tocá la página para activar el sonido"));
+      avisarEnTitulo(n.titulo);
+      toast(n.titulo + (n.mensaje ? " · " + n.mensaje : "") + (sono ? "" : " · activá el sonido con el botón dorado"));
       cargar();
       document.dispatchEvent(new CustomEvent("adm:notificacion", { detail: n }));
     });
