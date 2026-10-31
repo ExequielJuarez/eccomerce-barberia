@@ -33,8 +33,19 @@
     el.textContent = n;
     el.hidden = !n;
     el.animate([{ transform: "scale(1.6)" }, { transform: "scale(1)" }], { duration: 300, easing: "ease-out" });
+    barraCarrito(n);
+  }
+  // Barra fija de abajo: queda visible mientras haya productos en el carrito.
+  function barraCarrito(n) {
+    const barra = $("#barraCarrito");
+    if (!barra) return;
+    barra.hidden = !n;
+    $("#barraCarritoN").textContent = n;
+    $("#barraCarritoPal").textContent = n === 1 ? "producto" : "productos";
+    document.body.classList.toggle("con-barra-carrito", Boolean(n));
   }
   window.BB = { $, $$, peso, toast, pedir, contadorCarrito };
+  barraCarrito(Number($("#barraCarritoN")?.textContent) || 0);
 
   const flash = $("#flash");
   if (flash) toast(flash.dataset.mensaje);

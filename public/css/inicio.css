@@ -64,6 +64,9 @@
 
 @media (max-width: 1000px) {
   .hero__grilla { grid-template-columns: 1fr; }
+  .hero__texto { text-align: center; }
+  .hero__logo { margin-inline: auto; }
+  .hero__bajada { margin-inline: auto; }
   .hero__botones--grandes { justify-self: stretch; width: 100%; flex-direction: row; flex-wrap: wrap; }
   .hero__botones--grandes .btn { flex: 1 1 200px; }
   .categorias { grid-template-columns: repeat(3, minmax(0, 1fr)); }

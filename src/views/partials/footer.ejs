@@ -64,6 +64,14 @@
   <button type="button" class="btn btn--volt btn--chico" id="aceptarCookies">Entendido</button>
 </div>
 
+<% const sinBarra = /^\/(carrito|checkout|pedido)/.test(locals.currentPath || ''); const nCarrito = locals.cantidadCarrito || 0; %>
+<% if (!sinBarra) { %>
+<div class="barra-carrito" id="barraCarrito" <%= nCarrito ? '' : 'hidden' %>>
+  <span class="barra-carrito__texto"><b id="barraCarritoN"><%= nCarrito %></b> <span id="barraCarritoPal"><%= nCarrito === 1 ? 'producto' : 'productos' %></span> en tu carrito</span>
+  <a href="/carrito" class="btn btn--volt btn--chico">Terminar compra →</a>
+</div>
+<% } %>
+
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <% if (locals.flash) { %><div id="flash" data-mensaje="<%= flash %>" hidden></div><% } %>
 

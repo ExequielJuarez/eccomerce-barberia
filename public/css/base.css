@@ -344,3 +344,15 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .btn--grande { min-height: 60px; padding-inline: 28px; font-size: 14px; }
 .btn--grande { max-width: 100%; text-align: center; }
 @media (max-width: 600px) { .pedido-acciones .btn { flex: 1 1 100%; justify-content: center; } .btn--grande { padding-inline: 14px; font-size: 12.5px; letter-spacing: 0.06em; gap: 10px; } }
+
+/* Barra fija del carrito */
+.barra-carrito { position: fixed; z-index: 60; left: 0; right: 0; bottom: 0; display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 10px var(--gutter) calc(10px + var(--seguro-abajo)); background: var(--tinta-2); border-top: 1px solid var(--oro); box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.45); }
+.barra-carrito[hidden] { display: none; }
+.barra-carrito__texto { font-size: 13px; font-weight: 600; letter-spacing: 0.04em; color: var(--papel-2); min-width: 0; }
+.barra-carrito__texto b { color: var(--oro); font-size: 15px; }
+.barra-carrito .btn { flex: none; }
+.con-barra-carrito { padding-bottom: calc(66px + var(--seguro-abajo)); }
+.con-barra-carrito .whatsapp { bottom: calc(82px + var(--seguro-abajo)); }
+.con-barra-carrito .toast { bottom: calc(84px + var(--seguro-abajo)); }
+.con-barra-carrito .aviso-cookies { bottom: calc(76px + var(--seguro-abajo)); }
+@media (max-width: 760px) { .con-barra-carrito .barra-compra { bottom: calc(65px + var(--seguro-abajo)); } .con-barra-carrito .whatsapp { bottom: calc(144px + var(--seguro-abajo)); } }
