@@ -44,18 +44,11 @@
       <h2 class="bloque__titulo titulo"><%- textoRico(c.categorias.titulo) %></h2>
     </header>
     <div class="categorias">
-      <% c.categorias.items.forEach((cat, i) => { if (!cat.nombre) return; %>
-        <a href="<%= cat.link %>" class="cat rev" data-d="<%= i * 0.08 %>">
-          <span class="cat__num"><%= String(i + 1).padStart(2, '0') %></span>
-          <% if (cat.imagen) { %><img src="<%= cat.imagen %>" alt="" loading="lazy"><% } %>
-          <span class="cat__pie">
-            <strong class="cat__nombre titulo"><%= cat.nombre %></strong>
-            <span class="cat__frase"><%= cat.frase %></span>
-            <span class="cat__flecha"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
-          </span>
-        </a>
+      <% categoriasMenu.forEach((cat, i) => { %>
+        <a href="<%= cat.url %>" class="cat rev" data-d="<%= Math.min(i, 10) * 0.05 %>"><strong class="cat__nombre"><%= cat.nombre %></strong></a>
       <% }) %>
     </div>
+    <div class="categorias__todos"><a href="/catalogo" class="btn btn--linea">Ver todos los productos</a></div>
   </div>
 </section>
 <% } %>

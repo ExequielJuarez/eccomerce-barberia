@@ -52,28 +52,10 @@ const SECCIONES = {
 
   categorias: {
     titulo: "Categorías",
-    descripcion: "Las tarjetas grandes que llevan a cada sección del catálogo.",
+    descripcion: "Los botones de las categorías se arman solos con las categorías del catálogo.",
     campos: {
       etiqueta: etiquetaSeccion("Comprá por categoría"),
       titulo: tituloSeccion("Todo para *trabajar*"),
-      items: {
-        tipo: "lista",
-        etiqueta: "Tarjetas",
-        item: "Categoría",
-        cantidad: 4,
-        campos: {
-          nombre: texto("Nombre", "", 30, { ancho: "medio" }),
-          link: link("Link", "", { ayuda: "Ej: /categoria/clippers abre esa sección; /categoria/clippers?sub=wahl, ya filtrada." }),
-          frase: parrafo("Frase", "", 90),
-          imagen: imagen("Foto", ""),
-        },
-        defecto: [
-          { nombre: "Clippers", link: "/categoria/clippers", frase: "Wahl, Kemei, VGR y Viggo.", imagen: "/img/productos/wahl-magic-clip-1.jpg" },
-          { nombre: "Shavers", link: "/categoria/shavers", frase: "Terminaciones al ras.", imagen: "/img/productos/shaver-vgr-1.jpg" },
-          { nombre: "Tijeras", link: "/categoria/tijeras", frase: "Combos con estuche.", imagen: "/img/productos/tijeras-viggo-2.jpg" },
-          { nombre: "Insumos", link: "/categoria/insumos", frase: "Higiene y sanitizantes.", imagen: "/img/productos/liquido-sanitizante-1.jpg" },
-        ],
-      },
     },
   },
 
