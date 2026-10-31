@@ -90,28 +90,6 @@ const SECCIONES = {
   },
 
 
-  beneficios: {
-    titulo: "Beneficios",
-    descripcion: "Avisos cortos de pedido, pago y retiro.",
-    campos: {
-      items: {
-        tipo: "lista",
-        etiqueta: "Avisos",
-        item: "Aviso",
-        cantidad: 4,
-        campos: {
-          titulo: texto("Título", "", 36),
-          texto: parrafo("Texto", "", 110),
-        },
-        defecto: [
-          { titulo: "Pedí por WhatsApp", texto: "Hacé tu pedido y te contactamos para coordinar." },
-          { titulo: "Coordinamos con vos", texto: "El pago y la entrega los acordamos por WhatsApp." },
-          { titulo: "Retiro sin costo", texto: "En La Plata 212." },
-        ],
-      },
-    },
-  },
-
   local: {
     titulo: "El local",
     descripcion: "Dirección, contacto y mapa.",

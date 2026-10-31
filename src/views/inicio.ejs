@@ -77,16 +77,6 @@
 </section>
 <% } %>
 
-<% if (c.beneficios.visible) { %>
-<section class="beneficios">
-  <div class="contenedor beneficios__grilla">
-    <% c.beneficios.items.forEach((b) => { if (!b.titulo) return; %>
-      <div class="beneficio rev"><h3><%= b.titulo %></h3><p><%= b.texto %></p></div>
-    <% }) %>
-  </div>
-</section>
-<% } %>
-
 <% if (c.local.visible) { %>
 <section class="bloque" id="local">
   <div class="contenedor local">

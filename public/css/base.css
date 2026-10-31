@@ -238,12 +238,6 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .puntos-color { display: flex; gap: 5px; margin-top: 4px; }
 .punto-color { width: 13px; height: 13px; border-radius: 50%; border: 1px solid var(--linea-fuerte); }
 
-.beneficios { border-top: 1px solid var(--linea); border-bottom: 1px solid var(--linea); background: var(--tinta-2); }
-.beneficios__grilla { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
-.beneficio { padding: 28px 24px; border-left: 1px solid var(--linea); }
-.beneficio:first-child { border-left: 0; padding-left: 0; }
-.beneficio h3 { font-family: var(--ff-titulo); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; font-size: 17px; line-height: 1.2; margin-bottom: 6px; color: var(--oro); }
-.beneficio p { color: var(--apagado); font-size: 14px; }
 .footer { margin-top: 90px; border-top: 1px solid var(--linea); overflow: hidden; }
 .footer__gigante { font-family: var(--ff-titulo); font-weight: 700; font-size: clamp(40px, 11.5vw, 190px); line-height: 1; letter-spacing: 0.04em; color: var(--tinta-3); text-align: center; white-space: nowrap; user-select: none; padding-top: 0.2em; }
 .footer__grilla { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 40px; padding-block: 48px 36px; position: relative; background: var(--tinta); }
@@ -321,10 +315,6 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   .nav { display: none; }
   .header__barra { gap: 8px; }
   .header__acciones { margin-left: auto; }
-  .beneficios__grilla { grid-template-columns: 1fr 1fr; }
-  .beneficio:nth-child(3) { border-left: 0; padding-left: 0; }
-  .beneficio { border-top: 1px solid var(--linea); }
-  .beneficio:nth-child(-n + 2) { border-top: 0; }
 }
 @media (max-width: 640px) {
   :root { --alto-header: 62px; }

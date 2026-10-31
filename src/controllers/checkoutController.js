@@ -2,6 +2,7 @@ const { validationResult } = require("express-validator");
 const carrito = require("../services/carritoService");
 const pedidos = require("../services/pedidoService");
 const notificaciones = require("../services/notificacionService");
+const whatsapp = require("../services/whatsappService");
 
 const CAMPOS = ["nombre", "apellido", "telefono", "entrega"];
 
@@ -55,7 +56,11 @@ module.exports = {
     carrito.vaciar(req.session);
     delete req.session.checkout;
     recordarPedido(req, pedido.numero);
-    res.redirect(`/pedido/${pedido.numero}?enviar=1`);
+    // La venta se cierra al mandar el carrito por WhatsApp: se va directo al chat del local.
+    const destino = whatsapp.linkLocal(pedido);
+    if (!destino) return res.redirect(`/pedido/${pedido.numero}`);
+    req.session.flash = "¡Gracias! Te estaremos contactando por WhatsApp en breve.";
+    res.redirect(destino);
   },
 
   recordarPedido,
