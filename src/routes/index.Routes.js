@@ -141,8 +141,6 @@ router.delete("/carrito/item/:clave", carritoController.quitar);
 router.delete("/carrito", carritoController.vaciar);
 router.post("/carrito/cupon", carritoController.cupon);
 router.delete("/carrito/cupon", carritoController.quitarCupon);
-router.post("/carrito/envio", carritoController.envio);
-router.post("/carrito/entrega", carritoController.entrega);
 
 router.get("/favoritos", favoritosController.ver);
 router.post("/favoritos/:id", favoritosController.alternar);

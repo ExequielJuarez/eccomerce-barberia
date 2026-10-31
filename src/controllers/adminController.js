@@ -222,7 +222,7 @@ module.exports = {
         estados: pedidoService.ESTADOS,
         conteo,
 
-        total: Object.entries(conteo).reduce((a, [e, n]) => (e === "sin_pagar" ? a : a + n), 0),
+        total: Object.values(conteo).reduce((a, n) => a + n, 0),
       })
     );
   },
@@ -258,7 +258,6 @@ module.exports = {
     res.json({
       ok: true,
       estado: pedido.estado,
-      pagoEstado: pedido.pagoEstado,
       ganancia: pedido.ganancia,
       stockMovido,
       pendientes: await pedidoService.pendientes(),

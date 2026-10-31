@@ -42,7 +42,7 @@ const claveSegura = (c) => c.length >= 10 && /[a-z]/.test(c) && /[A-Z]/.test(c) 
   const hash = await bcrypt.hash(clave, 12);
   const usuario = await db.Usuario.findOne({ where: { email: email.toLowerCase() } });
   if (usuario) {
-    await usuario.update({ password: hash, ...(esSuper ? { rol: "superadmin" } : usuario.rol === "cliente" ? { rol: "admin" } : {}) });
+    await usuario.update({ password: hash, ...(esSuper ? { rol: "superadmin" } : {}) });
     console.log(`✅ Clave actualizada para ${usuario.email} (${usuario.rol}).`);
   } else {
     if (!nombre) {

@@ -11,7 +11,7 @@
     <div class="grilla-form">
       <%- include('partials/campo', { nombre: 'nombre', etiqueta: 'Nombre y apellido', valor: v('nombre'), errores: e, atributos: 'required' }) %>
       <%- include('partials/campo', { nombre: 'email', etiqueta: 'Email de la compra', tipo: 'email', valor: v('email'), errores: e, atributos: 'required' }) %>
-      <%- include('partials/campo', { nombre: 'telefono', etiqueta: 'Teléfono (opcional)', tipo: 'tel', valor: v('telefono'), errores: e }) %>
+      <%- include('partials/campo', { nombre: 'telefono', etiqueta: 'WhatsApp del pedido', tipo: 'tel', valor: v('telefono'), errores: e }) %>
       <%- include('partials/campo', { nombre: 'numeroPedido', etiqueta: 'Número de pedido', valor: v('numeroPedido'), errores: e, atributos: 'inputmode="numeric" placeholder="Ej: 1024" required' }) %>
       <div class="campo completo <%= e.motivo ? 'campo--error' : '' %>">
         <label for="c-motivo">Motivo (opcional)</label>

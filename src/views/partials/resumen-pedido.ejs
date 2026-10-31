@@ -16,7 +16,6 @@
   <dl class="totales">
     <div><dt>Subtotal</dt><dd><%= precio(r.subtotal) %></dd></div>
     <% if (r.descuentoCupon) { %><div><dt>Cupón <%= r.cupon.codigo %></dt><dd class="resaltado">−<%= precio(r.descuentoCupon) %></dd></div><% } %>
-    <div><dt>Envío</dt><dd><%= r.envio === null ? 'A calcular' : (r.envio === 0 ? 'Gratis' : precio(r.envio)) %></dd></div>
     <div class="totales__total"><dt>Total</dt><dd class="precio precio--grande"><%= precio(r.total) %></dd></div>
   </dl>
   <a href="/carrito" class="resumen__seguir">← Volver al carrito</a>

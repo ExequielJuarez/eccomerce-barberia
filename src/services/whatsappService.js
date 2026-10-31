@@ -21,46 +21,59 @@ function numeroCliente(telefono) {
   return "549" + d;
 }
 
-// Mensaje que el local le manda al cliente con el pedido y los datos de entrega a confirmar.
-function mensajeCliente(pedido) {
-  const dom = pedido.entrega === "domicilio";
-  const lineas = [
-    `Hola ${pedido.cliente.split(" ")[0]}! Te escribimos de ${tienda().nombre || "Barba Black"} por tu pedido *#${pedido.numero}*.`,
+const detalleItems = (pedido) =>
+  pedido.items.map((i) => `• ${i.cantidad} x ${i.nombre}${i.color ? ` (${i.color})` : ""} — ${pesos(i.precio * i.cantidad)}`);
+
+const totales = (pedido) => [
+  `Subtotal: ${pesos(pedido.subtotal)}`,
+  ...(pedido.descuento > 0 ? [`Descuento${pedido.cuponCodigo ? ` (${pedido.cuponCodigo})` : ""}: -${pesos(pedido.descuento)}`] : []),
+  `*Total: ${pesos(pedido.total)}*`,
+];
+
+const entregaTexto = (pedido) =>
+  pedido.entrega === "retiro" ? `Retiro en el local (${tienda().direccion})` : "Envío a domicilio (lo coordinamos por WhatsApp)";
+
+// Lo que manda el cliente al WhatsApp del local con su carrito.
+function mensajeLocal(pedido) {
+  return [
+    `Hola ${tienda().nombre}! Quiero confirmar este pedido (*#${pedido.numero}*):`,
     "",
-    "*Tu pedido:*",
-    ...pedido.items.map((i) => `• ${i.cantidad} x ${i.nombre}${i.color ? ` (${i.color})` : ""} — ${pesos(i.precio * i.cantidad)}`),
+    ...detalleItems(pedido),
     "",
-    `Subtotal: ${pesos(pedido.subtotal)}`,
-    ...(pedido.descuento > 0 ? [`Descuento${pedido.cuponCodigo ? ` (${pedido.cuponCodigo})` : ""}: -${pesos(pedido.descuento)}`] : []),
-    `Envío: ${pedido.envio > 0 ? pesos(pedido.envio) : "Gratis"}`,
-    `*Total: ${pesos(pedido.total)}*`,
+    ...totales(pedido),
     "",
-    "*Datos a confirmar:*",
     `Nombre: ${pedido.cliente}`,
-    `DNI: ${pedido.dni}`,
-    `Email: ${pedido.email}`,
-    dom
-      ? `Envío a: ${pedido.calle} ${pedido.altura}${pedido.piso ? `, ${pedido.piso}` : ""}, ${pedido.ciudad}, ${pedido.provincia} (CP ${pedido.codigoPostal})`
-      : `Retiro en el local: ${tienda().direccion}`,
-  ];
-  if (pedido.facturacion === "facturaA") lineas.push(`Factura A: ${pedido.razonSocial} (CUIT ${pedido.cuit})`);
-  if (pedido.notas) lineas.push(`Nota: ${pedido.notas}`);
-  lineas.push("", "¿Está todo bien? Confirmanos y te pasamos los datos para el pago. ¡Gracias!");
-  return lineas.join("\n");
+    `WhatsApp: ${pedido.telefono}`,
+    `Entrega: ${entregaTexto(pedido)}`,
+  ].join("\n");
+}
+
+// Lo que el local le manda al cliente desde el panel para confirmar y coordinar.
+function mensajeCliente(pedido) {
+  return [
+    `Hola ${pedido.cliente.split(" ")[0]}! Te escribimos de ${tienda().nombre} por tu pedido *#${pedido.numero}*.`,
+    "",
+    ...detalleItems(pedido),
+    "",
+    ...totales(pedido),
+    `Entrega: ${entregaTexto(pedido)}`,
+    "",
+    pedido.entrega === "retiro"
+      ? "¿Está todo bien? Confirmanos y coordinamos el pago y cuándo pasás a retirarlo. ¡Gracias!"
+      : "¿Está todo bien? Pasanos tu dirección completa (calle, altura, ciudad, provincia y código postal) y coordinamos el pago y el envío. ¡Gracias!",
+  ].join("\n");
+}
+
+// Abre el WhatsApp del local con el pedido ya escrito.
+function linkLocal(pedido) {
+  const base = tienda().whatsapp;
+  return base ? `${base}?text=${encodeURIComponent(mensajeLocal(pedido))}` : "";
 }
 
 // Link del panel admin: abre WhatsApp al cliente con el mensaje ya armado.
 function linkAdmin(pedido) {
   const numero = numeroCliente(pedido.telefono);
-  if (!numero) return "";
-  return `https://wa.me/${numero}?text=${encodeURIComponent(mensajeCliente(pedido))}`;
+  return numero ? `https://wa.me/${numero}?text=${encodeURIComponent(mensajeCliente(pedido))}` : "";
 }
 
-// Link para que el cliente le escriba al local (se muestra en su pantalla del pedido).
-function linkCliente(pedido) {
-  const numero = digitos(tienda().whatsapp);
-  if (!numero) return "";
-  return `https://wa.me/${numero}?text=${encodeURIComponent(`Hola! Hice el pedido #${pedido.numero} en la web. Quedo atento para coordinar.`)}`;
-}
-
-module.exports = { mensajeCliente, linkAdmin, linkCliente, numeroCliente };
+module.exports = { mensajeLocal, mensajeCliente, linkLocal, linkAdmin, numeroCliente };

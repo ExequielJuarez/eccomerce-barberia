@@ -10,14 +10,8 @@
     fijar('[data-r="cantidad"]', r.cantidad);
     fijar('[data-r="subtotal"]', peso(r.subtotal));
     fijar('[data-r="descuentoCupon"]', peso(r.descuentoCupon));
-    fijar('[data-r="envio"]', r.envio === null ? "A calcular" : r.envio === 0 ? "Gratis" : peso(r.envio));
     fijar('[data-r="total"]', peso(r.total));
     $("#filaCupon").hidden = !r.descuentoCupon;
-    $("#envioProgreso").style.width = r.progresoEnvio + "%";
-    $("#envioTexto").innerHTML = r.envioGratis
-      ? "🎉 <strong>¡Tenés envío gratis!</strong>"
-      : `Te faltan <strong>${peso(r.faltaEnvioGratis)}</strong> para el <strong>envío gratis</strong>`;
-    $("#formCp").hidden = r.entrega === "retiro" || r.envioGratis;
     $("#formCupon").hidden = !!r.cupon;
     $("#cuponActivo").hidden = !r.cupon;
     if (r.cupon) { $("#cuponCodigo").textContent = r.cupon.codigo; $("#cuponDesc").textContent = r.cupon.descripcion; }
@@ -54,13 +48,6 @@
     if (fila && e.target.matches("input")) accion(`/carrito/item/${encodeURIComponent(fila.dataset.clave)}`, "PATCH", { cantidad: Number(e.target.value) });
   });
   $("#vaciarCarrito").addEventListener("click", () => { if (confirm("¿Vaciar el carrito?")) accion("/carrito", "DELETE"); });
-
-  $$('input[name="entrega"]').forEach((i) => i.addEventListener("change", () => accion("/carrito/entrega", "POST", { entrega: i.value })));
-  $("#formCp").addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const r = await accion("/carrito/envio", "POST", { codigoPostal: $("#cp").value.trim() });
-    if (r) toast("Envío calculado");
-  });
 
   $("#formCupon").addEventListener("submit", async (e) => {
     e.preventDefault();

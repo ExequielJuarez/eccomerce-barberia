@@ -2,13 +2,11 @@ const { Op } = require("sequelize");
 const db = require("../model/database/models");
 const productoService = require("./productoService");
 
-const ENVIO_GRATIS_DESDE = 150000;
-const COSTO_ENVIO = 6500;
 const MAX_POR_ITEM = 20;
 
 function obtener(session) {
   if (!session.carrito) {
-    session.carrito = { items: [], cupon: null, entrega: "domicilio", codigoPostal: null };
+    session.carrito = { items: [], cupon: null };
   }
   return session.carrito;
 }
@@ -84,16 +82,6 @@ function quitarCupon(session) {
   obtener(session).cupon = null;
 }
 
-function fijarEntrega(session, entrega) {
-  if (["domicilio", "retiro"].includes(entrega)) obtener(session).entrega = entrega;
-}
-
-function fijarCodigoPostal(session, cp) {
-  if (!/^\d{4}$/.test(String(cp || ""))) return false;
-  obtener(session).codigoPostal = String(cp);
-  return true;
-}
-
 async function resumen(session) {
   const carrito = obtener(session);
 
@@ -113,27 +101,13 @@ async function resumen(session) {
   const cupon = cuponDb ? { codigo: cuponDb.codigo, descripcion: cuponDb.descripcion, porcentaje: Number(cuponDb.porcentaje) } : null;
   const descuentoCupon = cupon ? Math.round(subtotal * cupon.porcentaje) : 0;
 
-  const entrega = carrito.entrega || "domicilio";
-  const envioGratis = subtotal >= ENVIO_GRATIS_DESDE;
-  let envio = null;
-  if (envioGratis || entrega === "retiro") envio = 0;
-  else if (carrito.codigoPostal) envio = COSTO_ENVIO;
-
   return {
     items,
     cantidad: items.reduce((acc, i) => acc + i.cantidad, 0),
     subtotal,
     cupon,
     descuentoCupon,
-    codigoPostal: carrito.codigoPostal,
-    entrega,
-    costoEnvio: COSTO_ENVIO,
-    envio,
-    envioGratis,
-    envioGratisDesde: ENVIO_GRATIS_DESDE,
-    faltaEnvioGratis: Math.max(0, ENVIO_GRATIS_DESDE - subtotal),
-    progresoEnvio: Math.min(100, Math.round((subtotal / ENVIO_GRATIS_DESDE) * 100)),
-    total: subtotal - descuentoCupon + (envio || 0),
+    total: subtotal - descuentoCupon,
   };
 }
 
@@ -145,7 +119,5 @@ module.exports = {
   vaciar,
   aplicarCupon,
   quitarCupon,
-  fijarEntrega,
-  fijarCodigoPostal,
   resumen,
 };

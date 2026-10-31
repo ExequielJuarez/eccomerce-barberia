@@ -3,9 +3,6 @@ const db = require("../model/database/models");
 
 const ESTADOS = db.Pedido.ESTADOS;
 
-const SIN_PAGAR = { medioPago: "tarjeta", estado: "pendiente", pagoEstado: { [Op.ne]: "aprobado" } };
-const NO_SIN_PAGAR = { [Op.not]: SIN_PAGAR };
-
 function plano(p) {
   const x = p.get({ plain: true });
   return { ...x, numero: x.id, fecha: x.creado_en, items: x.items || [] };
@@ -13,11 +10,7 @@ function plano(p) {
 
 async function listar({ estado = "", q = "", limite } = {}) {
   const where = {};
-  if (estado === "sin_pagar") Object.assign(where, SIN_PAGAR);
-  else {
-    Object.assign(where, NO_SIN_PAGAR);
-    if (estado) where.estado = estado;
-  }
+  if (estado) where.estado = estado;
   const texto = q.trim();
   if (texto) {
     where[Op.or] = [{ cliente: { [Op.like]: `%${texto}%` } }, ...(/^\d+$/.test(texto) ? [{ id: Number(texto) }] : [])];
@@ -39,13 +32,11 @@ async function conteoPorEstado() {
   });
   const conteo = Object.fromEntries(ESTADOS.map((e) => [e, 0]));
   filas.forEach((f) => (conteo[f.estado] = Number(f.cantidad)));
-  conteo.sin_pagar = await db.Pedido.count({ where: SIN_PAGAR });
-  conteo.pendiente -= conteo.sin_pagar;
   return conteo;
 }
 
 async function pendientes() {
-  return db.Pedido.count({ where: { estado: ["pendiente", "pagado"], ...NO_SIN_PAGAR } });
+  return db.Pedido.count({ where: { estado: "pendiente" } });
 }
 
 async function cambiarEstado(id, estado) {
@@ -92,21 +83,13 @@ async function cambiarEstado(id, estado) {
       }
     }
 
-    const cambios = { estado };
-
-    if (["pagado", "enviado", "entregado"].includes(estado) && pedido.pagoEstado !== "aprobado") {
-      Object.assign(cambios, {
-        pagoEstado: "aprobado",
-        pagadoEn: new Date(),
-        pagoDetalle: pedido.pagoDetalle || (pedido.medioPago === "transferencia" ? "Transferencia acreditada" : "Pago confirmado a mano"),
-      });
-    }
+    const cambios = { estado, vendidoEn: estado === "vendido" ? pedido.vendidoEn || new Date() : null };
     await pedido.update(cambios, { transaction: t });
     return { pedido: plano(pedido), stockMovido };
   });
 }
 
-async function crearDesdeCarrito(resumen, datos, usuario) {
+async function crearDesdeCarrito(resumen, datos) {
   return db.sequelize.transaction(async (t) => {
     for (const i of resumen.items) {
 
@@ -123,34 +106,17 @@ async function crearDesdeCarrito(resumen, datos, usuario) {
 
     const costo = resumen.items.reduce((acc, i) => acc + i.producto.costo * i.cantidad, 0);
     const descuento = resumen.descuentoCupon;
-    const domicilio = datos.entrega === "domicilio";
 
     const pedido = await db.Pedido.create(
       {
-        usuarioId: usuario?.id || null,
         cliente: `${datos.nombre} ${datos.apellido}`.trim(),
-        email: datos.email,
         telefono: datos.telefono,
-        dni: datos.dni,
         entrega: datos.entrega,
-        calle: domicilio ? datos.calle : null,
-        altura: domicilio ? datos.numero : null,
-        piso: domicilio ? datos.piso || null : null,
-        codigoPostal: domicilio ? datos.codigoPostal : null,
-        ciudad: domicilio ? datos.ciudad : null,
-        provincia: domicilio ? datos.provincia : null,
-        notas: datos.notas || null,
-        facturacion: datos.facturacion,
-        cuit: datos.facturacion === "facturaA" ? datos.cuit : null,
-        razonSocial: datos.facturacion === "facturaA" ? datos.razonSocial : null,
-        medioPago: "whatsapp",
         cuponCodigo: resumen.cupon?.codigo || null,
 
         estado: "pendiente",
-        pagoEstado: "pendiente",
         subtotal: resumen.subtotal,
         descuento,
-        envio: resumen.envio || 0,
         total: resumen.total,
         costo,
         ganancia: resumen.subtotal - descuento - costo,
@@ -190,80 +156,6 @@ function conImagenes(pedido) {
   return pedido;
 }
 
-async function delUsuario(usuarioId) {
-  const filas = await db.Pedido.findAll({
-    where: { usuarioId },
-    include: [
-      {
-        association: "items",
-        include: [{ association: "producto", attributes: ["id"], include: [{ association: "imagenes", attributes: ["ruta", "orden"] }] }],
-      },
-    ],
-    order: [["creado_en", "DESC"], ["id", "DESC"]],
-  });
-  return filas.map((f) => conImagenes(plano(f)));
-}
-
-async function registrarPago(id, { estado, pagoId = null, detalle = null, fecha = null }) {
-  if (!db.Pedido.ESTADOS_PAGO.includes(estado)) return null;
-
-  const resultado = await db.sequelize.transaction(async (t) => {
-    const pedido = await db.Pedido.findByPk(id, { transaction: t, lock: t.LOCK.UPDATE });
-    if (!pedido) return null;
-
-    if (pedido.pagoEstado === "aprobado" && estado !== "aprobado" && estado !== "reembolsado") {
-      return { pedido: plano(pedido), cambio: false };
-    }
-    const cambio = pedido.pagoEstado !== estado || (pagoId && pedido.pagoId !== String(pagoId));
-    await pedido.update(
-      {
-        pagoEstado: estado,
-        pagoId: pagoId ? String(pagoId) : pedido.pagoId,
-        pagoDetalle: detalle || pedido.pagoDetalle,
-        pagadoEn: estado === "aprobado" ? pedido.pagadoEn || fecha || new Date() : pedido.pagadoEn,
-
-        ...(estado === "aprobado" && pedido.estado === "pendiente" ? { estado: "pagado" } : {}),
-      },
-      { transaction: t }
-    );
-    return { pedido: plano(pedido), cambio };
-  });
-  if (!resultado) return null;
-
-  if (estado === "aprobado" && resultado.pedido.estado === "cancelado") {
-    try {
-      const r = await cambiarEstado(id, "pagado");
-      resultado.pedido = r.pedido;
-    } catch (error) {
-      resultado.aviso = error.mensaje || "Se pagó un pedido cancelado";
-    }
-  }
-  return resultado;
-}
-
-async function vencerImpagos(horas) {
-  const limite = new Date(Date.now() - horas * 3600 * 1000);
-  const vencidos = await db.Pedido.findAll({
-    where: { ...SIN_PAGAR, creado_en: { [Op.lt]: limite } },
-    attributes: ["id"],
-    raw: true,
-  });
-  for (const { id } of vencidos) await cambiarEstado(id, "cancelado");
-  return vencidos.map((v) => v.id);
-}
-
-async function sinPagarRecientes(horas, limite = 30) {
-  const desde = new Date(Date.now() - horas * 3600 * 1000);
-  const filas = await db.Pedido.findAll({
-    where: { ...SIN_PAGAR, creado_en: { [Op.gte]: desde } },
-    attributes: ["id"],
-    order: [["creado_en", "DESC"]],
-    limit: limite,
-    raw: true,
-  });
-  return filas.map((f) => f.id);
-}
-
 const inicioDelDia = (fecha) => {
   const f = new Date(fecha);
   f.setHours(0, 0, 0, 0);
@@ -278,11 +170,11 @@ async function metricas(dias = 30) {
 
   const [validos, anteriores] = await Promise.all([
     db.Pedido.findAll({
-      where: { creado_en: { [Op.gte]: desde }, estado: { [Op.ne]: "cancelado" }, ...NO_SIN_PAGAR },
+      where: { creado_en: { [Op.gte]: desde }, estado: "vendido" },
       include: [{ association: "items" }],
     }),
     db.Pedido.findAll({
-      where: { creado_en: { [Op.gte]: antesDesde, [Op.lt]: desde }, estado: { [Op.ne]: "cancelado" }, ...NO_SIN_PAGAR },
+      where: { creado_en: { [Op.gte]: antesDesde, [Op.lt]: desde }, estado: "vendido" },
       attributes: ["ganancia"],
       raw: true,
     }),
@@ -337,7 +229,7 @@ async function metricas(dias = 30) {
 async function ventasDeProducto(id) {
   const filas = await db.PedidoItem.findAll({
     where: { productoId: id },
-    include: [{ association: "pedido", attributes: ["id", "creado_en", "estado"], where: { estado: { [Op.ne]: "cancelado" }, ...NO_SIN_PAGAR } }],
+    include: [{ association: "pedido", attributes: ["id", "creado_en", "estado"], where: { estado: "vendido" } }],
     order: [[{ model: db.Pedido, as: "pedido" }, "creado_en", "DESC"]],
   });
   const ventas = filas.map((f) => {
@@ -360,10 +252,6 @@ module.exports = {
   cambiarEstado,
   crearDesdeCarrito,
   obtener,
-  delUsuario,
-  registrarPago,
-  vencerImpagos,
-  sinPagarRecientes,
   metricas,
   ventasDeProducto,
 };

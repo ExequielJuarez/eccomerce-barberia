@@ -347,3 +347,10 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
   .rev { opacity: 1; transform: none; }
 }
+
+.btn--whatsapp { background: #25d366; color: #0b0b0b; border-color: #25d366; }
+.btn--whatsapp:hover { background: #1ebe5b; border-color: #1ebe5b; }
+.btn--whatsapp svg { width: 22px; height: 22px; flex: none; }
+.btn--grande { min-height: 60px; padding-inline: 28px; font-size: 14px; }
+.btn--grande { max-width: 100%; text-align: center; }
+@media (max-width: 600px) { .pedido-acciones .btn { flex: 1 1 100%; justify-content: center; } .btn--grande { padding-inline: 14px; font-size: 12.5px; letter-spacing: 0.06em; gap: 10px; } }

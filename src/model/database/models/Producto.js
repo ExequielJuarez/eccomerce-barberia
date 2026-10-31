@@ -32,12 +32,6 @@ module.exports = (sequelize, DataTypes) => {
     Producto.hasMany(db.Especificacion, { as: "especificaciones", foreignKey: "productoId" });
     Producto.hasMany(db.ProductoImagen, { as: "imagenes", foreignKey: "productoId" });
     Producto.hasMany(db.PedidoItem, { as: "ventas", foreignKey: "productoId" });
-    Producto.belongsToMany(db.Usuario, {
-      as: "guardadoPor",
-      through: db.Favorito,
-      foreignKey: "productoId",
-      otherKey: "usuarioId",
-    });
   };
 
   return Producto;

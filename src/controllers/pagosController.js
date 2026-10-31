@@ -5,11 +5,11 @@ const { esAdmin } = require("../helpers/roles");
 function puedeVer(req, pedido) {
   const u = req.session.usuarioLogueado;
   if (!pedido) return false;
-  if (u && (esAdmin(u) || (pedido.usuarioId && pedido.usuarioId === u.id))) return true;
+  if (u && esAdmin(u)) return true;
   return (req.session.pedidosRecientes || []).includes(pedido.numero);
 }
 
-const sePuedeCancelar = (p) => p.estado === "pendiente" && p.pagoEstado !== "aprobado";
+const sePuedeCancelar = (p) => p.estado === "pendiente";
 
 async function buscar(req, res) {
   const numero = Number(req.params.numero);
@@ -36,7 +36,7 @@ module.exports = {
       estilo: ["cuenta", "mi-pedido"],
       pedido,
       sePuedeCancelar: sePuedeCancelar(pedido),
-      linkWhatsapp: whatsapp.linkCliente(pedido),
+      linkWhatsapp: whatsapp.linkLocal(pedido),
     });
   },
 

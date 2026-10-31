@@ -12,7 +12,6 @@ DROP TABLE IF EXISTS arrepentimientos;
 DROP TABLE IF EXISTS notificaciones;
 DROP TABLE IF EXISTS pedido_items;
 DROP TABLE IF EXISTS pedidos;
-DROP TABLE IF EXISTS favoritos;
 DROP TABLE IF EXISTS especificaciones;
 DROP TABLE IF EXISTS producto_imagenes;
 DROP TABLE IF EXISTS producto_colores;
@@ -24,28 +23,18 @@ DROP TABLE IF EXISTS cupones;
 DROP TABLE IF EXISTS usuarios;
 SET FOREIGN_KEY_CHECKS = 1;
 
+-- Solo personal del local (la tienda no tiene cuentas de clientes).
 CREATE TABLE usuarios (
   id              INT UNSIGNED NOT NULL AUTO_INCREMENT,
   nombre          VARCHAR(40)  NOT NULL,
   apellido        VARCHAR(40)  NOT NULL DEFAULT '',
   email           VARCHAR(120) NOT NULL,
-  telefono        VARCHAR(20)  NULL,
-  password        CHAR(60)     NULL,
-  google_id       VARCHAR(64)  NULL,
-  rol             ENUM('cliente', 'admin', 'superadmin') NOT NULL DEFAULT 'cliente',
-  newsletter      TINYINT(1)   NOT NULL DEFAULT 0,
-  dni             VARCHAR(8)   NULL,
-  calle           VARCHAR(90)  NULL,
-  altura          VARCHAR(10)  NULL,
-  piso            VARCHAR(20)  NULL,
-  codigo_postal   CHAR(4)      NULL,
-  ciudad          VARCHAR(80)  NULL,
-  provincia       VARCHAR(60)  NULL,
+  password        CHAR(60)     NOT NULL,
+  rol             ENUM('admin', 'superadmin') NOT NULL DEFAULT 'admin',
   creado_en       DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
   actualizado_en  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (id),
-  UNIQUE KEY uq_usuarios_email (email),
-  UNIQUE KEY uq_usuarios_google (google_id)
+  UNIQUE KEY uq_usuarios_email (email)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE categorias (
@@ -144,18 +133,6 @@ CREATE TABLE especificaciones (
     ON UPDATE CASCADE ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE favoritos (
-  usuario_id   INT UNSIGNED NOT NULL,
-  producto_id  INT UNSIGNED NOT NULL,
-  creado_en    DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (usuario_id, producto_id),
-  KEY idx_favoritos_producto (producto_id),
-  CONSTRAINT fk_favoritos_usuario FOREIGN KEY (usuario_id) REFERENCES usuarios (id)
-    ON UPDATE CASCADE ON DELETE CASCADE,
-  CONSTRAINT fk_favoritos_producto FOREIGN KEY (producto_id) REFERENCES productos (id)
-    ON UPDATE CASCADE ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
 CREATE TABLE cupones (
   id              INT UNSIGNED  NOT NULL AUTO_INCREMENT,
   codigo          VARCHAR(30)   NOT NULL,
@@ -170,46 +147,25 @@ CREATE TABLE cupones (
   CONSTRAINT ck_cupones_porcentaje CHECK (porcentaje > 0 AND porcentaje < 1)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- Pedido armado en la web y mandado por WhatsApp al local. El dueño lo marca como vendido o cancelado.
 CREATE TABLE pedidos (
   id              INT UNSIGNED   NOT NULL AUTO_INCREMENT,
-  usuario_id      INT UNSIGNED   NULL,
   cliente         VARCHAR(90)    NOT NULL,
-  email           VARCHAR(120)   NULL,
-  telefono        VARCHAR(20)    NULL,
-  dni             VARCHAR(8)     NULL,
-  entrega         ENUM('domicilio', 'retiro') NOT NULL DEFAULT 'domicilio',
-  calle           VARCHAR(90)    NULL,
-  altura          VARCHAR(10)    NULL,
-  piso            VARCHAR(20)    NULL,
-  codigo_postal   CHAR(4)        NULL,
-  ciudad          VARCHAR(80)    NULL,
-  provincia       VARCHAR(60)    NULL,
-  notas           VARCHAR(300)   NULL,
-  facturacion     ENUM('consumidor', 'facturaA') NOT NULL DEFAULT 'consumidor',
-  cuit            VARCHAR(13)    NULL,
-  razon_social    VARCHAR(120)   NULL,
-  medio_pago      ENUM('tarjeta', 'transferencia', 'whatsapp') NOT NULL DEFAULT 'whatsapp',
+  telefono        VARCHAR(20)    NOT NULL,
+  entrega         ENUM('retiro', 'domicilio') NOT NULL DEFAULT 'retiro',
   cupon_codigo    VARCHAR(30)    NULL,
-  estado          ENUM('pendiente', 'pagado', 'enviado', 'entregado', 'cancelado') NOT NULL DEFAULT 'pendiente',
-  pago_estado     ENUM('pendiente', 'aprobado', 'rechazado', 'reembolsado') NOT NULL DEFAULT 'pendiente',
-  pago_id         VARCHAR(40)    NULL,
-  pago_detalle    VARCHAR(120)   NULL,
-  pagado_en       DATETIME       NULL,
+  estado          ENUM('pendiente', 'vendido', 'cancelado') NOT NULL DEFAULT 'pendiente',
+  vendido_en      DATETIME       NULL,
   subtotal        DECIMAL(12, 2) NOT NULL DEFAULT 0,
   descuento       DECIMAL(12, 2) NOT NULL DEFAULT 0,
-  envio           DECIMAL(12, 2) NOT NULL DEFAULT 0,
   total           DECIMAL(12, 2) NOT NULL DEFAULT 0,
   costo           DECIMAL(12, 2) NOT NULL DEFAULT 0,
   ganancia        DECIMAL(12, 2) NOT NULL DEFAULT 0,
   creado_en       DATETIME       NOT NULL DEFAULT CURRENT_TIMESTAMP,
   actualizado_en  DATETIME       NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (id),
-  KEY idx_pedidos_usuario (usuario_id),
   KEY idx_pedidos_estado (estado),
-  KEY idx_pedidos_pago (pago_id),
-  KEY idx_pedidos_fecha (creado_en),
-  CONSTRAINT fk_pedidos_usuario FOREIGN KEY (usuario_id) REFERENCES usuarios (id)
-    ON UPDATE CASCADE ON DELETE SET NULL
+  KEY idx_pedidos_fecha (creado_en)
 ) ENGINE=InnoDB AUTO_INCREMENT=1001 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE pedido_items (

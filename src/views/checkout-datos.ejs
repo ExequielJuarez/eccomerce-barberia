@@ -12,59 +12,22 @@
 
       <fieldset class="bloque-form">
         <legend><span>1</span> Contacto</legend>
-        <p class="apagado">Te escribimos por WhatsApp y por email para coordinar el pago y la entrega.</p>
+        <p class="apagado">Después de confirmar vas a poder mandar tu pedido por WhatsApp al local.</p>
         <div class="grilla-form">
-          <%- include('partials/campo', { nombre: 'email', etiqueta: 'Email', tipo: 'email', valor: v('email'), errores: e, atributos: 'autocomplete="email" required', clase: 'completo' }) %>
-          <%- include('partials/campo', { nombre: 'nombre', etiqueta: 'Nombre', valor: v('nombre'), errores: e, atributos: 'autocomplete="given-name" required' }) %>
-          <%- include('partials/campo', { nombre: 'apellido', etiqueta: 'Apellido', valor: v('apellido'), errores: e, atributos: 'autocomplete="family-name" required' }) %>
-          <%- include('partials/campo', { nombre: 'telefono', etiqueta: 'WhatsApp', tipo: 'tel', valor: v('telefono'), errores: e, atributos: 'autocomplete="tel" placeholder="Con código de área. Ej: 385 4000000" required' }) %>
-          <%- include('partials/campo', { nombre: 'dni', etiqueta: 'DNI', valor: v('dni'), errores: e, atributos: 'inputmode="numeric" maxlength="8" placeholder="Sin puntos" required' }) %>
+          <%- include('partials/campo', { nombre: 'nombre', etiqueta: 'Nombre', valor: v('nombre'), errores: e, atributos: 'autocomplete="given-name" maxlength="40" required' }) %>
+          <%- include('partials/campo', { nombre: 'apellido', etiqueta: 'Apellido', valor: v('apellido'), errores: e, atributos: 'autocomplete="family-name" maxlength="40" required' }) %>
+          <%- include('partials/campo', { nombre: 'telefono', etiqueta: 'WhatsApp', tipo: 'tel', valor: v('telefono'), errores: e, atributos: 'autocomplete="tel" maxlength="20" placeholder="Con código de área. Ej: 385 4000000" required', clase: 'completo' }) %>
         </div>
       </fieldset>
 
       <fieldset class="bloque-form">
-        <legend><span>2</span> Entrega</legend>
+        <legend><span>2</span> ¿Cómo lo recibís?</legend>
         <div class="opciones-entrega">
-          <label class="opcion"><input type="radio" name="entrega" value="domicilio" <%= v('entrega') !== 'retiro' ? 'checked' : '' %>><span><strong>Envío a domicilio</strong><small>A todo el país</small></span></label>
-          <label class="opcion"><input type="radio" name="entrega" value="retiro" <%= v('entrega') === 'retiro' ? 'checked' : '' %>><span><strong>Retiro en el local</strong><small><%= tienda.direccion %><%= tienda.horarios ? " · " + tienda.horarios : "" %></small></span><span class="opcion__extra">Gratis</span></label>
+          <label class="opcion"><input type="radio" name="entrega" value="retiro" <%= v('entrega') !== 'domicilio' ? 'checked' : '' %>><span><strong>Retiro en el local</strong><small><%= tienda.direccion %><%= tienda.horarios ? " · " + tienda.horarios : "" %></small></span></label>
+          <label class="opcion"><input type="radio" name="entrega" value="domicilio" <%= v('entrega') === 'domicilio' ? 'checked' : '' %>><span><strong>Envío a domicilio</strong><small>Se arregla por WhatsApp</small></span></label>
         </div>
         <% if (e.entrega) { %><span class="campo__error"><%= e.entrega.msg %></span><% } %>
-
-        <div class="grilla-form" id="camposDomicilio" <%= v('entrega') === 'retiro' ? 'hidden' : '' %>>
-          <%- include('partials/campo', { nombre: 'calle', etiqueta: 'Calle', valor: v('calle'), errores: e, atributos: 'autocomplete="address-line1"' }) %>
-          <%- include('partials/campo', { nombre: 'numero', etiqueta: 'Altura', valor: v('numero'), errores: e, atributos: 'maxlength="6" placeholder="1234 o S/N"' }) %>
-          <%- include('partials/campo', { nombre: 'piso', etiqueta: 'Piso / depto (opcional)', valor: v('piso'), errores: e }) %>
-          <%- include('partials/campo', { nombre: 'codigoPostal', etiqueta: 'Código postal', valor: v('codigoPostal'), errores: e, atributos: 'inputmode="numeric" maxlength="4" placeholder="4200" autocomplete="postal-code"' }) %>
-          <%- include('partials/campo', { nombre: 'ciudad', etiqueta: 'Ciudad / localidad', valor: v('ciudad'), errores: e, atributos: 'autocomplete="address-level2"' }) %>
-          <div class="campo <%= e.provincia ? 'campo--error' : '' %>">
-            <label for="c-provincia">Provincia</label>
-            <select id="c-provincia" name="provincia" autocomplete="address-level1">
-              <option value="">Elegí una provincia</option>
-              <% provincias.forEach((pv) => { %><option value="<%= pv %>" <%= v('provincia') === pv ? 'selected' : '' %>><%= pv %></option><% }) %>
-            </select>
-            <% if (e.provincia) { %><span class="campo__error"><%= e.provincia.msg %></span><% } %>
-          </div>
-        </div>
-        <div class="campo completo <%= e.notas ? 'campo--error' : '' %>">
-          <label for="c-notas">Notas para la entrega (opcional)</label>
-          <textarea id="c-notas" name="notas" maxlength="300" rows="3" placeholder="Horario, referencias, indicaciones…"><%= v('notas') %></textarea>
-          <% if (e.notas) { %><span class="campo__error"><%= e.notas.msg %></span><% } %>
-        </div>
       </fieldset>
-
-      <fieldset class="bloque-form">
-        <legend><span>3</span> Facturación</legend>
-        <div class="opciones-entrega">
-          <label class="opcion"><input type="radio" name="facturacion" value="consumidor" <%= v('facturacion') !== 'facturaA' ? 'checked' : '' %>><span><strong>Consumidor final</strong></span></label>
-          <label class="opcion"><input type="radio" name="facturacion" value="facturaA" <%= v('facturacion') === 'facturaA' ? 'checked' : '' %>><span><strong>Factura A</strong><small>Para empresas y responsables inscriptos</small></span></label>
-        </div>
-        <div class="grilla-form" id="camposFactura" <%= v('facturacion') === 'facturaA' ? '' : 'hidden' %>>
-          <%- include('partials/campo', { nombre: 'cuit', etiqueta: 'CUIT', valor: v('cuit'), errores: e, atributos: 'inputmode="numeric" maxlength="13" placeholder="20-12345678-9"' }) %>
-          <%- include('partials/campo', { nombre: 'razonSocial', etiqueta: 'Razón social', valor: v('razonSocial'), errores: e }) %>
-        </div>
-      </fieldset>
-
-      <label class="tilde"><input type="checkbox" name="newsletter" value="1" <%= datos.newsletter ? 'checked' : '' %>> <span>Quiero enterarme de los nuevos ingresos y promos.</span></label>
 
       <div class="checkout__acciones">
         <a href="/carrito" class="btn btn--linea">Volver</a>

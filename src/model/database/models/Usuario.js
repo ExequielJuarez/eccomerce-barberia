@@ -13,19 +13,8 @@ module.exports = (sequelize, DataTypes) => {
           this.setDataValue("email", String(valor).trim().toLowerCase());
         },
       },
-      telefono: DataTypes.STRING(20),
-      password: DataTypes.CHAR(60),
-      googleId: { type: DataTypes.STRING(64), unique: true },
-      rol: { type: DataTypes.ENUM("cliente", "admin", "superadmin"), allowNull: false, defaultValue: "cliente" },
-      newsletter: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
-
-      dni: DataTypes.STRING(8),
-      calle: DataTypes.STRING(90),
-      altura: DataTypes.STRING(10),
-      piso: DataTypes.STRING(20),
-      codigoPostal: DataTypes.CHAR(4),
-      ciudad: DataTypes.STRING(80),
-      provincia: DataTypes.STRING(60),
+      password: { type: DataTypes.CHAR(60), allowNull: false },
+      rol: { type: DataTypes.ENUM("admin", "superadmin"), allowNull: false, defaultValue: "admin" },
     },
     {
       tableName: "usuarios",
@@ -34,16 +23,6 @@ module.exports = (sequelize, DataTypes) => {
       scopes: { conPassword: { attributes: { include: ["password"] } } },
     }
   );
-
-  Usuario.associate = (db) => {
-    Usuario.hasMany(db.Pedido, { as: "pedidos", foreignKey: "usuarioId" });
-    Usuario.belongsToMany(db.Producto, {
-      as: "favoritos",
-      through: db.Favorito,
-      foreignKey: "usuarioId",
-      otherKey: "productoId",
-    });
-  };
 
   return Usuario;
 };

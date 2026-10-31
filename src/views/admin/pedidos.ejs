@@ -2,8 +2,8 @@
 <%- include('../partials/admin-inicio') %>
 <%
   const precio = (n) => formatoPrecio(n).replace(',00', '');
-  const nombres = { pendiente: 'Pendientes', pagado: 'Pagados', enviado: 'Enviados', entregado: 'Entregados', cancelado: 'Cancelados', sin_pagar: 'Sin pagar' };
-  const pestañas = [['', 'Todos', total]].concat(estados.map((e) => [e, nombres[e], conteo[e]]), [['sin_pagar', 'Sin pagar', conteo.sin_pagar]]);
+  const nombres = { pendiente: 'Pendientes', vendido: 'Vendidos', cancelado: 'Cancelados' };
+  const pestañas = [['', 'Todos', total]].concat(estados.map((e) => [e, nombres[e], conteo[e]]));
 %>
 <div class="adm-cab"><div><p class="etiqueta-seccion">Ventas</p><h1 class="adm-titulo titulo">Pedidos</h1></div></div>
 
@@ -21,27 +21,28 @@
     <article class="pedido panel" data-numero="<%= p.numero %>">
       <header class="pedido__cab">
         <div class="pedido__id"><strong class="titulo">#<%= p.numero %></strong><small><%= formatoFecha(p.fecha, true) %></small></div>
-        <div class="pedido__cliente"><strong><%= p.cliente %></strong><small><%= p.email %><%= p.telefono ? ' · ' + p.telefono : '' %></small></div>
+        <div class="pedido__cliente"><strong><%= p.cliente %></strong><small>WhatsApp <%= p.telefono %></small></div>
         <span class="estado estado--<%= s.clave %>" data-situacion><%= s.texto %></span>
         <strong class="precio"><%= precio(p.total) %></strong>
-        <% if (linkWhatsapp(p)) { %><a class="btn btn--chico" href="<%= linkWhatsapp(p) %>" target="_blank" rel="noopener">Enviar por WhatsApp</a><% } %>
+        <div class="pedido__acciones">
+        <% if (linkWhatsapp(p)) { %><a class="btn btn--whatsapp btn--chico" href="<%= linkWhatsapp(p) %>" target="_blank" rel="noopener">Escribirle por WhatsApp</a><% } %>
         <button type="button" class="enlace" data-abrir aria-expanded="false">Detalle</button>
+        </div>
       </header>
       <div class="pedido__cuerpo" hidden>
         <ul class="pedido__items">
           <% p.items.forEach((i) => { %><li><span><%= i.cantidad %> ×</span> <strong><%= i.nombre %></strong> <small><%= [i.color || ''].filter(Boolean).join(' · ') %></small><span class="num"><%= precio(i.precio * i.cantidad) %></span></li><% }) %>
         </ul>
         <div class="pedido__info">
-          <div><span class="campo__label">Entrega</span><p><%= p.entrega === 'retiro' ? 'Retiro en el local' : [p.calle + ' ' + p.altura + (p.piso ? ', ' + p.piso : ''), p.ciudad + ', ' + p.provincia + ' (' + p.codigoPostal + ')'].join(' — ') %></p><% if (p.notas) { %><p class="apagado">“<%= p.notas %>”</p><% } %></div>
-          <div><span class="campo__label">Pago</span><p><%= {transferencia: 'Transferencia', tarjeta: 'Tarjeta'}[p.medioPago] || 'WhatsApp' %> · <%= p.pagoEstado %><%= p.pagoDetalle ? ' · ' + p.pagoDetalle : '' %></p>
-            <% if (p.facturacion === 'facturaA') { %><p class="apagado">Factura A · CUIT <%= p.cuit %> · <%= p.razonSocial %></p><% } %><% if (p.dni) { %><p class="apagado">DNI <%= p.dni %></p><% } %></div>
-          <div><span class="campo__label">Importes</span><p>Subtotal <%= precio(p.subtotal) %><% if (p.descuento > 0) { %> · Desc. −<%= precio(p.descuento) %><% } %> · Envío <%= p.envio ? precio(p.envio) : 'gratis' %></p><p class="apagado">Ganancia <span data-ganancia><%= precio(p.ganancia) %></span></p></div>
+          <div><span class="campo__label">Entrega</span><p><%= p.entrega === 'retiro' ? 'Retira en el local' : 'Envío a domicilio (se arregla por WhatsApp)' %></p></div>
+          <div><span class="campo__label">Importes</span><p>Subtotal <%= precio(p.subtotal) %><% if (p.descuento > 0) { %> · Desc. −<%= precio(p.descuento) %><% } %> · Total <%= precio(p.total) %></p><p class="apagado">Ganancia <span data-ganancia><%= precio(p.ganancia) %></span></p></div>
         </div>
         <footer class="pedido__pie">
-          <label class="pedido__estado"><span class="campo__label">Estado del pedido</span>
-            <select class="adm-select" data-estado aria-label="Estado del pedido #<%= p.numero %>">
-              <% estados.forEach((e) => { %><option value="<%= e %>" <%= p.estado === e ? 'selected' : '' %>><%= e.charAt(0).toUpperCase() + e.slice(1) %></option><% }) %>
-            </select></label>
+          <div class="pedido__estado" role="group" aria-label="Estado del pedido #<%= p.numero %>">
+            <% if (p.estado !== 'vendido') { %><button type="button" class="btn btn--volt btn--chico" data-marcar="vendido">✓ Marcar vendido</button><% } %>
+            <% if (p.estado !== 'cancelado') { %><button type="button" class="btn btn--linea btn--chico" data-marcar="cancelado">Cancelar pedido</button><% } %>
+            <% if (p.estado !== 'pendiente') { %><button type="button" class="btn btn--linea btn--chico" data-marcar="pendiente">Volver a pendiente</button><% } %>
+          </div>
           <a class="btn btn--linea btn--chico" href="/admin/pedidos/<%= p.numero %>/comprobante" target="_blank" rel="noopener">Comprobante</a>
         </footer>
       </div>

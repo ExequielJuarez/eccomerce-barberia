@@ -7,7 +7,6 @@ TRUNCATE TABLE notificaciones;
 TRUNCATE TABLE arrepentimientos;
 TRUNCATE TABLE pedido_items;
 TRUNCATE TABLE pedidos;
-TRUNCATE TABLE favoritos;
 TRUNCATE TABLE especificaciones;
 TRUNCATE TABLE producto_imagenes;
 TRUNCATE TABLE producto_colores;
@@ -20,9 +19,9 @@ TRUNCATE TABLE usuarios;
 SET FOREIGN_KEY_CHECKS = 1;
 ALTER TABLE pedidos AUTO_INCREMENT = 1001;
 
-INSERT INTO usuarios (id, nombre, apellido, email, telefono, password, google_id, rol, newsletter) VALUES
-  (1, 'Admin', 'Barba Black', 'admin@tienda.com', NULL, '$2b$10$OUwf1N16MEgHBa5jhFt6K.cGjo4yUyiF/cOwUOBsyttSBQqgwMRYq', NULL, 'admin', 0),
-  (2, 'Super', 'Admin', 'super@tienda.com', NULL, '$2b$10$AhElj/1kwG2mSrQCEpRKI.eaaUIicEpYgvqxK2sckmrfVXodWJpke', NULL, 'superadmin', 0);
+INSERT INTO usuarios (id, nombre, apellido, email, password, rol) VALUES
+  (1, 'Admin', 'Barba Black', 'admin@tienda.com', '$2b$10$OUwf1N16MEgHBa5jhFt6K.cGjo4yUyiF/cOwUOBsyttSBQqgwMRYq', 'admin'),
+  (2, 'Super', 'Admin', 'super@tienda.com', '$2b$10$AhElj/1kwG2mSrQCEpRKI.eaaUIicEpYgvqxK2sckmrfVXodWJpke', 'superadmin');
 
 INSERT INTO categorias (id, nombre, slug, orden) VALUES
   (1, 'Clippers', 'clippers', 1),

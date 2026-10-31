@@ -17,9 +17,10 @@ async function crear(datos, usuarioId = null) {
   const numero = String(datos.numeroPedido).replace(/\D/g, "");
 
   const pedido = numero
-    ? await db.Pedido.findByPk(Number(numero), { attributes: ["id", "email", "usuarioId"], raw: true })
+    ? await db.Pedido.findByPk(Number(numero), { attributes: ["id", "telefono"], raw: true })
     : null;
-  const esSuyo = pedido && (pedido.email?.toLowerCase() === email || (usuarioId && pedido.usuarioId === usuarioId));
+  const ultimos = (v) => String(v || "").replace(/\D/g, "").slice(-8);
+  const esSuyo = Boolean(pedido) && ultimos(pedido.telefono).length === 8 && ultimos(pedido.telefono) === ultimos(datos.telefono);
 
   let fila;
   for (let intento = 0; intento < 5 && !fila; intento++) {
@@ -44,7 +45,7 @@ async function crear(datos, usuarioId = null) {
     await notificaciones.crear({
       tipo: "pedido",
       titulo: `Arrepentimiento ${solicitud.codigo}`,
-      mensaje: `${solicitud.nombre} · pedido #${solicitud.numeroPedido}${esSuyo ? "" : " (no coincide con su email: revisar)"}`,
+      mensaje: `${solicitud.nombre} · pedido #${solicitud.numeroPedido}${esSuyo ? "" : " (el WhatsApp no coincide con el del pedido: revisar)"}`,
       url: "/admin/arrepentimientos",
       pedidoId: esSuyo ? pedido.id : null,
     });

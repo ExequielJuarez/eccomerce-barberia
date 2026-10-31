@@ -32,7 +32,7 @@ async function nuevoPedido(pedido) {
   await crear({
     tipo: "pedido",
     titulo: `Nueva compra #${pedido.numero}`,
-    mensaje: `${pedido.cliente} · ${pesos(pedido.total)} · ${unidades} ${unidades === 1 ? "unidad" : "unidades"} · por coordinar (WhatsApp)`,
+    mensaje: `${pedido.cliente} · ${pesos(pedido.total)} · ${unidades} ${unidades === 1 ? "unidad" : "unidades"} · ${pedido.entrega === "retiro" ? "retira en el local" : "envío a domicilio"}`,
     url: `/admin/pedidos?q=${pedido.numero}`,
     pedidoId: pedido.numero,
   });
@@ -48,16 +48,6 @@ async function nuevoPedido(pedido) {
       productoId: p.id,
     });
   }
-}
-
-async function pagoAprobado(pedido) {
-  await crear({
-    tipo: "pedido",
-    titulo: `Pago aprobado #${pedido.numero}`,
-    mensaje: `${pedido.cliente} · ${pesos(pedido.total)}${pedido.pagoDetalle ? ` · ${pedido.pagoDetalle}` : ""}`,
-    url: `/admin/pedidos?q=${pedido.numero}`,
-    pedidoId: pedido.numero,
-  });
 }
 
 async function listar(limite = 15, usuarioId = null) {
@@ -79,4 +69,4 @@ async function marcarLeidas(id = null, usuarioId = null) {
   return cantidad;
 }
 
-module.exports = { eventos, crear, nuevoPedido, pagoAprobado, listar, noLeidas, marcarLeidas };
+module.exports = { eventos, crear, nuevoPedido, listar, noLeidas, marcarLeidas };

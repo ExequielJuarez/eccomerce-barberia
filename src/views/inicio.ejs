@@ -13,11 +13,8 @@
   <div class="hero__velo" aria-hidden="true"></div>
   <div class="contenedor hero__grilla">
     <div class="hero__texto">
-      <p class="etiqueta-seccion hero__etiqueta"><%= c.portada.etiqueta %></p>
-      <h1 class="hero__titulo titulo">
-        <% lineas(c.portada.titulo).forEach((l, i) => { %>
-          <span class="hero__linea"><span data-i="<%= i %>"><%- textoRico(l) %></span></span>
-        <% }) %>
+      <h1 class="hero__logo">
+        <img src="/img/marca/logo-barbablack.webp" alt="Barba Black" width="1535" height="1023" fetchpriority="high">
       </h1>
       <p class="hero__bajada"><%= c.portada.bajada %></p>
     </div>
@@ -94,7 +91,7 @@
 <section class="bloque" id="local">
   <div class="contenedor local">
     <div class="local__foto rev">
-      <img src="<%= c.local.imagen %>" alt="Insumos de Barba Black" loading="lazy">
+      <img src="<%= c.local.imagen %>" alt="Mapa de Barba Black" loading="lazy">
     </div>
     <div class="local__info rev">
       <p class="etiqueta-seccion"><%= c.local.etiqueta %></p>

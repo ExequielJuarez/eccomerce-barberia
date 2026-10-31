@@ -2,33 +2,12 @@
   const { $, $$, pedir, toast } = window.ADM;
   const lista = $("#pedidosLista");
   if (!lista) return;
-  const TEXTO = { pendiente: ["alerta", "Pendiente"], pagado: ["curso", "Pago aprobado"], enviado: ["curso", "Enviado"], entregado: ["ok", "Entregado"], cancelado: ["cancelado", "Cancelado"] };
+  const TEXTO = { pendiente: "Pendiente", vendido: "Vendido", cancelado: "Cancelado" };
 
-  lista.addEventListener("click", (e) => {
-    const b = e.target.closest("[data-abrir]");
-    if (!b) return;
-    const cuerpo = b.closest(".pedido").querySelector(".pedido__cuerpo");
-    cuerpo.hidden = !cuerpo.hidden;
-    b.setAttribute("aria-expanded", String(!cuerpo.hidden));
-    b.textContent = cuerpo.hidden ? "Detalle" : "Cerrar";
-  });
-  lista.addEventListener("change", async (e) => {
-    const sel = e.target.closest("[data-estado]");
-    if (!sel) return;
-    const art = sel.closest(".pedido");
-    const r = await pedir(`/admin/pedidos/${art.dataset.numero}/estado`, { metodo: "PATCH", datos: { estado: sel.value } });
-    if (!r.ok) { toast(r.mensaje || "No se pudo cambiar el estado", "error"); location.reload(); return; }
-    const [clave, texto] = TEXTO[r.estado] || ["curso", r.estado];
-    const est = art.querySelector("[data-situacion]");
-    est.className = `estado estado--${clave}`;
-    est.textContent = texto;
-    toast(`Pedido #${art.dataset.numero}: ${texto}` + (r.stockMovido ? (r.stockMovido > 0 ? ` · volvieron ${r.stockMovido} u. al stock` : ` · se descontaron ${-r.stockMovido} u.`) : ""));
-  });
-
-  // Pedido nuevo: se actualiza la lista y los contadores sin recargar, respetando los detalles abiertos.
+  // Vuelve a pedir la página y cambia solo la lista y los contadores, respetando los detalles abiertos.
   let actualizando = false;
-  document.addEventListener("adm:notificacion", async (e) => {
-    if (e.detail.tipo !== "pedido" || actualizando) return;
+  async function refrescar() {
+    if (actualizando) return;
     actualizando = true;
     try {
       const html = await (await fetch(location.href, { headers: { Accept: "text/html" } })).text();
@@ -49,7 +28,37 @@
       const chips = $(".adm-rango"), nuevos = doc.querySelector(".adm-rango");
       if (chips && nuevos) chips.innerHTML = nuevos.innerHTML;
     } catch { /* si falla, queda la notificación */ } finally { actualizando = false; }
+  }
+
+  lista.addEventListener("click", async (e) => {
+    const abrir = e.target.closest("[data-abrir]");
+    if (abrir) {
+      const cuerpo = abrir.closest(".pedido").querySelector(".pedido__cuerpo");
+      cuerpo.hidden = !cuerpo.hidden;
+      abrir.setAttribute("aria-expanded", String(!cuerpo.hidden));
+      abrir.textContent = cuerpo.hidden ? "Detalle" : "Cerrar";
+      return;
+    }
+
+    const marcar = e.target.closest("[data-marcar]");
+    if (!marcar) return;
+    const art = marcar.closest(".pedido");
+    const estado = marcar.dataset.marcar;
+    if (estado === "cancelado" && !confirm(`¿Cancelar el pedido #${art.dataset.numero}? Los productos vuelven al stock.`)) return;
+
+    marcar.disabled = true;
+    const r = await pedir(`/admin/pedidos/${art.dataset.numero}/estado`, { metodo: "PATCH", datos: { estado } });
+    if (!r.ok) {
+      marcar.disabled = false;
+      toast(r.mensaje || "No se pudo cambiar el estado", "error");
+      return;
+    }
+    toast(`Pedido #${art.dataset.numero}: ${TEXTO[r.estado] || r.estado}` + (r.stockMovido ? (r.stockMovido > 0 ? ` · volvieron ${r.stockMovido} u. al stock` : ` · se descontaron ${-r.stockMovido} u.`) : ""));
+    await refrescar();
   });
+
+  // Pedido nuevo: la lista se actualiza sola.
+  document.addEventListener("adm:notificacion", (e) => { if (e.detail.tipo === "pedido") refrescar(); });
 
   if (lista.children.length === 1) lista.querySelector("[data-abrir]")?.click();
 })();

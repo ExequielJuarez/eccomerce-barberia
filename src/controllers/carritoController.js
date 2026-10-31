@@ -65,15 +65,4 @@ module.exports = {
     await responder(req, res);
   },
 
-  async entrega(req, res) {
-    carrito.fijarEntrega(req.session, req.body.entrega);
-    await responder(req, res);
-  },
-
-  async envio(req, res) {
-    if (!carrito.fijarCodigoPostal(req.session, req.body.codigoPostal)) {
-      return res.status(400).json({ ok: false, mensaje: "Ingresá un código postal de 4 dígitos" });
-    }
-    await responder(req, res);
-  },
 };

@@ -15,13 +15,6 @@
   <div class="carrito">
     <div class="carrito__lista">
 
-      <div class="envio-barra" id="envioBarra">
-        <p id="envioTexto">
-          <% if (r.envioGratis) { %>🎉 <strong>¡Tenés envío gratis!</strong><% } else { %>Te faltan <strong><%= precio(r.faltaEnvioGratis) %></strong> para el <strong>envío gratis</strong><% } %>
-        </p>
-        <div class="envio-barra__riel"><span id="envioProgreso" data-w="<%= r.progresoEnvio %>"></span></div>
-      </div>
-
       <ul class="items" id="items">
         <% r.items.forEach((i) => { const p = i.producto; %>
           <li class="item" data-clave="<%= i.clave %>">
@@ -51,17 +44,6 @@
     <aside class="resumen" aria-label="Resumen del pedido">
       <h2 class="resumen__titulo titulo">Resumen</h2>
 
-      <fieldset class="resumen__bloque">
-        <legend>Cómo lo recibís</legend>
-        <label class="opcion"><input type="radio" name="entrega" value="domicilio" <%= r.entrega === 'domicilio' ? 'checked' : '' %>><span><strong>Envío a domicilio</strong><small>A todo el país</small></span></label>
-        <label class="opcion"><input type="radio" name="entrega" value="retiro" <%= r.entrega === 'retiro' ? 'checked' : '' %>><span><strong>Retiro en el local</strong><small><%= tienda.direccion %> · Gratis</small></span></label>
-        <form class="cp" id="formCp" <%= r.entrega === 'retiro' || r.envioGratis ? 'hidden' : '' %>>
-          <label class="campo"><span class="campo__label">Código postal</span>
-            <span class="cp__fila"><input type="text" id="cp" inputmode="numeric" maxlength="4" placeholder="4200" value="<%= r.codigoPostal || '' %>"><button type="submit" class="btn btn--linea btn--chico">Calcular</button></span>
-          </label>
-        </form>
-      </fieldset>
-
       <div class="resumen__bloque">
         <form class="cupon" id="formCupon" <%= r.cupon ? 'hidden' : '' %>>
           <input type="text" id="codigoCupon" placeholder="Cupón de descuento" autocomplete="off" aria-label="Cupón de descuento" maxlength="30">
@@ -77,7 +59,6 @@
       <dl class="totales">
         <div><dt>Subtotal</dt><dd data-r="subtotal"><%= precio(r.subtotal) %></dd></div>
         <div id="filaCupon" <%= r.descuentoCupon ? '' : 'hidden' %>><dt>Cupón</dt><dd class="resaltado">−<span data-r="descuentoCupon"><%= precio(r.descuentoCupon) %></span></dd></div>
-        <div><dt>Envío</dt><dd data-r="envio"><%= r.envio === null ? 'A calcular' : (r.envio === 0 ? 'Gratis' : precio(r.envio)) %></dd></div>
         <div class="totales__total"><dt>Total</dt><dd class="precio precio--grande" data-r="total"><%= precio(r.total) %></dd></div>
       </dl>
 

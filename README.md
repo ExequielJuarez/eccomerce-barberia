@@ -36,10 +36,11 @@ Al iniciar, la consola muestra una línea `Celular: http://<ip>:3000`. Con el ce
 
 ## Pedidos por WhatsApp
 
-- El cliente arma el carrito, carga sus datos (**WhatsApp y email obligatorios**) y confirma. No se cobra en la web: ve el mensaje "nos estaremos poniendo en contacto" y recibe un email de confirmación.
-- El pedido llega a `/admin/pedidos` con una notificación. Cada pedido tiene el botón **Enviar por WhatsApp**: abre WhatsApp (Web o app) al número del cliente con el mensaje ya armado (productos, total, datos y dirección de envío a confirmar). Solo falta apretar enviar.
-- No hace falta ninguna API ni configuración: usa links `wa.me`. El número del cliente se normaliza al formato argentino (549 + área + número).
-- Bases ya instaladas: correr `database/migracion-whatsapp.sql` una sola vez.
+- El cliente arma el carrito y completa solo **nombre, apellido y WhatsApp**, y elige **retiro en el local** o **envío a domicilio** (el envío se arregla por WhatsApp).
+- Al confirmar ve su pedido con el botón **Enviar pedido por WhatsApp**: abre el WhatsApp del local (`TIENDA_WHATSAPP`, con código de país, ej. `5493854000000`) con el carrito ya escrito. Así el dueño no tiene que contactar a cada cliente.
+- El pedido queda guardado igual en `/admin/pedidos` (con aviso sonoro y en vivo). Desde ahí el dueño lo marca **vendido** o **cancelado** (al cancelar, el stock vuelve) y puede escribirle al cliente con el botón **Escribirle por WhatsApp**. Las estadísticas cuentan solo los pedidos vendidos.
+- No usa ninguna API ni clave: son links `wa.me`.
+- Bases ya instaladas: correr `database/migracion-simple.sql` una sola vez (hacé un backup antes). Borra las cuentas de clientes y las columnas que ya no se usan.
 
 ## Estructura
 

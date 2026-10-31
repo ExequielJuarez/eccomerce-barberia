@@ -124,7 +124,7 @@ const SECCIONES = {
       horarios: texto("Horarios", "Consultanos por WhatsApp", 60, { ancho: "medio" }),
       botonTexto: texto("Botón", "Cómo llegar", 30, { ancho: "medio" }),
       botonLink: link("Link del mapa", "https://www.google.com/maps/search/La+Plata+212"),
-      imagen: imagen("Foto del local", "/img/productos/combo-iniciados-1.jpg", { ayuda: "Mejor una foto vertical." }),
+      imagen: imagen("Foto del local", "/img/inicio/mapa-local.webp", { ayuda: "Mejor una foto vertical." }),
     },
   },
 
