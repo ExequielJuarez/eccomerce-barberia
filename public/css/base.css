@@ -355,7 +355,6 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .con-barra-carrito .whatsapp { bottom: calc(82px + var(--seguro-abajo)); }
 .con-barra-carrito .toast { bottom: calc(84px + var(--seguro-abajo)); }
 .con-barra-carrito .aviso-cookies { bottom: calc(76px + var(--seguro-abajo)); }
-@media (max-width: 760px) { .con-barra-carrito .barra-compra { bottom: calc(65px + var(--seguro-abajo)); } .con-barra-carrito .whatsapp { bottom: calc(144px + var(--seguro-abajo)); } }
 
 /* Mini carrito (se abre desde la barra de abajo) */
 .barra-carrito__ver { display: inline-flex; align-items: center; gap: 6px; flex: none; white-space: nowrap; min-height: 40px; padding: 0 10px 0 6px; background: transparent; color: var(--papel); border: 1px solid var(--linea-fuerte); border-radius: var(--radio); font-size: 12px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; cursor: pointer; }

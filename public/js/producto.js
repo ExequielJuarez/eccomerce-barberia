@@ -50,14 +50,4 @@
     setTimeout(() => (span.textContent = "Agregar al carrito"), 1800);
   }
   form.addEventListener("submit", agregar);
-  $("#barraAgregar")?.addEventListener("click", agregar);
-
-  const barra = $("#barraCompra");
-  if (barra && "IntersectionObserver" in window) {
-    new IntersectionObserver(([en]) => {
-      const visible = !en.isIntersecting && en.boundingClientRect.top < 0;
-      barra.classList.toggle("visible", visible);
-      barra.setAttribute("aria-hidden", String(!visible));
-    }).observe(boton);
-  }
 })();

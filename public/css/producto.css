@@ -57,7 +57,6 @@
 
 .relacionados { padding-top: 40px; }
 
-.barra-compra { display: none; }
 @media (hover: hover) and (pointer: fine) {
   .galeria__mini button.activa, .galeria__mini button:hover { opacity: 1; border-color: var(--oro); }
   .color-swatch:hover span:nth-of-type(1) { transform: scale(1.08); }
@@ -70,11 +69,6 @@
   .ficha__info { min-width: 0; }
   .galeria__mini { grid-auto-flow: column; grid-auto-columns: 72px; order: 2; overflow-x: auto; }
   .galeria__principal { cursor: default; }
-  .barra-compra { position: fixed; z-index: 45; left: 0; right: 0; bottom: 0; display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 10px var(--gutter); background: var(--tinta-2); border-top: 1px solid var(--papel); transform: translateY(110%); transition: transform 0.3s var(--ease); }
-  .barra-compra.visible { transform: none; }
-  .barra-compra div { display: grid; min-width: 0; }
-  .barra-compra small { color: var(--apagado); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .whatsapp { bottom: 84px; }
 }
 
 @media (max-width: 560px) {
