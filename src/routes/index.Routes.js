@@ -7,17 +7,10 @@ const categoriaService = require("../services/categoriaService");
 const carritoController = require("../controllers/carritoController");
 const checkoutController = require("../controllers/checkoutController");
 const checkoutValidator = require("../validations/checkoutValidator");
-const usuarioController = require("../controllers/usuarioController");
-const loginValidator = require("../validations/loginValidator");
-const registroValidator = require("../validations/registroValidator");
-const soloInvitados = require("../middlewares/soloInvitados");
 const favoritosController = require("../controllers/favoritosController");
 const pagosController = require("../controllers/pagosController");
-const cuentaController = require("../controllers/cuentaController");
-const soloLogueados = require("../middlewares/soloLogueados");
 const legal = require("../controllers/legalController");
-const perfilValidator = require("../validations/perfilValidator");
-const claveValidator = require("../validations/claveValidator");
+const limites = require("../middlewares/seguridad");
 
 router.get("/", async (req, res) => {
   const contenido = await inicioService.obtener();
@@ -156,16 +149,10 @@ router.post("/favoritos/:id", favoritosController.alternar);
 router.delete("/favoritos", favoritosController.vaciar);
 
 router.get("/checkout/datos", checkoutController.ver);
-router.post("/checkout/datos", checkoutValidator, checkoutController.guardar);
+router.post("/checkout/datos", limites.pedido, checkoutValidator, checkoutController.guardar);
 
 router.get("/pedido/:numero", pagosController.detalle);
 router.post("/pedido/:numero/cancelar", pagosController.cancelar);
-
-router.get("/mi-cuenta", soloLogueados, (req, res) => res.redirect("/mi-cuenta/pedidos"));
-router.get("/mi-cuenta/pedidos", soloLogueados, cuentaController.pedidos);
-router.get("/mi-cuenta/datos", soloLogueados, cuentaController.verDatos);
-router.post("/mi-cuenta/datos", soloLogueados, perfilValidator, cuentaController.guardarDatos);
-router.post("/mi-cuenta/clave", soloLogueados, claveValidator, cuentaController.cambiarClave);
 
 router.get("/terminos", legal.pagina("terminos"));
 router.get("/privacidad", legal.pagina("privacidad"));
@@ -173,23 +160,6 @@ router.get("/cookies", legal.pagina("cookies"));
 router.get("/cambios-y-devoluciones", legal.pagina("cambios"));
 
 router.get("/arrepentimiento", legal.verArrepentimiento);
-router.post("/arrepentimiento", legal.enviarArrepentimiento);
-
-router.get("/login", soloInvitados, usuarioController.verLogin);
-router.post("/login", soloInvitados, loginValidator, usuarioController.login);
-router.post("/logout", usuarioController.logout);
-router.get("/registro", soloInvitados, usuarioController.verRegistro);
-router.post("/registro", soloInvitados, registroValidator, usuarioController.registrar);
-
-router.get("/login/codigo", soloInvitados, usuarioController.verPedirCodigo);
-router.post("/login/codigo", soloInvitados, usuarioController.pedirCodigo);
-router.get("/verificar", soloInvitados, usuarioController.verVerificar);
-router.post("/verificar", soloInvitados, usuarioController.confirmarCodigo);
-router.post("/verificar/reenviar", soloInvitados, usuarioController.reenviarCodigo);
-
-router.get("/auth/google", soloInvitados, usuarioController.googleInicio);
-router.get("/auth/google/callback", usuarioController.googleCallback);
-router.get("/auth/google/demo", soloInvitados, usuarioController.googleDemo);
-router.post("/auth/google/demo", soloInvitados, usuarioController.googleDemoConfirmar);
+router.post("/arrepentimiento", limites.formulario, legal.enviarArrepentimiento);
 
 module.exports = router;

@@ -66,11 +66,11 @@ async function listar({ q = "", categoria = "", categoriaId = null, stock = "", 
   const where = {};
   const texto = q.trim();
   if (texto) {
-
+    const patron = `%${texto.replace(/[\\%_]/g, "\\$&")}%`;
     where[Op.or] = [
-      { nombre: { [Op.like]: `%${texto}%` } },
-      { "$categoria.nombre$": { [Op.like]: `%${texto}%` } },
-      { "$subcategoria.nombre$": { [Op.like]: `%${texto}%` } },
+      { nombre: { [Op.like]: patron } },
+      { "$categoria.nombre$": { [Op.like]: patron } },
+      { "$subcategoria.nombre$": { [Op.like]: patron } },
       ...(/^\d+$/.test(texto) ? [{ id: Number(texto) }] : []),
     ];
   }

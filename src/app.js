@@ -3,6 +3,8 @@ const express = require("express");
 const path = require("path");
 const methodOverride = require("method-override");
 const session = require("express-session");
+const crypto = require("crypto");
+const seguridad = require("./middlewares/seguridad");
 
 const app = express();
 
@@ -15,28 +17,36 @@ const categoriaService = require("./services/categoriaService");
 
 const puerto = Number(process.env.PORT) || 3000;
 
-app.use(express.static(path.join(__dirname, "../public")));
+app.disable("x-powered-by");
+app.set("trust proxy", 1);
+
+app.use(seguridad.nonce);
+app.use(seguridad.cabeceras);
+app.use(express.static(path.join(__dirname, "../public"), { dotfiles: "ignore", index: false }));
+app.use(seguridad.general);
 
 app.get("/favicon.ico", (req, res) => res.redirect(301, "/img/marca/logo.png"));
-app.use(express.urlencoded({ extended: false }));
-app.use(express.json());
+app.use(express.urlencoded({ extended: false, limit: "100kb", parameterLimit: 500 }));
+app.use(express.json({ limit: "100kb" }));
+app.use(seguridad.mismoOrigen);
 app.use(methodOverride("_method"));
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
-app.set("trust proxy", 1);
-
-if (!process.env.SESSION_SECRET && process.env.NODE_ENV === "production") {
-  console.warn("⚠️  Falta SESSION_SECRET en las variables de entorno: usá una clave larga y secreta.");
+let secretoSesion = process.env.SESSION_SECRET;
+if (!secretoSesion && process.env.NODE_ENV === "production") {
+  console.warn("⚠️  Falta SESSION_SECRET: se usa una clave al azar y las sesiones se pierden al reiniciar. Definí una clave larga y secreta.");
+  secretoSesion = crypto.randomBytes(48).toString("hex");
 }
 
 app.use(
   session({
-    secret: process.env.SESSION_SECRET || "clave-solo-para-desarrollo-local",
+    name: "bb.sid",
+    secret: secretoSesion || "clave-solo-para-desarrollo-local",
     resave: false,
     saveUninitialized: false,
-
+    rolling: true,
     cookie: { secure: "auto", httpOnly: true, sameSite: "lax" },
   }),
 );

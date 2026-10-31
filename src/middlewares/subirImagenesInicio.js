@@ -1,6 +1,7 @@
 const path = require("path");
 const crypto = require("crypto");
 const multer = require("multer");
+const { filtrarImagenes } = require("../helpers/imagen");
 
 const TIPOS = { "image/jpeg": ".jpg", "image/png": ".png", "image/webp": ".webp" };
 const MAX_FOTOS = 30;
@@ -30,7 +31,9 @@ module.exports = (req, res, next) => {
   subir(req, res, (err) => {
     if (err) req.errorImagen = MENSAJES[err.code] || "No se pudieron subir las fotos";
     req.fotos = {};
-    (req.files || []).forEach((f) => (req.fotos[f.fieldname.slice("archivo:".length)] = `/img/inicio/subidas/${f.filename}`));
+    const { buenos, descartados } = filtrarImagenes(req.files);
+    if (descartados && !req.errorImagen) req.errorImagen = "Alguno de los archivos no es una imagen válida";
+    buenos.forEach((f) => (req.fotos[f.fieldname.slice("archivo:".length)] = `/img/inicio/subidas/${f.filename}`));
     next();
   });
 };

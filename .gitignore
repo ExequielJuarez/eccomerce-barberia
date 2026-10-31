@@ -7,3 +7,5 @@ public/img/inicio/subidas/*
 
 public/img/equipo/*
 !public/img/equipo/.gitkeep
+
+.sesion-secreto

@@ -1,8 +1,0 @@
-.datos-grilla { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(280px, 0.8fr); gap: clamp(24px, 4vw, 56px); align-items: start; }
-.clave-caja { border: 1px solid var(--linea); padding: 0 20px; }
-.clave-caja summary { padding: 20px 0; cursor: pointer; font-weight: 800; font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase; list-style: none; display: flex; justify-content: space-between; }
-.clave-caja summary::-webkit-details-marker { display: none; }
-.clave-caja summary::after { content: "+"; color: var(--oro); font-size: 22px; line-height: 1; }
-.clave-caja[open] summary::after { content: "−"; }
-.clave-caja form { padding-bottom: 22px; }
-@media (max-width: 900px) { .datos-grilla { grid-template-columns: 1fr; } }

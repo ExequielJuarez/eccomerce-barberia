@@ -9,9 +9,6 @@
   <div class="checkout__grilla">
     <form action="/checkout/datos" method="POST" class="checkout__form" id="formDatos" novalidate>
       <% if (hayErrores) { %><div class="aviso aviso--error" role="alert">Revisá los campos marcados para poder seguir.</div><% } %>
-      <% if (!locals.usuarioLocal) { %>
-        <p class="aviso aviso--info">¿Ya tenés cuenta? <a class="enlace" href="/login?volver=/checkout/datos">Iniciá sesión</a> y completamos tus datos. También podés comprar sin cuenta.</p>
-      <% } %>
 
       <fieldset class="bloque-form">
         <legend><span>1</span> Contacto</legend>

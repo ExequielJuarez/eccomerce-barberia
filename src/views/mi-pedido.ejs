@@ -17,7 +17,6 @@
 <section class="contenedor pagina">
   <nav class="migas" aria-label="Ruta">
     <a href="/">Inicio</a><span>/</span>
-    <% if (conCuenta) { %><a href="/mi-cuenta/pedidos">Mis pedidos</a><span>/</span><% } %>
     <span aria-current="page">Pedido #<%= p.numero %></span>
   </nav>
 
@@ -86,7 +85,7 @@
         <% } %>
         <p class="apagado separado-arriba"><%= p.cliente %> · <%= p.email %> · <%= p.telefono %></p>
       </section>
-      <% if (!conCuenta) { %><p class="aviso">Guardá el número <strong>#<%= p.numero %></strong>. Con una <a class="enlace" href="/registro">cuenta</a> podés seguir tus pedidos cuando quieras.</p><% } %>
+      <p class="aviso">Guardá el número <strong>#<%= p.numero %></strong> por si querés consultarnos por tu pedido.</p>
     </aside>
   </div>
 </section>

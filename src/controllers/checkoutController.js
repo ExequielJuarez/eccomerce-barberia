@@ -4,7 +4,6 @@ const pedidos = require("../services/pedidoService");
 const notificaciones = require("../services/notificacionService");
 const correo = require("../services/correoService");
 const tienda = require("../helpers/tienda");
-const usuarios = require("../services/usuarioService");
 const provincias = require("../data/provincias");
 
 const CAMPOS = [
@@ -16,21 +15,11 @@ const CAMPOS = [
 async function datosIniciales(req, resumen) {
   const guardados = req.session.checkout?.datos || {};
 
-  const u = req.session.usuarioLogueado;
-  const p = u ? await usuarios.perfil(u.id) : null;
-  const deCuenta = p
-    ? {
-        email: p.email, nombre: p.nombre, apellido: p.apellido, telefono: p.telefono || "", dni: p.dni,
-        calle: p.calle, numero: p.numero, piso: p.piso, ciudad: p.ciudad, provincia: p.provincia,
-        ...(p.codigoPostal ? { codigoPostal: p.codigoPostal } : {}),
-      }
-    : {};
   return {
     entrega: resumen.entrega,
     facturacion: "consumidor",
     codigoPostal: resumen.codigoPostal || "",
     provincia: "",
-    ...deCuenta,
     ...guardados,
   };
 }
@@ -83,10 +72,9 @@ module.exports = {
     const final = await carrito.resumen(req.session);
     if (!final.items.length) return res.redirect("/carrito");
 
-    const u = req.session.usuarioLogueado;
     let pedido;
     try {
-      pedido = await pedidos.crearDesdeCarrito(final, datos, u);
+      pedido = await pedidos.crearDesdeCarrito(final, datos, null);
     } catch (error) {
       if (!error.sinStock) throw error;
       req.session.flash = `${error.message}. Revisá tu carrito.`;
@@ -95,7 +83,6 @@ module.exports = {
 
     notificaciones.nuevoPedido(pedido).catch((e) => console.error("No se pudo notificar la compra:", e.message));
     avisarPorCorreo(pedido);
-    if (u) await usuarios.guardarDireccionSiFalta(u.id, datos).catch((e) => console.error("No se guardó la dirección:", e.message));
 
     carrito.vaciar(req.session);
     delete req.session.checkout;

@@ -84,7 +84,7 @@
   </aside>
 </form>
 
-<script>window.PF_CATEGORIAS = <%- JSON.stringify(categoriasCompletas.map(c => ({ nombre: c.nombre, subs: c.subcategorias.map(s => ({ id: s.id, nombre: s.nombre })) }))).replace(/</g, '\\u003c') %>;</script>
+<script nonce="<%= nonce %>">window.PF_CATEGORIAS = <%- JSON.stringify(categoriasCompletas.map(c => ({ nombre: c.nombre, subs: c.subcategorias.map(s => ({ id: s.id, nombre: s.nombre })) }))).replace(/</g, '\\u003c') %>;</script>
 <%- include('../partials/admin-fin') %>
 <script src="/js/admin-producto-form.js"></script>
 </body>

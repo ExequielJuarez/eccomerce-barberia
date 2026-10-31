@@ -38,31 +38,6 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4" stroke-linecap="round"/></svg>
       </button>
 
-      <% if (locals.usuarioLocal) { %>
-        <div class="cuenta" id="cuenta">
-          <button class="icono-btn" id="cuentaBtn" aria-label="Mi cuenta" aria-expanded="false" aria-controls="cuentaMenu">
-            <span class="cuenta__inicial"><%= usuarioLocal.nombre.charAt(0) %></span>
-          </button>
-          <div class="cuenta__menu" id="cuentaMenu" hidden>
-            <p class="cuenta__hola">Hola, <strong><%= usuarioLocal.nombre %></strong></p>
-            <p class="cuenta__email"><%= usuarioLocal.email %></p>
-            <% if (esAdmin(usuarioLocal)) { %>
-              <a href="/admin" class="cuenta__link cuenta__link--admin">Panel de administración →</a>
-            <% } %>
-            <a href="/mi-cuenta/pedidos" class="cuenta__link">Mis pedidos</a>
-            <a href="/mi-cuenta/datos" class="cuenta__link">Mis datos</a>
-            <a href="/favoritos" class="cuenta__link">Favoritos</a>
-            <form action="/logout" method="POST">
-              <button type="submit" class="cuenta__salir">Cerrar sesión</button>
-            </form>
-          </div>
-        </div>
-      <% } else { %>
-        <% const volverA = ['/login', '/'].includes(locals.currentPath) ? '' : '?volver=' + encodeURIComponent(currentPath); %>
-        <a href="/login<%= volverA %>" class="icono-btn" aria-label="Iniciar sesión">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>
-        </a>
-      <% } %>
 
       <a href="/favoritos" class="icono-btn" aria-label="Favoritos">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-10a4 4 0 017-2.6A4 4 0 0119 10c0 5.6-7 10-7 10z"/></svg>

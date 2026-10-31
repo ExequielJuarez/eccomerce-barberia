@@ -3,7 +3,7 @@
 
 <section class="contenedor pagina">
   <h1 class="pagina__titulo titulo">Favoritos <% if (productos.length) { %><sup id="favTotal"><%= productos.length %></sup><% } %></h1>
-  <p class="pagina__sub">Los productos que te gustaron, guardados en un solo lugar.<% if (!locals.usuarioLocal) { %> <a href="/login?volver=/favoritos" class="enlace">Iniciá sesión</a> para no perderlas.<% } %></p>
+  <p class="pagina__sub">Los productos que te gustaron, guardados en un solo lugar.</p>
 
   <% if (productos.length) { %>
     <div class="grilla-productos fav-grilla" id="favGrilla">

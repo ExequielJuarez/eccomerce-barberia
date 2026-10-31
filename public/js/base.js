@@ -49,18 +49,6 @@
   $("#btnCerrarMenu")?.addEventListener("click", cerrarMenu);
   document.addEventListener("keydown", (e) => { if (e.key === "Escape") cerrarMenu(); });
 
-  const cuentaBtn = $("#cuentaBtn");
-  const cuentaMenu = $("#cuentaMenu");
-  cuentaBtn?.addEventListener("click", (e) => {
-    e.stopPropagation();
-    const abrir = cuentaMenu.hidden;
-    cuentaMenu.hidden = !abrir;
-    cuentaBtn.setAttribute("aria-expanded", String(abrir));
-  });
-  document.addEventListener("click", (e) => {
-    if (cuentaMenu && !cuentaMenu.hidden && !cuentaMenu.contains(e.target)) { cuentaMenu.hidden = true; cuentaBtn.setAttribute("aria-expanded", "false"); }
-  });
-
   const busqueda = $("#busqueda");
   const input = $("#busquedaInput");
   const lista = $("#sugerencias");

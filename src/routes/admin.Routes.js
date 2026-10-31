@@ -13,11 +13,17 @@ const categorias = require("../controllers/categoriasAdminController");
 const arrepentimientos = require("../controllers/arrepentimientosAdminController");
 const arrepentimientoService = require("../services/arrepentimientoService");
 const multer = require("multer");
+const auth = require("../controllers/authController");
+const limites = require("../middlewares/seguridad");
 
 const soloCampos = (req, res, next) =>
   multer({ limits: { fields: 400, fieldSize: 20 * 1024 } }).none()(req, res, (err) =>
     err ? res.status(400).send("No se pudo armar la vista previa") : next()
   );
+
+router.get("/login", auth.ver);
+router.post("/login", limites.login, auth.entrar);
+router.post("/logout", auth.salir);
 
 router.use(soloAdmin);
 

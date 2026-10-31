@@ -1,5 +1,4 @@
 const arrepentimientos = require("../services/arrepentimientoService");
-const usuarios = require("../services/usuarioService");
 
 const ACTUALIZADO = "20 de octubre de 2026";
 
@@ -48,10 +47,7 @@ module.exports = {
   },
 
   async verArrepentimiento(req, res) {
-    const u = req.session.usuarioLogueado;
-    const datos = u
-      ? { nombre: `${u.nombre} ${u.apellido || ""}`.trim(), email: u.email, telefono: u.telefono || "" }
-      : {};
+    const datos = {};
     datos.numeroPedido = String(req.query.pedido || "").replace(/\D/g, "").slice(0, 10);
     renderArrepentimiento(res, { datos });
   },
@@ -80,8 +76,7 @@ module.exports = {
       });
     }
 
-    const usuario = req.session.usuarioLogueado ? await usuarios.buscarPorId(req.session.usuarioLogueado.id) : null;
-    const solicitud = await arrepentimientos.crear(datos, usuario?.id || null);
+    const solicitud = await arrepentimientos.crear(datos, null);
     req.session.arrepentimientos.push(ahora);
 
     res.render("arrepentimiento-listo", {

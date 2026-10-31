@@ -17,15 +17,22 @@ Completá en `.env` los datos de conexión a MySQL (`DB_*`) y, si querés, los d
 
 Al iniciar, la consola muestra una línea `Celular: http://<ip>:3000`. Con el celular en el mismo Wi-Fi que la PC, abrí esa dirección en el navegador. Si no carga, permití Node.js (puerto 3000) en el Firewall de Windows para redes privadas.
 
-## Usuarios de prueba
+## Panel de administración
 
-| Rol | Email | Clave |
-| --- | --- | --- |
-| Cliente | demo@tienda.com | Demo1234 |
-| Admin | admin@tienda.com | Admin1234 |
-| Superadmin | super@tienda.com | Super1234 |
+- El público no tiene cuentas ni inicio de sesión: se compra como invitado. Solo el personal entra al panel, con usuario y contraseña, en `/admin/login` (no hay ningún enlace público hacia esa página).
+- Crear un admin o cambiar una clave (la pide por consola, sin mostrarla): `npm run admin -- usuario@mail.com "Nombre Apellido"` (agregá `--super` para superadmin).
+- `npm run db:instalar` carga dos usuarios de **prueba** (`admin@tienda.com` y `super@tienda.com`, claves `Admin1234` / `Super1234`). Con `NODE_ENV=production` esas claves quedan bloqueadas: cambialas antes de publicar con el comando de arriba.
 
-Con `NODE_ENV=production` no se muestran en el login.
+## Seguridad
+
+- Contraseñas con bcrypt (costo 12); el login compara siempre contra un hash para no revelar si el usuario existe.
+- Límite de intentos: 10 por IP cada 15 min y bloqueo de 15 min por usuario tras 5 fallos. Límites también en compra, arrepentimiento y un tope general por IP.
+- Sesión nueva en cada ingreso, cookie `HttpOnly` + `SameSite=Lax` (+ `Secure` con HTTPS), vence a las 8 h de inactividad.
+- Cabeceras con Helmet y política CSP estricta (solo scripts propios o con nonce), sin iframes, HSTS en producción.
+- Anti-CSRF: los pedidos que modifican datos solo se aceptan desde el mismo sitio (Origin/Sec-Fetch-Site).
+- Base de datos: todas las consultas son parametrizadas (Sequelize); el buscador escapa los comodines.
+- Imágenes subidas: tipo, tamaño y firma real del archivo (JPG/PNG/WEBP), con nombre aleatorio.
+- En producción definí `SESSION_SECRET` (clave larga y al azar) y `NODE_ENV=production`, y servilo siempre con HTTPS.
 
 ## Pedidos por WhatsApp
 

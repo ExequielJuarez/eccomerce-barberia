@@ -37,7 +37,6 @@ module.exports = {
       pedido,
       sePuedeCancelar: sePuedeCancelar(pedido),
       linkWhatsapp: whatsapp.linkCliente(pedido),
-      conCuenta: Boolean(req.session.usuarioLogueado),
     });
   },
 

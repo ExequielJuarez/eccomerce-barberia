@@ -1,7 +1,9 @@
-document.querySelectorAll("[data-demo-email]").forEach((b) =>
-  b.addEventListener("click", () => {
-    document.getElementById("c-email").value = b.dataset.demoEmail;
-    document.getElementById("c-password").value = b.dataset.demoClave;
-    document.getElementById("c-password").focus();
-  })
-);
+document.querySelectorAll("[data-ver-clave]").forEach((boton) => {
+  boton.addEventListener("click", () => {
+    const campo = boton.parentElement.querySelector("input");
+    const visible = campo.type === "text";
+    campo.type = visible ? "password" : "text";
+    boton.textContent = visible ? "Ver" : "Ocultar";
+    boton.setAttribute("aria-label", visible ? "Mostrar contraseña" : "Ocultar contraseña");
+  });
+});

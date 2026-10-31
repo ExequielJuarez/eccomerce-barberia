@@ -1,0 +1,22 @@
+<%- include('partials/head') %>
+<section class="acceso acceso--panel">
+  <%- include('partials/acceso-marca', { frase: 'Panel de *gestión*.' }) %>
+  <div class="acceso__panel">
+    <div class="acceso__form">
+      <p class="etiqueta-seccion">Solo personal</p>
+      <h1 class="acceso__titulo titulo">Ingreso al panel</h1>
+
+      <% if (error) { %><div class="aviso aviso--error" role="alert"><%= error %></div><% } %>
+
+      <form action="/admin/login" method="POST" class="acceso__campos">
+        <%- include('partials/campo', { nombre: 'email', etiqueta: 'Usuario', tipo: 'text', valor: email, atributos: 'autocomplete="username" maxlength="120" autocapitalize="off" spellcheck="false" required autofocus' }) %>
+        <%- include('partials/campo-clave', { nombre: 'password', etiqueta: 'Contraseña', atributos: 'autocomplete="current-password" maxlength="200" required' }) %>
+        <button type="submit" class="btn btn--volt btn--bloque">Entrar</button>
+      </form>
+      <p class="acceso__pie"><a class="enlace" href="/">← Volver a la tienda</a></p>
+    </div>
+  </div>
+</section>
+<script src="/js/login.js" defer></script>
+</body>
+</html>

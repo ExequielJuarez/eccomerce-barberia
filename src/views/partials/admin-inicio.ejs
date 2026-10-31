@@ -24,7 +24,7 @@
     <div class="adm-lateral__pie">
       <a href="/" class="adm-ver-tienda" target="_blank" rel="noopener">Ver la tienda ↗</a>
       <p class="adm-usuario"><strong><%= usuario.nombre %></strong><small><%= esSuperAdmin(usuario) ? 'Superadmin' : 'Admin' %></small></p>
-      <form action="/logout" method="POST"><button class="enlace adm-salir">Cerrar sesión</button></form>
+      <form action="/admin/logout" method="POST"><button class="enlace adm-salir">Cerrar sesión</button></form>
     </div>
   </aside>
 

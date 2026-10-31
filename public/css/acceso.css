@@ -4,7 +4,7 @@
 .acceso__velo { position: absolute; inset: 0; background: linear-gradient(160deg, rgba(10, 10, 11, 0.2), rgba(10, 10, 11, 0.92)); }
 .acceso__marca-contenido { position: relative; height: 100%; display: flex; flex-direction: column; justify-content: space-between; padding: clamp(24px, 4vw, 56px); gap: 30px; }
 .acceso__logo { display: block; width: clamp(120px, 14vw, 190px); color: var(--papel); }
-.acceso__frase { font-size: clamp(29px, 6.5vw, 62px); line-height: 1.08; max-width: 10ch; }
+.acceso__frase { overflow-wrap: break-word; font-size: clamp(29px, 6.5vw, 62px); line-height: 1.08; max-width: 10ch; }
 .acceso__dir { font-size: 12px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: var(--papel-2); }
 .acceso__panel { display: grid; align-items: center; padding: clamp(28px, 5vw, 72px) var(--gutter); }
 .acceso__form { width: 100%; max-width: 480px; margin-inline: auto; display: grid; gap: 22px; }

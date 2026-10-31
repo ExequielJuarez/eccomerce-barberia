@@ -1,6 +1,0 @@
-<nav class="cuenta-nav" aria-label="Mi cuenta">
-  <a href="/mi-cuenta/pedidos" class="<%= locals.cuentaActiva === 'pedidos' ? 'activo' : '' %>">Mis pedidos</a>
-  <a href="/mi-cuenta/datos" class="<%= locals.cuentaActiva === 'datos' ? 'activo' : '' %>">Mis datos</a>
-  <a href="/favoritos">Favoritos</a>
-  <% if (esAdmin(locals.usuarioLocal)) { %><a href="/admin" class="cuenta-nav__admin">Panel admin →</a><% } %>
-</nav>
