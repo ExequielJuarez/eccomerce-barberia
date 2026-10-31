@@ -37,8 +37,10 @@ module.exports = {
 
     const datos = Object.fromEntries(CAMPOS.map((c) => [c, String(req.body[c] ?? "")]));
 
+    const quiereJson = req.accepts(["html", "json"]) === "json";
     const resultado = validationResult(req);
     if (!resultado.isEmpty()) {
+      if (quiereJson) return res.status(422).json({ ok: false });
       return render(res, { resumen, datos, errores: resultado.mapped(), status: 422 });
     }
 
@@ -48,7 +50,7 @@ module.exports = {
     } catch (error) {
       if (!error.sinStock) throw error;
       req.session.flash = `${error.message}. Revisá tu carrito.`;
-      return res.redirect("/carrito");
+      return quiereJson ? res.json({ ok: false, url: "/carrito" }) : res.redirect("/carrito");
     }
 
     notificaciones.nuevoPedido(pedido).catch((e) => console.error("No se pudo notificar la compra:", e.message));
@@ -57,10 +59,12 @@ module.exports = {
     delete req.session.checkout;
     recordarPedido(req, pedido.numero);
     // La venta se cierra al mandar el carrito por WhatsApp: se va directo al chat del local.
+    // (El formulario lo manda con fetch: el navegador no deja que un form termine en otro sitio por la política CSP.)
     const destino = whatsapp.linkLocal(pedido);
-    if (!destino) return res.redirect(`/pedido/${pedido.numero}`);
-    req.session.flash = "¡Gracias! Te estaremos contactando por WhatsApp en breve.";
-    res.redirect(destino);
+    if (destino) req.session.flash = "¡Gracias! Te estaremos contactando por WhatsApp en breve.";
+    const url = destino || `/pedido/${pedido.numero}`;
+    if (quiereJson) return res.json({ ok: true, url });
+    res.redirect(url);
   },
 
   recordarPedido,

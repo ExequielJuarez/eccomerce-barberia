@@ -23,7 +23,7 @@ const cabeceras = helmet({
       connectSrc: ["'self'"],
       objectSrc: ["'none'"],
       baseUri: ["'self'"],
-      formAction: ["'self'"],
+      formAction: ["'self'", "https://wa.me", "https://api.whatsapp.com"],
       frameAncestors: ["'none'"],
       ...(produccion ? { upgradeInsecureRequests: [] } : {}),
     },
