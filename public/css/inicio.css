@@ -36,8 +36,6 @@
 .cat::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 9px; background: repeating-linear-gradient(-45deg, #f4f1ea 0 5px, #1f4fd8 5px 10px, #d62828 10px 15px); }
 .cat:active { transform: scale(0.985); }
 .cat__nombre { font-size: 14px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; line-height: 1.2; overflow-wrap: anywhere; }
-.categorias__todos { display: flex; justify-content: center; margin-top: 18px; }
-.categorias__todos .btn { min-width: 260px; }
 .local { display: grid; grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr); gap: clamp(28px, 6vw, 90px); align-items: center; }
 .local__foto { position: relative; aspect-ratio: 4 / 5; max-width: 480px; border: 1px solid var(--linea-fuerte); }
 .local__foto img { width: 100%; height: 100%; object-fit: cover; }
@@ -75,7 +73,6 @@
   .categorias { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
   .cat { min-height: 66px; padding: 10px 10px 10px 24px; }
   .cat__nombre { font-size: 13px; letter-spacing: 0.06em; }
-  .categorias__todos .btn { width: 100%; min-width: 0; }
-  .local__datos > div { grid-template-columns: 96px 1fr; }
+    .local__datos > div { grid-template-columns: 96px 1fr; }
   .hero__botones .btn { flex: 1 1 100%; }
 }

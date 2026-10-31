@@ -6,10 +6,13 @@ const LARGO = { categoria: 60, subcategoria: 40 };
 
 let menuCache = null;
 
+// Categoría virtual: muestra todos los productos del catálogo.
+const TODOS = { id: null, nombre: "Todos los productos", slug: "todos", url: "/categoria/todos" };
+
 async function menu() {
   if (!menuCache) {
     const filas = await db.Categoria.findAll({ order: [["orden", "ASC"], ["id", "ASC"]], raw: true });
-    menuCache = filas.map(({ id, nombre, slug }) => ({ id, nombre, slug, url: `/categoria/${slug}` }));
+    menuCache = [TODOS, ...filas.filter((f) => f.slug !== TODOS.slug).map(({ id, nombre, slug }) => ({ id, nombre, slug, url: `/categoria/${slug}` }))];
   }
   return menuCache;
 }
@@ -43,6 +46,7 @@ async function listarCompletas() {
 }
 
 async function porSlug(valor) {
+  if (valor === TODOS.slug) return { ...TODOS, subcategorias: [] };
   const c = await db.Categoria.findOne({
     where: { slug: String(valor || "") },
     include: [{ association: "subcategorias" }],
