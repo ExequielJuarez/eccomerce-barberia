@@ -16,6 +16,19 @@ async function responder(req, res, extra = {}) {
 }
 
 module.exports = {
+  // Lista liviana para el mini carrito de la barra de abajo (se ve sin salir de la página).
+  async resumenLista(req, res) {
+    const r = await carrito.resumen(req.session);
+    res.json({
+      ok: true,
+      cantidad: r.cantidad,
+      subtotal: r.subtotal,
+      descuento: r.descuentoCupon,
+      total: r.total,
+      items: r.items.map((i) => ({ clave: i.clave, nombre: i.producto.nombre, color: i.color, imagen: i.producto.imagen || null, cantidad: i.cantidad, subtotal: i.subtotal })),
+    });
+  },
+
   async ver(req, res) {
     const resumen = await carrito.resumen(req.session);
     const enCarrito = new Set(resumen.items.map((i) => i.id));

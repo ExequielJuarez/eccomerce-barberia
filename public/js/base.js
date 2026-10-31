@@ -41,9 +41,57 @@
     if (!barra) return;
     barra.hidden = !n;
     $("#barraCarritoN").textContent = n;
-    $("#barraCarritoPal").textContent = n === 1 ? "producto" : "productos";
     document.body.classList.toggle("con-barra-carrito", Boolean(n));
+    if (!n) cerrarMini();
+    else if (mini && !mini.hidden) pintarMini();
   }
+
+  // Mini carrito: deja ver (y ajustar) lo que se va agregando sin salir de la página.
+  const mini = $("#miniCarrito");
+  const miniLista = $("#miniLista");
+  const el = (tag, clase, texto) => { const e = document.createElement(tag); if (clase) e.className = clase; if (texto !== undefined) e.textContent = texto; return e; };
+  async function pintarMini() {
+    const r = await pedir("/carrito/resumen");
+    if (!r.ok) return;
+    miniLista.replaceChildren(...r.items.map((i) => {
+      const li = el("li", "mini-item"); li.dataset.clave = i.clave;
+      const foto = el("span", "mini-item__foto");
+      if (i.imagen) { const img = document.createElement("img"); img.src = i.imagen; img.alt = ""; foto.append(img); }
+      const datos = el("span", "mini-item__datos");
+      datos.append(el("strong", "", i.nombre));
+      if (i.color) datos.append(el("small", "", i.color));
+      const cant = el("span", "mini-item__cant");
+      const menos = el("button", "", "−"); menos.type = "button"; menos.dataset.menos = ""; menos.setAttribute("aria-label", "Menos"); menos.disabled = i.cantidad <= 1;
+      const mas = el("button", "", "+"); mas.type = "button"; mas.dataset.mas = ""; mas.setAttribute("aria-label", "Más");
+      cant.append(menos, el("b", "", String(i.cantidad)), mas);
+      datos.append(cant);
+      const der = el("span", "mini-item__der");
+      der.append(el("strong", "", peso(i.subtotal)));
+      const quitar = el("button", "mini-item__quitar", "Quitar"); quitar.type = "button"; quitar.dataset.quitar = "";
+      der.append(quitar);
+      li.append(foto, datos, der);
+      return li;
+    }));
+    $("#miniTotal").textContent = peso(r.total);
+  }
+  function abrirMini() { if (!mini) return; mini.hidden = false; document.body.classList.add("mini-abierto"); pintarMini(); }
+  function cerrarMini() { if (!mini) return; mini.hidden = true; document.body.classList.remove("mini-abierto"); }
+  $("#abrirMini")?.addEventListener("click", abrirMini);
+  $$("[data-cerrar-mini]").forEach((e) => e.addEventListener("click", cerrarMini));
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") cerrarMini(); });
+  miniLista?.addEventListener("click", async (e) => {
+    const li = e.target.closest(".mini-item");
+    if (!li) return;
+    const clave = encodeURIComponent(li.dataset.clave);
+    const actual = Number(li.querySelector("b").textContent);
+    let r;
+    if (e.target.closest("[data-quitar]")) r = await pedir(`/carrito/item/${clave}`, { metodo: "DELETE" });
+    else if (e.target.closest("[data-mas]")) r = await pedir(`/carrito/item/${clave}`, { metodo: "PATCH", datos: { cantidad: actual + 1 } });
+    else if (e.target.closest("[data-menos]") && actual > 1) r = await pedir(`/carrito/item/${clave}`, { metodo: "PATCH", datos: { cantidad: actual - 1 } });
+    else return;
+    if (!r.ok) return toast(r.mensaje || "No se pudo actualizar", "error");
+    contadorCarrito(r.cantidad);
+  });
   window.BB = { $, $$, peso, toast, pedir, contadorCarrito };
   barraCarrito(Number($("#barraCarritoN")?.textContent) || 0);
 

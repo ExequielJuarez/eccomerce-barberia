@@ -135,6 +135,7 @@ router.get("/producto/:id", async (req, res) => {
 });
 
 router.get("/carrito", carritoController.ver);
+router.get("/carrito/resumen", carritoController.resumenLista);
 router.post("/carrito/agregar", carritoController.agregar);
 router.patch("/carrito/item/:clave", carritoController.actualizar);
 router.delete("/carrito/item/:clave", carritoController.quitar);

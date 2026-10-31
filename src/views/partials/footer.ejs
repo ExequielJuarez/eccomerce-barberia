@@ -67,8 +67,20 @@
 <% const sinBarra = /^\/(carrito|checkout|pedido)/.test(locals.currentPath || ''); const nCarrito = locals.cantidadCarrito || 0; %>
 <% if (!sinBarra) { %>
 <div class="barra-carrito" id="barraCarrito" <%= nCarrito ? '' : 'hidden' %>>
-  <span class="barra-carrito__texto"><b id="barraCarritoN"><%= nCarrito %></b> <span id="barraCarritoPal"><%= nCarrito === 1 ? 'producto' : 'productos' %></span> en tu carrito</span>
+  <button type="button" class="barra-carrito__ver" id="abrirMini" aria-haspopup="dialog" aria-controls="miniCarrito"><b id="barraCarritoN"><%= nCarrito %></b><span>Ver productos</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 15l6-6 6 6"/></svg></button>
   <a href="/carrito" class="btn btn--volt btn--chico">Terminar compra →</a>
+</div>
+
+<div class="mini-carrito" id="miniCarrito" hidden>
+  <div class="mini-carrito__fondo" data-cerrar-mini></div>
+  <section class="mini-carrito__hoja" role="dialog" aria-modal="true" aria-labelledby="miniTitulo">
+    <header class="mini-carrito__cab"><h2 id="miniTitulo" class="titulo">Tu carrito</h2><button type="button" class="icono-btn" data-cerrar-mini aria-label="Cerrar">✕</button></header>
+    <ul class="mini-carrito__lista" id="miniLista"></ul>
+    <footer class="mini-carrito__pie">
+      <div class="mini-carrito__total"><span>Total</span><strong id="miniTotal"></strong></div>
+      <a href="/carrito" class="btn btn--volt btn--bloque">Terminar compra →</a>
+    </footer>
+  </section>
 </div>
 <% } %>
 
