@@ -57,3 +57,11 @@ ALTER TABLE usuarios
   DROP COLUMN provincia,
   MODIFY password CHAR(60) NOT NULL,
   MODIFY rol ENUM('admin', 'superadmin') NOT NULL DEFAULT 'admin';
+
+-- 4) Datos del local editables desde el panel (WhatsApp, dirección, horarios, redes)
+CREATE TABLE IF NOT EXISTS configuracion (
+  clave          VARCHAR(40) NOT NULL,
+  valor          TEXT        NOT NULL,
+  actualizado_en DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (clave)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

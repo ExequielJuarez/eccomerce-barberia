@@ -3,6 +3,8 @@ const path = require("path");
 const { validationResult } = require("express-validator");
 const productoService = require("../services/productoService");
 const whatsapp = require("../services/whatsappService");
+const tiendaService = require("../services/tiendaService");
+const datosTienda = require("../helpers/tienda");
 const pedidoService = require("../services/pedidoService");
 const categoriaService = require("../services/categoriaService");
 
@@ -65,7 +67,56 @@ async function validarCantidadImagenes(req, errores, productoId = null) {
 
 const borrarSubidas = (req) => req.files.forEach((f) => borrarImagen(`/img/productos/${f.filename}`));
 
+const URL_OK = /^https?:\/\/\S{3,300}$/i;
+const RE_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+// Valida y normaliza los datos del local (el WhatsApp se guarda en formato internacional, solo números).
+function validarTienda(b) {
+  const t = (v, max) => String(v ?? "").trim().slice(0, max);
+  const datos = {
+    whatsapp: t(b.whatsapp, 25),
+    telefono: t(b.telefono, 30),
+    email: t(b.email, 120),
+    direccion: t(b.direccion, 120),
+    horarios: t(b.horarios, 120),
+    instagram: t(b.instagram, 300),
+    usuario: t(b.usuario, 40),
+    facebook: t(b.facebook, 300),
+    tiktok: t(b.tiktok, 300),
+    mapa: t(b.mapa, 300),
+  };
+  const errores = {};
+  const digitos = whatsapp.numeroCliente(datos.whatsapp);
+  if (!datos.whatsapp) errores.whatsapp = { msg: "Ingresá el WhatsApp de la tienda" };
+  else if (digitos.length < 12 || digitos.length > 15) errores.whatsapp = { msg: "Número inválido. Poné el código de área y el número, ej: 385 4000000" };
+  else datos.whatsapp = digitos;
+  if (datos.email && !RE_EMAIL.test(datos.email)) errores.email = { msg: "Email inválido" };
+  if (!datos.direccion) errores.direccion = { msg: "Ingresá la dirección del local" };
+  for (const campo of ["instagram", "facebook", "tiktok", "mapa"]) {
+    if (datos[campo] && !URL_OK.test(datos[campo])) errores[campo] = { msg: "Pegá el link completo (empieza con https://)" };
+  }
+  return { datos, errores };
+}
+
+function renderTienda(res, req, extra) {
+  return base(req, { titulo: "Mi tienda", estilo: ["admin", "admin-tienda"], seccion: "tienda", errores: {}, ...extra }).then((v) => res.status(extra.status || 200).render("admin/tienda", v));
+}
+
 module.exports = {
+  async tienda(req, res) {
+    const t = datosTienda();
+    const datos = { ...t, whatsapp: t.whatsappNumero };
+    renderTienda(res, req, { datos });
+  },
+
+  async guardarTienda(req, res) {
+    const { datos, errores } = validarTienda(req.body);
+    if (Object.keys(errores).length) return renderTienda(res, req, { datos: { ...datos, whatsapp: req.body.whatsapp || "" }, errores, status: 422 });
+    await tiendaService.guardar(datos);
+    req.session.flash = "Guardaste los datos de la tienda ✓";
+    res.redirect("/admin/tienda");
+  },
+
 
   async dashboard(req, res) {
     const dias = [7, 14, 30].includes(Number(req.query.dias)) ? Number(req.query.dias) : 14;

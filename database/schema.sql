@@ -9,6 +9,7 @@ SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 DROP TABLE IF EXISTS contenido_inicio;
 DROP TABLE IF EXISTS arrepentimientos;
+DROP TABLE IF EXISTS configuracion;
 DROP TABLE IF EXISTS notificaciones;
 DROP TABLE IF EXISTS pedido_items;
 DROP TABLE IF EXISTS pedidos;
@@ -205,6 +206,14 @@ CREATE TABLE notificaciones (
     ON UPDATE CASCADE ON DELETE SET NULL,
   CONSTRAINT fk_notificaciones_producto FOREIGN KEY (producto_id) REFERENCES productos (id)
     ON UPDATE CASCADE ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Datos del local editables desde el panel (WhatsApp, dirección, horarios, redes).
+CREATE TABLE configuracion (
+  clave          VARCHAR(40) NOT NULL,
+  valor          TEXT        NOT NULL,
+  actualizado_en DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (clave)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE contenido_inicio (

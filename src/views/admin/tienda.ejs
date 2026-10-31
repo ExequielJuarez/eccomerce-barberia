@@ -1,0 +1,44 @@
+<%- include('../partials/head') %>
+<%- include('../partials/admin-inicio') %>
+<% const v = (k) => datos[k] ?? ''; const hayErrores = Object.keys(errores).length > 0; const tel = String(v('whatsapp')).replace(/\D/g, ''); %>
+<div class="adm-cab"><div><p class="etiqueta-seccion">Configuración</p><h1 class="adm-titulo titulo">Mi tienda</h1></div></div>
+<p class="apagado texto-ancho">Estos datos se muestran en la web y el WhatsApp es el número al que le llegan los pedidos de los clientes.</p>
+
+<form action="/admin/tienda" method="POST" class="tienda-form" novalidate>
+  <% if (hayErrores) { %><div class="aviso aviso--error" role="alert">Revisá los campos marcados.</div><% } %>
+
+  <section class="panel">
+    <header class="panel__cab"><h2>WhatsApp de pedidos</h2></header>
+    <p class="apagado texto-chico">Cuando un cliente aprieta “Enviar pedido por WhatsApp”, se abre este chat con el pedido ya escrito y solo tiene que mandarlo.</p>
+    <div class="tienda-grilla">
+      <%- include('../partials/campo', { nombre: 'whatsapp', etiqueta: 'Número de WhatsApp', tipo: 'tel', valor: v('whatsapp'), errores, ayuda: 'Con código de área, sin 0 ni 15. Ej: 385 4000000', atributos: 'inputmode="tel" maxlength="25" autocomplete="off" required', clase: 'completo' }) %>
+    </div>
+    <% if (tel.length >= 10) { %><a class="enlace" href="https://wa.me/<%= tel.length <= 11 ? '549' + tel.replace(/^0+/, '') : tel %>" target="_blank" rel="noopener">Probar este número en WhatsApp ↗</a><% } %>
+  </section>
+
+  <section class="panel">
+    <header class="panel__cab"><h2>Datos del local</h2></header>
+    <div class="tienda-grilla">
+      <%- include('../partials/campo', { nombre: 'direccion', etiqueta: 'Dirección', valor: v('direccion'), errores, atributos: 'maxlength="120" required' }) %>
+      <%- include('../partials/campo', { nombre: 'horarios', etiqueta: 'Horarios', valor: v('horarios'), errores, ayuda: 'Ej: Lun a Sáb de 9 a 13 y de 16 a 20', atributos: 'maxlength="120"' }) %>
+      <%- include('../partials/campo', { nombre: 'telefono', etiqueta: 'Teléfono (opcional)', tipo: 'tel', valor: v('telefono'), errores, atributos: 'maxlength="30"' }) %>
+      <%- include('../partials/campo', { nombre: 'email', etiqueta: 'Email (opcional)', tipo: 'email', valor: v('email'), errores, atributos: 'maxlength="120"' }) %>
+      <%- include('../partials/campo', { nombre: 'mapa', etiqueta: 'Link de Google Maps (opcional)', valor: v('mapa'), errores, ayuda: 'Si lo dejás vacío se arma con la dirección.', atributos: 'maxlength="300" inputmode="url"', clase: 'completo' }) %>
+    </div>
+  </section>
+
+  <section class="panel">
+    <header class="panel__cab"><h2>Redes sociales</h2></header>
+    <div class="tienda-grilla">
+      <%- include('../partials/campo', { nombre: 'instagram', etiqueta: 'Link de Instagram', valor: v('instagram'), errores, ayuda: 'https://instagram.com/tu_cuenta', atributos: 'maxlength="300" inputmode="url"' }) %>
+      <%- include('../partials/campo', { nombre: 'usuario', etiqueta: 'Usuario (se muestra en la web)', valor: v('usuario'), errores, ayuda: 'Ej: @barbablack', atributos: 'maxlength="40"' }) %>
+      <%- include('../partials/campo', { nombre: 'facebook', etiqueta: 'Link de Facebook', valor: v('facebook'), errores, atributos: 'maxlength="300" inputmode="url"' }) %>
+      <%- include('../partials/campo', { nombre: 'tiktok', etiqueta: 'Link de TikTok', valor: v('tiktok'), errores, atributos: 'maxlength="300" inputmode="url"' }) %>
+    </div>
+  </section>
+
+  <div class="tienda-acciones"><button type="submit" class="btn btn--volt">Guardar cambios</button></div>
+</form>
+<%- include('../partials/admin-fin') %>
+</body>
+</html>

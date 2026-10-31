@@ -5,6 +5,8 @@ const methodOverride = require("method-override");
 const session = require("express-session");
 const crypto = require("crypto");
 const seguridad = require("./middlewares/seguridad");
+const tienda = require("./helpers/tienda");
+const tiendaService = require("./services/tiendaService");
 
 const app = express();
 
@@ -54,7 +56,6 @@ app.use(
 app.locals.formatoPrecio = (n) =>
   "$" + n.toLocaleString("es-AR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-app.locals.tienda = require("./helpers/tienda")();
 
 Object.assign(app.locals, require("./helpers/situacionPedido"));
 
@@ -78,6 +79,7 @@ app.locals.formatoFecha = (fecha, conHora = false) =>
 
 app.use((req, res, next) => {
   res.locals.currentPath = req.path;
+  res.locals.tienda = tienda();
   next();
 });
 
@@ -122,7 +124,8 @@ app.use((err, req, res, next) => {
 
 db.sequelize
   .authenticate()
-  .then(() => {
+  .then(async () => {
+    await tiendaService.cargar();
     console.log(`✅ Conectado a la base de datos "${db.sequelize.config.database}"`);
     app.listen(puerto, "0.0.0.0", () => {
       console.log(`🚀 Servidor Express corriendo en el puerto ${puerto}`);

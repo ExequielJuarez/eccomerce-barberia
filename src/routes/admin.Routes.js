@@ -57,6 +57,9 @@ router.get("/arrepentimientos", arrepentimientos.ver);
 router.patch("/arrepentimientos/:id", arrepentimientos.cambiarEstado);
 
 
+router.get("/tienda", admin.tienda);
+router.post("/tienda", admin.guardarTienda);
+
 router.get("/pedidos", admin.pedidos);
 router.patch("/pedidos/:numero/estado", admin.cambiarEstado);
 router.get("/pedidos/:numero/comprobante", admin.comprobante);
