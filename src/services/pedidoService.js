@@ -10,7 +10,7 @@ function plano(p) {
 
 async function listar({ estado = "", q = "", limite } = {}) {
   const where = {};
-  if (estado) where.estado = estado;
+  where.estado = estado || { [Op.ne]: "cancelado" };
   const texto = q.trim();
   if (texto) {
     where[Op.or] = [{ cliente: { [Op.like]: `%${texto}%` } }, ...(/^\d+$/.test(texto) ? [{ id: Number(texto) }] : [])];

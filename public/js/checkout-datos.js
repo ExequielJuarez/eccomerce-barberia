@@ -16,6 +16,6 @@
       return;
     }
     const boton = form.querySelector("button[type=submit]");
-    if (boton) { boton.disabled = true; boton.textContent = "Enviando pedido…"; }
+    if (boton) { boton.disabled = true; boton.textContent = "Enviando pedido…"; boton.classList.add("enviando"); }
   });
 })();

@@ -239,7 +239,7 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .punto-color { width: 13px; height: 13px; border-radius: 50%; border: 1px solid var(--linea-fuerte); }
 
 .beneficios { border-top: 1px solid var(--linea); border-bottom: 1px solid var(--linea); background: var(--tinta-2); }
-.beneficios__grilla { display: grid; grid-template-columns: repeat(4, 1fr); }
+.beneficios__grilla { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
 .beneficio { padding: 28px 24px; border-left: 1px solid var(--linea); }
 .beneficio:first-child { border-left: 0; padding-left: 0; }
 .beneficio h3 { font-family: var(--ff-titulo); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; font-size: 17px; line-height: 1.2; margin-bottom: 6px; color: var(--oro); }

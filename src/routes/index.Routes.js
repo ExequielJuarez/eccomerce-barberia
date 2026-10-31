@@ -150,7 +150,6 @@ router.get("/checkout/datos", checkoutController.ver);
 router.post("/checkout/datos", limites.pedido, checkoutValidator, checkoutController.guardar);
 
 router.get("/pedido/:numero", pagosController.detalle);
-router.post("/pedido/:numero/cancelar", pagosController.cancelar);
 
 router.get("/terminos", legal.pagina("terminos"));
 router.get("/privacidad", legal.pagina("privacidad"));

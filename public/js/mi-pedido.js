@@ -1,6 +1,7 @@
-document.querySelectorAll("[data-copiar]").forEach((b) =>
-  b.addEventListener("click", async () => {
-    const valor = b.parentElement.querySelector("[data-copiar-valor]")?.dataset.copiarValor;
-    try { await navigator.clipboard.writeText(valor); window.BB.toast("Copiado ✓"); } catch { window.BB.toast("No se pudo copiar", "error"); }
-  })
-);
+// Después de confirmar, abre solo el WhatsApp del local con el pedido (el botón queda por si el navegador lo bloquea).
+(() => {
+  const boton = document.querySelector("[data-auto-wa]");
+  if (!boton || !/[?&]enviar=1/.test(location.search)) return;
+  history.replaceState(null, "", location.pathname);
+  setTimeout(() => { location.href = boton.href; }, 1200);
+})();

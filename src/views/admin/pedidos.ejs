@@ -2,8 +2,8 @@
 <%- include('../partials/admin-inicio') %>
 <%
   const precio = (n) => formatoPrecio(n).replace(',00', '');
-  const nombres = { pendiente: 'Pendientes', vendido: 'Vendidos', cancelado: 'Cancelados' };
-  const pestañas = [['', 'Todos', total]].concat(estados.map((e) => [e, nombres[e], conteo[e]]));
+  const nombres = { pendiente: 'Nuevos', vendido: 'Vendidos' };
+  const pestañas = [['', 'Todos', total]].concat(estados.filter((e) => e !== 'cancelado').map((e) => [e, nombres[e], conteo[e]]));
 %>
 <div class="adm-cab"><div><p class="etiqueta-seccion">Ventas</p><h1 class="adm-titulo titulo">Pedidos</h1></div></div>
 
@@ -15,7 +15,7 @@
   <% pestañas.forEach(([k, n, c]) => { %><a href="/admin/pedidos?estado=<%= k %><%= filtros.q ? '&q=' + encodeURIComponent(filtros.q) : '' %>" class="filtro-chip <%= filtros.estado === k ? 'activo' : '' %>"><%= n %> <small><%= c %></small></a><% }) %>
 </div>
 
-<% if (!lista.length) { %><div class="panel"><p class="apagado vacio-panel">No hay pedidos con esos filtros.</p></div><% } %>
+<% if (!lista.length) { %><div class="panel"><p class="apagado vacio-panel">No hay pedidos.</p></div><% } %>
 <div class="pedidos-lista" id="pedidosLista">
   <% lista.forEach((p) => { const s = situacionPedido(p); %>
     <article class="pedido panel" data-numero="<%= p.numero %>">
@@ -41,7 +41,7 @@
           <div class="pedido__estado" role="group" aria-label="Estado del pedido #<%= p.numero %>">
             <% if (p.estado !== 'vendido') { %><button type="button" class="btn btn--volt btn--chico" data-marcar="vendido">✓ Marcar vendido</button><% } %>
             <% if (p.estado !== 'cancelado') { %><button type="button" class="btn btn--linea btn--chico" data-marcar="cancelado">Cancelar pedido</button><% } %>
-            <% if (p.estado !== 'pendiente') { %><button type="button" class="btn btn--linea btn--chico" data-marcar="pendiente">Volver a pendiente</button><% } %>
+            <% if (p.estado !== 'pendiente') { %><button type="button" class="btn btn--linea btn--chico" data-marcar="pendiente">Volver a nuevo</button><% } %>
           </div>
           <a class="btn btn--linea btn--chico" href="/admin/pedidos/<%= p.numero %>/comprobante" target="_blank" rel="noopener">Comprobante</a>
         </footer>

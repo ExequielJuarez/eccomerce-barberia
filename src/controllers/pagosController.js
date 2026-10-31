@@ -9,8 +9,6 @@ function puedeVer(req, pedido) {
   return (req.session.pedidosRecientes || []).includes(pedido.numero);
 }
 
-const sePuedeCancelar = (p) => p.estado === "pendiente";
-
 async function buscar(req, res) {
   const numero = Number(req.params.numero);
   const pedido = Number.isInteger(numero) ? await pedidos.obtener(numero) : null;
@@ -35,20 +33,8 @@ module.exports = {
       titulo: `Pedido #${pedido.numero}`,
       estilo: ["cuenta", "mi-pedido"],
       pedido,
-      sePuedeCancelar: sePuedeCancelar(pedido),
       linkWhatsapp: whatsapp.linkLocal(pedido),
     });
   },
 
-  async cancelar(req, res) {
-    const pedido = await buscar(req, res);
-    if (!pedido) return;
-    if (!sePuedeCancelar(pedido)) {
-      req.session.flash = "Este pedido ya no se puede cancelar desde acá. Escribinos y lo vemos.";
-      return res.redirect(`/pedido/${pedido.numero}`);
-    }
-    await pedidos.cambiarEstado(pedido.numero, "cancelado");
-    req.session.flash = `Cancelaste el pedido #${pedido.numero}.`;
-    res.redirect(`/pedido/${pedido.numero}`);
-  },
 };

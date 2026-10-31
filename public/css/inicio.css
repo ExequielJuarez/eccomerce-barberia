@@ -77,12 +77,13 @@
   .local { grid-template-columns: 1fr; }
 }
 @media (max-width: 640px) {
-  .cat { aspect-ratio: 3 / 4.4; }
-  .cat__frase { display: none; }
-  .cat__nombre { font-size: 18px; letter-spacing: 0.03em; }
-  .cat__flecha { top: 10px; right: 10px; bottom: auto; width: 30px; height: 30px; }
-  .cat__flecha svg { width: 16px; height: 16px; }
-  .cat__num { display: none; }
+  /* Categorías en el celular: botones con solo el nombre, de a dos */
+  .categorias { gap: 10px; }
+  .cat { aspect-ratio: auto; min-height: 56px; display: grid; place-items: center; padding: 12px 10px; border-radius: 14px; border-color: var(--linea-fuerte); background: var(--tinta-2); }
+  .cat img, .cat__num, .cat__frase, .cat__flecha { display: none; }
+  .cat::after { display: none; }
+  .cat__pie { position: static; display: block; text-align: center; }
+  .cat__nombre { font-size: 15px; letter-spacing: 0.06em; line-height: 1.15; overflow-wrap: anywhere; }
   .local__datos > div { grid-template-columns: 96px 1fr; }
   .hero__botones .btn { flex: 1 1 100%; }
 }

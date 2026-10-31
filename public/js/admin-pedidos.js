@@ -2,7 +2,7 @@
   const { $, $$, pedir, toast } = window.ADM;
   const lista = $("#pedidosLista");
   if (!lista) return;
-  const TEXTO = { pendiente: "Pendiente", vendido: "Vendido", cancelado: "Cancelado" };
+  const TEXTO = { pendiente: "Nuevo", vendido: "Vendido", cancelado: "Cancelado" };
 
   // Vuelve a pedir la página y cambia solo la lista y los contadores, respetando los detalles abiertos.
   let actualizando = false;
@@ -44,7 +44,7 @@
     if (!marcar) return;
     const art = marcar.closest(".pedido");
     const estado = marcar.dataset.marcar;
-    if (estado === "cancelado" && !confirm(`¿Cancelar el pedido #${art.dataset.numero}? Los productos vuelven al stock.`)) return;
+    if (estado === "cancelado" && !confirm(`¿Cancelar el pedido #${art.dataset.numero}? Sale de la lista y los productos vuelven al stock.`)) return;
 
     marcar.disabled = true;
     const r = await pedir(`/admin/pedidos/${art.dataset.numero}/estado`, { metodo: "PATCH", datos: { estado } });

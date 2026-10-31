@@ -55,7 +55,7 @@ module.exports = {
     carrito.vaciar(req.session);
     delete req.session.checkout;
     recordarPedido(req, pedido.numero);
-    res.redirect(`/pedido/${pedido.numero}`);
+    res.redirect(`/pedido/${pedido.numero}?enviar=1`);
   },
 
   recordarPedido,

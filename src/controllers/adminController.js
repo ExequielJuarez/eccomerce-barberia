@@ -222,7 +222,7 @@ module.exports = {
         estados: pedidoService.ESTADOS,
         conteo,
 
-        total: Object.values(conteo).reduce((a, n) => a + n, 0),
+        total: conteo.pendiente + conteo.vendido,
       })
     );
   },

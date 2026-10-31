@@ -92,7 +92,7 @@ const SECCIONES = {
 
   beneficios: {
     titulo: "Beneficios",
-    descripcion: "Cuatro avisos cortos de envío, pago y retiro.",
+    descripcion: "Avisos cortos de pedido, pago y retiro.",
     campos: {
       items: {
         tipo: "lista",
@@ -104,7 +104,6 @@ const SECCIONES = {
           texto: parrafo("Texto", "", 110),
         },
         defecto: [
-          { titulo: "Envío gratis", texto: "En compras desde $150.000 a todo el país." },
           { titulo: "Pedí por WhatsApp", texto: "Hacé tu pedido y te contactamos para coordinar." },
           { titulo: "Coordinamos con vos", texto: "El pago y la entrega los acordamos por WhatsApp." },
           { titulo: "Retiro sin costo", texto: "En La Plata 212." },

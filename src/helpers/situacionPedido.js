@@ -5,7 +5,7 @@ function situacionPedido(p) {
   if (p.estado === "vendido") {
     return { clave: "ok", texto: "Vendido", detalle: "Tu compra está confirmada. ¡Gracias!" };
   }
-  return { clave: "alerta", texto: "Pendiente", detalle: "Mandá el pedido por WhatsApp al local para confirmarlo." };
+  return { clave: "alerta", texto: "Nuevo", detalle: "Pedido nuevo." };
 }
 
 function pasosPedido(p) {
