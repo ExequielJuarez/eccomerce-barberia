@@ -5,6 +5,7 @@ const CLAVES = ["whatsapp", "telefono", "email", "direccion", "horarios", "insta
 
 async function cargar() {
   try {
+    await db.Configuracion.sync(); // crea la tabla si todavía no se corrió la migración
     const filas = await db.Configuracion.findAll({ raw: true });
     tienda.cargar(Object.fromEntries(filas.filter((f) => CLAVES.includes(f.clave)).map((f) => [f.clave, f.valor])));
   } catch (error) {
