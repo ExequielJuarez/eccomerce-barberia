@@ -1,0 +1,10 @@
+NODE_ENV=
+SESSION_SECRET=barba-black-deploy-prueba
+DB_HOST=bnmof6wxfpxgg48q3ygb-mysql.services.clever-cloud.com
+DB_PORT=3306
+DB_USER=uctllkvbhuxgw132
+DB_PASSWORD=TpJ7CvnEDZRyJreQSKmK
+DB_NAME=bnmof6wxfpxgg48q3ygb
+DB_TIMEZONE=-03:00
+DB_POOL_MAX=3
+TIENDA_DIRECCION=Av. Leopoldo Lugones 5147 y San Ramón Nonato 5708
