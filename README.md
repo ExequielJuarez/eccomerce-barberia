@@ -25,7 +25,7 @@ Al iniciar, la consola muestra una línea `Celular: http://<ip>:3000`. Con el ce
 
 ## Catálogo
 
-- **Menú de arriba:** siempre "Todos los productos" y las 5 primeras categorías. El orden se elige en el panel, en **Categorías** (flechas ▲▼). Las demás categorías salen en el inicio, el menú del celular y el pie.
+- **Menú de arriba:** siempre "Todos los productos" y "Combos" (fijas: "Combos" se crea sola y no se puede renombrar ni borrar, pero se le asignan productos como a cualquier categoría), más las 5 primeras categorías. El orden se elige en el panel, en **Categorías** (flechas ▲▼). Las demás categorías salen en el inicio, el menú del celular y el pie.
 - **Etiquetas:** se crean y editan en **Categorías → Etiquetas** y se eligen en una lista al cargar o editar un producto. "Nuevo" es fija: los productos con esa etiqueta salen en `/categoria/nuevos` (el botón de "Nuevos ingresos" del inicio).
 - **Buscador de productos del panel:** filtra en vivo mientras escribís.
 

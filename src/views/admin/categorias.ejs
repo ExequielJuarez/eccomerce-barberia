@@ -29,19 +29,21 @@
 </div>
 
 <ul class="cats">
-  <% lista.forEach((c, n) => { %>
+  <% const ordenables = lista.filter((x) => !x.fija); lista.forEach((c) => { const n = ordenables.findIndex((x) => x.id === c.id); %>
     <li class="panel cat" id="categoria-<%= c.id %>">
       <header class="cat__cab">
-        <div class="cat__orden">
+        <div class="cat__orden"><% if (c.fija) { %><span class="sub__n" title="Fija: siempre va primera en el menú">fija</span><% } else { %>
           <form action="/admin/categorias/<%= c.id %>/mover?_method=PATCH" method="POST"><input type="hidden" name="direccion" value="-1"><button class="icono-btn" <%= n === 0 ? 'disabled' : '' %> aria-label="Subir <%= c.nombre %>">▲</button></form>
-          <form action="/admin/categorias/<%= c.id %>/mover?_method=PATCH" method="POST"><input type="hidden" name="direccion" value="1"><button class="icono-btn" <%= n === lista.length - 1 ? 'disabled' : '' %> aria-label="Bajar <%= c.nombre %>">▼</button></form>
-        </div>
+          <form action="/admin/categorias/<%= c.id %>/mover?_method=PATCH" method="POST"><input type="hidden" name="direccion" value="1"><button class="icono-btn" <%= n === ordenables.length - 1 ? 'disabled' : '' %> aria-label="Bajar <%= c.nombre %>">▼</button></form>
+        <% } %></div>
         <div class="cat__titulo"><h2 class="titulo"><%= c.nombre %></h2><small class="apagado"><%= c.productos %> <%= c.productos === 1 ? 'producto' : 'productos' %> · <a href="/categoria/<%= c.slug %>" target="_blank" rel="noopener" class="enlace-suave">/categoria/<%= c.slug %> ↗</a></small></div>
         <div class="cat__acciones">
+          <% if (!c.fija) { %>
           <details class="menu-flotante"><summary class="btn btn--linea btn--chico">Renombrar</summary>
             <form action="/admin/categorias/<%= c.id %>?_method=PATCH" method="POST" class="menu-flotante__form"><input type="text" name="nombre" value="<%= c.nombre %>" maxlength="60" required aria-label="Nuevo nombre"><button class="btn btn--volt btn--chico">Guardar</button></form></details>
           <% if (c.productos) { %><button class="btn btn--peligro btn--chico" disabled title="Pasá sus productos a otra categoría antes de borrarla">Eliminar</button>
           <% } else { %><form action="/admin/categorias/<%= c.id %>?_method=DELETE" method="POST" data-confirmar="¿Eliminar la categoría “<%= c.nombre %>” y sus subcategorías? Deja de aparecer en el menú."><button class="btn btn--peligro btn--chico">Eliminar</button></form><% } %>
+          <% } %>
         </div>
       </header>
       <div class="cat__subs">

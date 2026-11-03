@@ -91,7 +91,9 @@ app.use(async (req, res, next) => {
 
   res.locals.categoriasMenu = await categoriaService.menu();
   res.locals.urlProductos = res.locals.categoriasMenu[0]?.url || "/";
-  res.locals.categoriasNav = res.locals.categoriasMenu.slice(0, 6);
+  // Arriba van siempre "Todos los productos" y "Combos", más las 5 primeras categorías que ordena el panel.
+  const menuCats = res.locals.categoriasMenu;
+  res.locals.categoriasNav = [...menuCats.filter((c) => c.slug === "todos" || c.fija), ...menuCats.filter((c) => c.slug !== "todos" && !c.fija).slice(0, 5)];
 
   res.locals.flash = req.session.flash || null;
   delete req.session.flash;
@@ -129,6 +131,7 @@ db.sequelize
   .then(async () => {
     await tiendaService.cargar();
     await etiquetaService.iniciar();
+    await categoriaService.asegurarFijas();
     console.log(`✅ Conectado a la base de datos "${db.sequelize.config.database}"`);
     app.listen(puerto, "0.0.0.0", () => {
       console.log(`🚀 Servidor Express corriendo en el puerto ${puerto}`);

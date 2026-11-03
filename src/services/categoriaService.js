@@ -6,18 +6,35 @@ const LARGO = { categoria: 60, subcategoria: 40 };
 
 let menuCache = null;
 
+// "Combos" es una categoría fija: siempre existe y va primera en el menú (después de "Todos los productos").
+const COMBOS = { nombre: "Combos", slug: "combos" };
+const esFija = (c) => c.slug === COMBOS.slug;
+
 // Categoría virtual: muestra todos los productos del catálogo.
 const TODOS = { id: null, nombre: "Todos los productos", slug: "todos", url: "/categoria/todos" };
 
 async function menu() {
   if (!menuCache) {
     const filas = await db.Categoria.findAll({ order: [["orden", "ASC"], ["id", "ASC"]], raw: true });
-    menuCache = [TODOS, ...filas.filter((f) => f.slug !== TODOS.slug).map(({ id, nombre, slug }) => ({ id, nombre, slug, url: `/categoria/${slug}` }))];
+    const visibles = filas.filter((f) => f.slug !== TODOS.slug).map(({ id, nombre, slug }) => ({ id, nombre, slug, url: `/categoria/${slug}`, fija: slug === COMBOS.slug }));
+    menuCache = [TODOS, ...visibles.filter((c) => c.fija), ...visibles.filter((c) => !c.fija)];
   }
   return menuCache;
 }
 
 const limpiarMenu = () => (menuCache = null);
+
+// Crea "Combos" si todavía no existe (también reconoce una que ya se llamaba así).
+async function asegurarFijas() {
+  try {
+    const existente = await db.Categoria.findOne({ where: { [Op.or]: [{ slug: COMBOS.slug }, { nombre: COMBOS.nombre }] } });
+    if (!existente) await db.Categoria.create({ nombre: COMBOS.nombre, slug: COMBOS.slug, orden: 0 });
+    else if (existente.slug !== COMBOS.slug) await existente.update({ slug: COMBOS.slug });
+    limpiarMenu();
+  } catch (error) {
+    console.warn("⚠️  No se pudo preparar la categoría Combos:", error.message);
+  }
+}
 
 async function listarCompletas() {
   const [categorias, conteoCat, conteoSub] = await Promise.all([
@@ -35,14 +52,16 @@ async function listarCompletas() {
   ]);
   const nCat = new Map(conteoCat.map((f) => [f.categoriaId, Number(f.n)]));
   const nSub = new Map(conteoSub.map((f) => [f.subcategoriaId, Number(f.n)]));
-  return categorias.map((c) => ({
+  const lista = categorias.map((c) => ({
     id: c.id,
     nombre: c.nombre,
     slug: c.slug,
+    fija: esFija(c),
     orden: c.orden,
     productos: nCat.get(c.id) || 0,
     subcategorias: c.subcategorias.map((s) => ({ id: s.id, nombre: s.nombre, slug: s.slug, productos: nSub.get(s.id) || 0 })),
   }));
+  return [...lista.filter((c) => c.fija), ...lista.filter((c) => !c.fija)];
 }
 
 async function porSlug(valor) {
@@ -93,6 +112,7 @@ async function crearCategoria(texto) {
 async function renombrarCategoria(id, texto) {
   const c = await db.Categoria.findByPk(id);
   if (!c) return { ok: false, mensaje: "No encontramos esa categoría" };
+  if (esFija(c)) return { ok: false, mensaje: `"${c.nombre}" es una categoría fija: no se puede renombrar.` };
   const v = nombreValido(texto, "categoria");
   if (v.mensaje) return { ok: false, mensaje: v.mensaje };
   const repetida = await db.Categoria.findOne({
@@ -107,6 +127,7 @@ async function renombrarCategoria(id, texto) {
 async function borrarCategoria(id) {
   const c = await db.Categoria.findByPk(id);
   if (!c) return { ok: false, mensaje: "No encontramos esa categoría" };
+  if (esFija(c)) return { ok: false, mensaje: `"${c.nombre}" es una categoría fija: no se puede borrar.` };
   const productos = await db.Producto.count({ where: { categoriaId: c.id } });
   if (productos) {
     return {
@@ -121,7 +142,8 @@ async function borrarCategoria(id) {
 }
 
 async function moverCategoria(id, direccion) {
-  const todas = await db.Categoria.findAll({ order: [["orden", "ASC"], ["id", "ASC"]] });
+  // Las fijas (Combos) no entran en el orden: solo se ordenan las demás.
+  const todas = (await db.Categoria.findAll({ order: [["orden", "ASC"], ["id", "ASC"]] })).filter((c) => !esFija(c));
   const i = todas.findIndex((c) => c.id === Number(id));
   const j = i + (Number(direccion) < 0 ? -1 : 1);
   if (i < 0 || j < 0 || j >= todas.length) return { ok: false, mensaje: "No se puede mover más" };
@@ -175,6 +197,7 @@ module.exports = {
   menu,
   limpiarMenu,
   listarCompletas,
+  asegurarFijas,
   porSlug,
   porNombre,
   crearCategoria,
