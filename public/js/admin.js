@@ -73,15 +73,19 @@
     } catch { audio = null; }
   };
   ["pointerdown", "keydown", "touchstart"].forEach((ev) => document.addEventListener(ev, desbloquear, { passive: true }));
-  // Mientras el navegador no deje sonar, se ve un botón fijo para activarlo con un toque.
-  const btnSonido = document.createElement("button");
-  btnSonido.type = "button";
-  btnSonido.className = "adm-sonido";
-  btnSonido.textContent = "🔔 Activar sonido de pedidos";
-  document.body.appendChild(btnSonido);
-  const revisarSonido = () => { btnSonido.hidden = Boolean(audio && audio.state === "running"); };
-  btnSonido.addEventListener("click", () => { desbloquear(); setTimeout(revisarSonido, 150); });
+  // El botón vive en el encabezado de Pedidos y siempre se ve: muestra si el sonido ya está activo.
+  const btnSonido = document.getElementById("btnSonido");
+  const revisarSonido = () => {
+    if (!btnSonido) return;
+    const activo = Boolean(audio && audio.state === "running");
+    btnSonido.classList.toggle("adm-sonido--activo", activo);
+    btnSonido.setAttribute("aria-pressed", String(activo));
+    btnSonido.textContent = activo ? "Sonido activado" : "Activar sonido de pedidos";
+  };
+  if (btnSonido) btnSonido.addEventListener("click", () => { desbloquear(); setTimeout(revisarSonido, 150); });
   ["pointerdown", "keydown", "touchstart"].forEach((ev) => document.addEventListener(ev, () => setTimeout(revisarSonido, 150), { passive: true }));
+  revisarSonido();
+  setInterval(() => { if (audio && audio.state === "suspended") audio.resume().catch(() => {}); revisarSonido(); }, 2000);
   const tituloOriginal = document.title;
   let parpadeo = null;
   const avisarEnTitulo = (texto) => {
@@ -117,7 +121,7 @@
       const n = JSON.parse(e.data);
       const sono = sonar();
       avisarEnTitulo(n.titulo);
-      toast(n.titulo + (n.mensaje ? " · " + n.mensaje : "") + (sono ? "" : " · activá el sonido con el botón dorado"));
+      toast(n.titulo + (n.mensaje ? " · " + n.mensaje : "") + (sono ? "" : " · tocá la pantalla para activar el sonido"));
       cargar();
       document.dispatchEvent(new CustomEvent("adm:notificacion", { detail: n }));
     });

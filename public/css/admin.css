@@ -120,5 +120,5 @@ body.adm-body { display: block; }
 }
 @media (max-width: 560px) { .kpis { grid-template-columns: 1fr; } }
 
-.adm-sonido { position: fixed; left: 16px; bottom: 16px; z-index: 150; padding: 10px 16px; background: var(--oro); color: var(--tinta); border: 0; border-radius: var(--radio); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45); font-weight: 700; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; }
-.adm-sonido[hidden] { display: none; }
+.adm-sonido { padding: 10px 16px; background: var(--oro); color: var(--tinta); border: 1px solid var(--oro); border-radius: var(--radio); font-weight: 700; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; }
+.adm-sonido--activo { background: transparent; color: var(--oro); }

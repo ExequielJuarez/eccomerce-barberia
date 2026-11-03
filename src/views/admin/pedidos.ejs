@@ -5,7 +5,7 @@
   const nombres = { pendiente: 'Nuevos', vendido: 'Vendidos' };
   const pestañas = [['', 'Todos', total]].concat(estados.filter((e) => e !== 'cancelado').map((e) => [e, nombres[e], conteo[e]]));
 %>
-<div class="adm-cab"><div><p class="etiqueta-seccion">Ventas</p><h1 class="adm-titulo titulo">Pedidos</h1></div></div>
+<div class="adm-cab"><div><p class="etiqueta-seccion">Ventas</p><h1 class="adm-titulo titulo">Pedidos</h1></div><button type="button" class="adm-sonido" id="btnSonido" aria-pressed="false">Sonido de pedidos</button></div>
 
 <form method="GET" class="adm-filtros">
   <input type="hidden" name="estado" value="<%= filtros.estado %>">
