@@ -4,6 +4,7 @@ SET time_zone = '-03:00';
 
 SET FOREIGN_KEY_CHECKS = 0;
 TRUNCATE TABLE configuracion;
+TRUNCATE TABLE etiquetas;
 TRUNCATE TABLE notificaciones;
 TRUNCATE TABLE arrepentimientos;
 TRUNCATE TABLE pedido_items;

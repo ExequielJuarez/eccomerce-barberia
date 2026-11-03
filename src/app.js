@@ -7,6 +7,7 @@ const crypto = require("crypto");
 const seguridad = require("./middlewares/seguridad");
 const tienda = require("./helpers/tienda");
 const tiendaService = require("./services/tiendaService");
+const etiquetaService = require("./services/etiquetaService");
 
 const app = express();
 
@@ -90,6 +91,7 @@ app.use(async (req, res, next) => {
 
   res.locals.categoriasMenu = await categoriaService.menu();
   res.locals.urlProductos = res.locals.categoriasMenu[0]?.url || "/";
+  res.locals.categoriasNav = res.locals.categoriasMenu.slice(0, 6);
 
   res.locals.flash = req.session.flash || null;
   delete req.session.flash;
@@ -126,6 +128,7 @@ db.sequelize
   .authenticate()
   .then(async () => {
     await tiendaService.cargar();
+    await etiquetaService.iniciar();
     console.log(`✅ Conectado a la base de datos "${db.sequelize.config.database}"`);
     app.listen(puerto, "0.0.0.0", () => {
       console.log(`🚀 Servidor Express corriendo en el puerto ${puerto}`);

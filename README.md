@@ -23,6 +23,12 @@ Al iniciar, la consola muestra una línea `Celular: http://<ip>:3000`. Con el ce
 - Crear un admin o cambiar una clave (la pide por consola, sin mostrarla): `npm run admin -- usuario@mail.com "Nombre Apellido"` (agregá `--super` para superadmin).
 - `npm run db:instalar` carga dos usuarios de **prueba** (`admin@tienda.com` y `super@tienda.com`, claves `Admin1234` / `Super1234`). Con `NODE_ENV=production` esas claves quedan bloqueadas: cambialas antes de publicar con el comando de arriba.
 
+## Catálogo
+
+- **Menú de arriba:** siempre "Todos los productos" y las 5 primeras categorías. El orden se elige en el panel, en **Categorías** (flechas ▲▼). Las demás categorías salen en el inicio, el menú del celular y el pie.
+- **Etiquetas:** se crean y editan en **Categorías → Etiquetas** y se eligen en una lista al cargar o editar un producto. "Nuevo" es fija: los productos con esa etiqueta salen en `/categoria/nuevos` (el botón de "Nuevos ingresos" del inicio).
+- **Buscador de productos del panel:** filtra en vivo mientras escribís.
+
 ## Seguridad
 
 - Contraseñas con bcrypt (costo 12); el login compara siempre contra un hash para no revelar si el usuario existe.

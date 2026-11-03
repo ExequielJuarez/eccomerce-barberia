@@ -65,3 +65,15 @@ CREATE TABLE IF NOT EXISTS configuracion (
   actualizado_en DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (clave)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 5) Etiquetas elegibles al cargar productos (Nuevo, Más vendido...). El servidor también la crea sola al iniciar.
+CREATE TABLE IF NOT EXISTS etiquetas (
+  id     SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  nombre VARCHAR(24)       NOT NULL,
+  orden  SMALLINT UNSIGNED NOT NULL DEFAULT 0,
+  PRIMARY KEY (id),
+  UNIQUE KEY uq_etiquetas_nombre (nombre)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+INSERT IGNORE INTO etiquetas (nombre, orden) VALUES ('Nuevo', 0);
+INSERT IGNORE INTO etiquetas (nombre, orden)
+  SELECT DISTINCT etiqueta, 1 FROM productos WHERE etiqueta IS NOT NULL AND etiqueta <> '';

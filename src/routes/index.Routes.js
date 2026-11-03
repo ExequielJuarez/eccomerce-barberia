@@ -32,10 +32,12 @@ async function coloresDe(productos) {
 
 
 router.get("/categoria/:slug", async (req, res, next) => {
-  const categoria = await categoriaService.porSlug(req.params.slug);
+  // "nuevos" no es una categoría: junta los productos marcados con la etiqueta Nuevo.
+  const esNuevos = req.params.slug === "nuevos";
+  const categoria = esNuevos ? { id: null, nombre: "Nuevos ingresos", slug: "nuevos", subcategorias: [] } : await categoriaService.porSlug(req.params.slug);
   if (!categoria) return next();
 
-  const productos = await productoService.listar({ categoriaId: categoria.id });
+  const productos = await productoService.listar({ categoriaId: categoria.id, etiqueta: esNuevos ? "Nuevo" : "" });
   const subElegida = categoria.subcategorias.find((s) => s.slug === req.query.sub) || null;
 
   res.render("catalogo", {

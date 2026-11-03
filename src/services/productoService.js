@@ -62,8 +62,9 @@ function plano(p) {
   };
 }
 
-async function listar({ q = "", categoria = "", categoriaId = null, stock = "", orden = "" } = {}) {
+async function listar({ q = "", categoria = "", categoriaId = null, etiqueta = "", stock = "", orden = "" } = {}) {
   const where = {};
+  if (etiqueta) where.etiqueta = etiqueta;
   const texto = q.trim();
   if (texto) {
     const patron = `%${texto.replace(/[\\%_]/g, "\\$&")}%`;

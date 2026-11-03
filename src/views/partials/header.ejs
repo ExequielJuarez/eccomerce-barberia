@@ -25,7 +25,7 @@
 
     <nav class="nav" aria-label="Principal">
       <ul class="nav__lista">
-        <% cats.forEach(cat => { %>
+        <% (locals.categoriasNav || cats).forEach(cat => { %>
           <li class="<%= locals.navActivo === cat.slug ? 'nav__item--activo' : '' %>"><a href="<%= cat.url %>"><%= cat.nombre %></a></li>
         <% }) %>
         <li class="<%= locals.navActivo === 'local' ? 'nav__item--activo' : '' %>"><a href="/#local">El local</a></li>

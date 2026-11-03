@@ -27,4 +27,33 @@
   tabla.addEventListener("change", (e) => {
     if (e.target.matches("[data-stock-input]")) enviar(e.target.closest("tr"), { valor: Number(e.target.value) });
   });
+
+  // Búsqueda y filtros en vivo: la tabla se actualiza sola mientras escribís (sin apretar Enter).
+  const form = $("#filtrosProductos");
+  if (form) {
+    let espera, anterior;
+    async function buscar() {
+      const params = new URLSearchParams(new FormData(form));
+      [...params].forEach(([k, v]) => { if (!v) params.delete(k); });
+      const url = location.pathname + (params.toString() ? "?" + params : "");
+      anterior?.abort();
+      anterior = new AbortController();
+      try {
+        const html = await (await fetch(url, { headers: { Accept: "text/html" }, signal: anterior.signal })).text();
+        const nuevo = new DOMParser().parseFromString(html, "text/html").querySelector("#tablaProductos tbody");
+        if (!nuevo) return;
+        tabla.querySelector("tbody").innerHTML = nuevo.innerHTML;
+        const total = $("#totalLista");
+        if (total) total.textContent = nuevo.querySelectorAll("tr[data-id]").length;
+        history.replaceState(null, "", url);
+      } catch { /* una búsqueda más nueva reemplaza a esta */ }
+    }
+    form.addEventListener("input", (e) => {
+      if (!e.target.matches('input[type="search"]')) return;
+      clearTimeout(espera);
+      espera = setTimeout(buscar, 200);
+    });
+    form.addEventListener("change", (e) => { e.stopPropagation(); buscar(); });
+    form.addEventListener("submit", (e) => { e.preventDefault(); clearTimeout(espera); buscar(); });
+  }
 })();

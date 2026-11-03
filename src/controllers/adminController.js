@@ -4,6 +4,7 @@ const { validationResult } = require("express-validator");
 const productoService = require("../services/productoService");
 const whatsapp = require("../services/whatsappService");
 const tiendaService = require("../services/tiendaService");
+const etiquetaService = require("../services/etiquetaService");
 const datosTienda = require("../helpers/tienda");
 const pedidoService = require("../services/pedidoService");
 const categoriaService = require("../services/categoriaService");
@@ -21,10 +22,11 @@ async function base(req, extra) {
 }
 
 async function renderFormulario(res, req, { producto = null, datos, errores = {}, status = 200 }) {
-  const [categorias, colores, categoriasCompletas] = await Promise.all([
+  const [categorias, colores, categoriasCompletas, etiquetas] = await Promise.all([
     productoService.categorias(),
     productoService.colores(),
     categoriaService.listarCompletas(),
+    etiquetaService.nombres(),
   ]);
   res.status(status).render(
     "admin/producto-form",
@@ -37,6 +39,7 @@ async function renderFormulario(res, req, { producto = null, datos, errores = {}
       errores,
       categorias,
       categoriasCompletas,
+      etiquetas,
       colores,
       MAX_IMAGENES: productoService.MAX_IMAGENES,
     })

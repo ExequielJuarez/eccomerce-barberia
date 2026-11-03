@@ -21,3 +21,10 @@
   .sub__borrar:hover { color: var(--rojo); }
   .enlace-suave:hover { color: var(--oro); }
 }
+
+.cat-fila { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: 14px; align-items: start; margin-bottom: 14px; }
+.cat-fila > * { min-width: 0; }
+.etiquetas .panel__cab { flex-wrap: wrap; gap: 4px 12px; }
+.cat-fila .cat-alta { max-width: none; }
+.etiquetas { display: grid; gap: 14px; }
+@media (max-width: 900px) { .cat-fila { grid-template-columns: 1fr; } }

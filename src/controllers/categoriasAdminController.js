@@ -1,6 +1,7 @@
 const categorias = require("../services/categoriaService");
 const productoService = require("../services/productoService");
 const pedidoService = require("../services/pedidoService");
+const etiquetas = require("../services/etiquetaService");
 
 const quiereJson = (req) => req.accepts(["html", "json"]) === "json";
 
@@ -14,8 +15,9 @@ function responder(req, res, resultado, mensajeOk, ancla = "") {
 
 module.exports = {
   async ver(req, res) {
-    const [lista, totalProductos, pedidosPendientes] = await Promise.all([
+    const [lista, listaEtiquetas, totalProductos, pedidosPendientes] = await Promise.all([
       categorias.listarCompletas(),
+      etiquetas.listar(),
       productoService.total(),
       pedidoService.pendientes(),
     ]);
@@ -27,6 +29,7 @@ module.exports = {
       totalProductos,
       pedidosPendientes,
       lista,
+      etiquetas: listaEtiquetas,
     });
   },
 
@@ -48,6 +51,27 @@ module.exports = {
   async moverCategoria(req, res) {
     const r = await categorias.moverCategoria(req.params.id, req.body.direccion);
     responder(req, res, r, () => "Orden del menú actualizado.", `#categoria-${req.params.id}`);
+  },
+
+  async crearEtiqueta(req, res) {
+    const r = await etiquetas.crear(req.body.nombre);
+    responder(req, res, r, (x) => `Etiqueta "${x.etiqueta.nombre}" creada. Ya la podés elegir al cargar o editar un producto.`, "#etiquetas");
+  },
+
+  async renombrarEtiqueta(req, res) {
+    const r = await etiquetas.renombrar(req.params.id, req.body.nombre);
+    responder(req, res, r, (x) => `Listo, ahora se llama "${x.etiqueta.nombre}".`, "#etiquetas");
+  },
+
+  async borrarEtiqueta(req, res) {
+    const r = await etiquetas.borrar(req.params.id);
+    responder(
+      req,
+      res,
+      r,
+      (x) => `Etiqueta "${x.etiqueta.nombre}" eliminada.` + (x.productos ? ` ${x.productos} ${x.productos === 1 ? "producto quedó" : "productos quedaron"} sin etiqueta.` : ""),
+      "#etiquetas"
+    );
   },
 
   async crearSubcategoria(req, res) {

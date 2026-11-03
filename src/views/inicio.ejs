@@ -60,7 +60,7 @@
         <p class="etiqueta-seccion"><%= c.nuevos.etiqueta %></p>
         <h2 class="bloque__titulo titulo"><%- textoRico(c.nuevos.titulo) %></h2>
       </div>
-      <a href="<%= c.nuevos.linkUrl %>" class="enlace"><%= c.nuevos.linkTexto %> →</a>
+      <a href="/categoria/nuevos" class="enlace"><%= c.nuevos.linkTexto %> →</a>
     </header>
     <div class="grilla-productos">
       <% nuevos.forEach((p, i) => { %><%- include('partials/tarjeta', { p, indice: i }) %><% }) %>

@@ -3,9 +3,30 @@
 <div class="adm-cab"><div><p class="etiqueta-seccion">Catálogo</p><h1 class="adm-titulo titulo">Categorías</h1></div></div>
 <p class="apagado texto-ancho">Las categorías son las pestañas del menú de la tienda. Las subcategorías son los filtros de cada sección (por ejemplo Clippers → Wahl, Kemei).</p>
 
+<div class="cat-fila">
 <form action="/admin/categorias" method="POST" class="panel cat-alta">
   <label class="campo"><span class="campo__label">Nueva categoría</span><span class="cat-alta__fila"><input type="text" name="nombre" maxlength="60" placeholder="Ej: Trimmers" required><button class="btn btn--volt">Agregar</button></span></label>
 </form>
+
+<section class="panel etiquetas" id="etiquetas">
+  <header class="panel__cab"><h2>Etiquetas</h2><span class="apagado">Las elegís al cargar un producto</span></header>
+  <ul class="subs">
+    <% if (!etiquetas.length) { %><li class="apagado" style="border:0">Todavía no hay etiquetas.</li><% } %>
+    <% etiquetas.forEach((t) => { %>
+      <li>
+        <span class="sub__nombre"><%= t.nombre %></span><span class="sub__n" title="Productos"><%= t.productos %></span>
+        <% if (t.fija) { %><span class="sub__n" title="Fija: arma los nuevos ingresos">fija</span><% } else { %>
+        <details class="menu-flotante"><summary class="icono-btn" aria-label="Renombrar <%= t.nombre %>">✎</summary>
+          <form action="/admin/etiquetas/<%= t.id %>?_method=PATCH" method="POST" class="menu-flotante__form"><input type="text" name="nombre" value="<%= t.nombre %>" maxlength="24" required aria-label="Nuevo nombre"><button class="btn btn--volt btn--chico">Guardar</button></form></details>
+        <form action="/admin/etiquetas/<%= t.id %>?_method=DELETE" method="POST" data-confirmar="¿Eliminar “<%= t.nombre %>”?<%= t.productos ? ' ' + t.productos + ' producto(s) quedan sin etiqueta.' : '' %>"><button class="icono-btn sub__borrar" aria-label="Eliminar <%= t.nombre %>">✕</button></form>
+        <% } %>
+      </li>
+    <% }) %>
+  </ul>
+  <p class="apagado texto-chico">“Nuevo” es fija: los productos que la tengan salen en <b>Nuevos ingresos</b>.</p>
+  <form action="/admin/etiquetas" method="POST" class="cat-alta__fila"><input type="text" name="nombre" maxlength="24" placeholder="Nueva etiqueta. Ej: Más vendido" required aria-label="Nueva etiqueta"><button class="btn btn--linea btn--chico">Agregar</button></form>
+</section>
+</div>
 
 <ul class="cats">
   <% lista.forEach((c, n) => { %>

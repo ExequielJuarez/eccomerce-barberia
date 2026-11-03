@@ -53,6 +53,10 @@ router.post("/categorias/:id/subcategorias", categorias.crearSubcategoria);
 router.patch("/subcategorias/:id", categorias.renombrarSubcategoria);
 router.delete("/subcategorias/:id", categorias.borrarSubcategoria);
 
+router.post("/etiquetas", categorias.crearEtiqueta);
+router.patch("/etiquetas/:id", categorias.renombrarEtiqueta);
+router.delete("/etiquetas/:id", categorias.borrarEtiqueta);
+
 router.get("/arrepentimientos", arrepentimientos.ver);
 router.patch("/arrepentimientos/:id", arrepentimientos.cambiarEstado);
 

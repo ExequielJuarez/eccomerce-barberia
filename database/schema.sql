@@ -10,6 +10,7 @@ SET FOREIGN_KEY_CHECKS = 0;
 DROP TABLE IF EXISTS contenido_inicio;
 DROP TABLE IF EXISTS arrepentimientos;
 DROP TABLE IF EXISTS configuracion;
+DROP TABLE IF EXISTS etiquetas;
 DROP TABLE IF EXISTS notificaciones;
 DROP TABLE IF EXISTS pedido_items;
 DROP TABLE IF EXISTS pedidos;
@@ -206,6 +207,15 @@ CREATE TABLE notificaciones (
     ON UPDATE CASCADE ON DELETE SET NULL,
   CONSTRAINT fk_notificaciones_producto FOREIGN KEY (producto_id) REFERENCES productos (id)
     ON UPDATE CASCADE ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Etiquetas que se eligen al cargar un producto (Nuevo, Más vendido...).
+CREATE TABLE etiquetas (
+  id     SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  nombre VARCHAR(24)       NOT NULL,
+  orden  SMALLINT UNSIGNED NOT NULL DEFAULT 0,
+  PRIMARY KEY (id),
+  UNIQUE KEY uq_etiquetas_nombre (nombre)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Datos del local editables desde el panel (WhatsApp, dirección, horarios, redes).

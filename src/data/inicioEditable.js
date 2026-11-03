@@ -66,8 +66,7 @@ const SECCIONES = {
       etiqueta: etiquetaSeccion("Recién llegado"),
       titulo: tituloSeccion("Nuevos *ingresos*"),
       cantidad: { tipo: "numero", etiqueta: "Cuántos mostrar", defecto: 4, max: 8, ancho: "medio" },
-      linkTexto: texto("Texto del link", "Ver todo el catálogo", 30, { ancho: "medio" }),
-      linkUrl: link("A dónde lleva", "/categoria/clippers"),
+      linkTexto: texto("Texto del link (lleva a los productos marcados como Nuevo)", "Ver todos los nuevos", 30, { ancho: "medio" }),
     },
   },
 
