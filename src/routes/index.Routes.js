@@ -15,7 +15,8 @@ const limites = require("../middlewares/seguridad");
 router.get("/", async (req, res) => {
   const contenido = await inicioService.obtener();
 
-  const catalogo = await productoService.listar();
+  // Solo los productos marcados con la etiqueta Nuevo.
+  const catalogo = await productoService.listar({ etiqueta: "Nuevo" });
   const nuevos = catalogo
     .filter((p) => p.stock > 0)
     .sort((a, b) => b.id - a.id)
