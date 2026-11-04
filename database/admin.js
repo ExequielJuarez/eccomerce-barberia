@@ -24,7 +24,7 @@ function pedirClave(texto) {
 const claveSegura = (c) => c.length >= 10 && /[a-z]/.test(c) && /[A-Z]/.test(c) && /\d/.test(c) && !/^(Admin|Super|Demo)1234$/.test(c);
 
 (async () => {
-  if (!email || !/^\S+@\S+\.\S+$|^[\w.-]{3,}$/.test(email)) {
+  if (!email || !/^[\w.@+-]{3,120}$/.test(email)) {
     console.log('Uso: npm run admin -- <usuario o email> "Nombre Apellido" [--super]');
     process.exit(1);
   }
